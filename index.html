@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TriCoach AI</title>
+<meta name="theme-color" content="#0A1826">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#0A1826;
+    --surface:#122636;
+    --surface-2:#1A3347;
+    --line:#22475F;
+    --ink:#EAF2F8;
+    --muted:#8EA9BE;
+    --signal:#FFC247;
+    --alert:#FF6B5A;
+    --calm:#5FD3A6;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--deep);color:var(--ink);
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px;line-height:1.55;
+    padding:0 0 env(safe-area-inset-bottom);
+    min-height:100vh;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:20px 18px 64px}
+  h1,h2,h3,.num{font-family:"Barlow Condensed",Impact,sans-serif;letter-spacing:.01em}
+  h1{font-size:30px;font-weight:700;line-height:1}
+  h2{font-size:22px;font-weight:600;margin-bottom:12px;color:var(--ink)}
+  .num{font-weight:700;font-variant-numeric:tabular-nums;line-height:.9}
+  p{color:var(--muted)}
+  a{color:var(--signal)}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 22px}
+  .brand{display:flex;align-items:baseline;gap:9px}
+  .brand span{color:var(--signal);font-size:13px;font-weight:600;font-family:Inter,sans-serif}
+
+  button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:11px 16px;
+    background:var(--signal);color:#0A1826;font-weight:600;transition:filter .15s}
+  button:hover:not(:disabled){filter:brightness(1.08)}
+  button:disabled{opacity:.5;cursor:default}
+  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  button.small{padding:8px 13px;font-size:14px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+
+  input,select{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+  input::placeholder{color:#5F7C93}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+  .field{margin-bottom:14px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;margin-bottom:16px}
+
+  /* Hero fraîcheur */
+  .hero{text-align:center;padding:26px 18px}
+  .hero .score{font-size:84px;display:block}
+  .hero .of{color:var(--muted);font-size:14px;margin-top:-4px}
+  .flag{display:inline-block;margin-top:14px;padding:7px 16px;border-radius:999px;
+    font-weight:600;font-size:14px}
+  .flag.ok{background:rgba(95,211,166,.14);color:var(--calm)}
+  .flag.monitor{background:rgba(255,194,71,.14);color:var(--signal)}
+  .flag.reduce{background:rgba(255,107,90,.16);color:var(--alert)}
+  .hero .note{margin-top:12px;font-size:14px}
+
+  .rows{display:flex;flex-direction:column;gap:1px;background:var(--line);
+    border-radius:10px;overflow:hidden}
+  .row{background:var(--surface);display:flex;align-items:center;gap:12px;padding:13px 14px}
+  .row .mark{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:var(--surface-2);
+    display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;
+    font-weight:700;font-size:15px;color:var(--signal)}
+  .row .main{flex:1;min-width:0}
+  .row .t{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .s{font-size:13px;color:var(--muted)}
+  .row .r{font-size:14px;color:var(--muted);white-space:nowrap;
+    font-variant-numeric:tabular-nums}
+  .tag{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--surface-2);
+    color:var(--muted);margin-left:6px}
+  .tag.mod{background:rgba(255,194,71,.14);color:var(--signal)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+  .stat .v{font-size:30px}
+  .stat .k{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .chat{display:flex;flex-direction:column;gap:11px;max-height:340px;overflow-y:auto;
+    margin-bottom:14px;padding-right:2px}
+  .msg{padding:11px 14px;border-radius:13px;max-width:88%;font-size:15px;line-height:1.5;
+    white-space:pre-wrap;word-wrap:break-word}
+  .msg.me{background:var(--signal);color:#0A1826;align-self:flex-end;border-bottom-right-radius:4px}
+  .msg.ai{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
+  .composer{display:flex;gap:8px}
+
+  .empty{color:var(--muted);font-size:14px;padding:6px 0}
+  .msgbar{padding:11px 14px;border-radius:10px;font-size:14px;margin-bottom:16px;
+    border:1px solid var(--line);background:var(--surface)}
+  .msgbar.err{border-color:var(--alert);color:var(--alert)}
+  .msgbar.ok{border-color:var(--calm);color:var(--calm)}
+  .hide{display:none!important}
+  .center{text-align:center}
+  .mt{margin-top:14px}
+  .spark{width:100%;height:46px;display:block;margin-top:4px}
+  .auth-switch{background:none;border:0;color:var(--signal);padding:0;font-size:14px;
+    text-decoration:underline}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><h1>TriCoach</h1><span>AI</span></div>
+    <button id="btn-logout" class="ghost small hide">Déconnexion</button>
+  </header>
+
+  <div id="msgbar" class="msgbar hide"></div>
+
+  <!-- ÉCRAN 1 : connexion -->
+  <section id="view-auth" class="hide">
+    <div class="card">
+      <h2 id="auth-title">Connexion</h2>
+      <div class="field">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.fr">
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="8 caractères minimum">
+      </div>
+      <button id="btn-auth" style="width:100%">Se connecter</button>
+      <p class="center mt" style="font-size:14px">
+        <span id="auth-hint">Pas encore de compte ?</span>
+        <button id="btn-switch" class="auth-switch">Créer un compte</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ÉCRAN 2 : mise en route -->
+  <section id="view-setup" class="hide">
+    <div class="card">
+      <h2>Relier ton compte intervals.icu</h2>
+      <p style="margin-bottom:16px">Tes séances, ta VFC et ton sommeil remonteront automatiquement.</p>
+      <div class="field">
+        <label for="athlete-id">Identifiant athlète intervals.icu</label>
+        <input id="athlete-id" placeholder="i272820" autocapitalize="off" autocorrect="off">
+      </div>
+      <div class="field">
+        <label for="full-name">Ton prénom</label>
+        <input id="full-name" placeholder="Prénom">
+      </div>
+      <button id="btn-setup" style="width:100%">Enregistrer et continuer</button>
+    </div>
+  </section>
+
+  <!-- ÉCRAN 3 : tableau de bord -->
+  <section id="view-app" class="hide">
+
+    <div class="card hero">
+      <span class="num score" id="score">—</span>
+      <div class="of">fraîcheur du jour</div>
+      <div id="flag" class="flag hide"></div>
+      <p class="note" id="score-note">Lance une synchronisation pour récupérer tes données.</p>
+    </div>
+
+    <div class="card">
+      <h2>Charge d'entraînement</h2>
+      <div class="stats">
+        <div class="stat"><div class="num v" id="acute">—</div><div class="k">aiguë · 7 j</div></div>
+        <div class="stat"><div class="num v" id="chronic">—</div><div class="k">chronique · 28 j</div></div>
+        <div class="stat"><div class="num v" id="acwr">—</div><div class="k">ratio</div></div>
+      </div>
+      <svg class="spark" id="spark" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <p id="acwr-note" style="font-size:13px;margin-top:8px"></p>
+    </div>
+
+    <div class="card">
+      <h2>Séances à venir</h2>
+      <div id="sessions" class="rows"></div>
+      <p class="empty hide" id="sessions-empty">Aucune séance planifiée pour l'instant.</p>
+    </div>
+
+    <div class="card">
+      <h2>Coach</h2>
+      <div class="chat" id="chat"></div>
+      <p class="empty" id="chat-empty">Pose une question sur ton entraînement, ta forme ou ta semaine.</p>
+      <div class="composer">
+        <input id="chat-input" placeholder="Comment je me situe cette semaine ?" autocomplete="off">
+        <button id="btn-send" class="small">Envoyer</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Données</h2>
+      <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
+      <p id="sync-note" style="font-size:13px;margin-top:10px"></p>
+    </div>
+
+  </section>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+const SUPABASE_URL = 'https://dcwbzguiedgubqkbattt.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_8yLD29FFhAhLfQJnNsAjJg_pVamcF0y'
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const $ = id => document.getElementById(id)
+const show = (el, on = true) => el.classList.toggle('hide', !on)
+const DISC = { natation:'N', velo:'V', course:'C', renfo:'R', repos:'—' }
+const DISC_LABEL = { natation:'Natation', velo:'Vélo', course:'Course', renfo:'Renfo', repos:'Repos' }
+let mode = 'login'
+
+function notify(text, kind = '') {
+  const bar = $('msgbar')
+  bar.textContent = text
+  bar.className = 'msgbar ' + kind
+  show(bar, !!text)
+  if (text) window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso + 'T00:00:00')
+  const today = new Date(); today.setHours(0,0,0,0)
+  const diff = Math.round((d - today) / 86400000)
+  if (diff === 0) return "aujourd'hui"
+  if (diff === 1) return 'demain'
+  return d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' })
+}
+
+// ---------- navigation ----------
+async function route() {
+  const { data:{ session } } = await sb.auth.getSession()
+  if (!session) {
+    show($('view-auth')); show($('view-setup'), false); show($('view-app'), false)
+    show($('btn-logout'), false)
+    return
+  }
+  show($('btn-logout'))
+  const { data: profile } = await sb.from('profiles')
+    .select('intervals_athlete_id').eq('id', session.user.id).maybeSingle()
+
+  if (!profile?.intervals_athlete_id) {
+    show($('view-auth'), false); show($('view-setup')); show($('view-app'), false)
+  } else {
+    show($('view-auth'), false); show($('view-setup'), false); show($('view-app'))
+    loadDashboard()
+  }
+}
+
+// ---------- connexion ----------
+$('btn-switch').onclick = () => {
+  mode = mode === 'login' ? 'signup' : 'login'
+  $('auth-title').textContent = mode === 'login' ? 'Connexion' : 'Créer un compte'
+  $('btn-auth').textContent  = mode === 'login' ? 'Se connecter' : 'Créer mon compte'
+  $('auth-hint').textContent = mode === 'login' ? 'Pas encore de compte ?' : 'Déjà inscrit ?'
+  $('btn-switch').textContent = mode === 'login' ? 'Créer un compte' : 'Se connecter'
+  $('password').autocomplete = mode === 'login' ? 'current-password' : 'new-password'
+  notify('')
+}
+
+$('btn-auth').onclick = async () => {
+  const email = $('email').value.trim(), password = $('password').value
+  if (!email || !password) return notify('Renseigne ton e-mail et ton mot de passe.', 'err')
+  $('btn-auth').disabled = true
+  notify('')
+  try {
+    if (mode === 'signup') {
+      const { data, error } = await sb.auth.signUp({ email, password })
+      if (error) throw error
+      if (!data.session) {
+        notify("Compte créé. Confirme ton adresse par e-mail, puis connecte-toi.", 'ok')
+        return
+      }
+      await sb.from('profiles').insert({ id: data.user.id })
+    } else {
+      const { error } = await sb.auth.signInWithPassword({ email, password })
+      if (error) throw error
+    }
+    await route()
+  } catch (e) {
+    notify(e.message === 'Invalid login credentials'
+      ? 'E-mail ou mot de passe incorrect.' : e.message, 'err')
+  } finally {
+    $('btn-auth').disabled = false
+  }
+}
+
+$('btn-logout').onclick = async () => { await sb.auth.signOut(); notify(''); route() }
+
+// ---------- mise en route ----------
+$('btn-setup').onclick = async () => {
+  const athleteId = $('athlete-id').value.trim()
+  if (!athleteId) return notify('Renseigne ton identifiant athlète intervals.icu.', 'err')
+  $('btn-setup').disabled = true
+  try {
+    const { data:{ user } } = await sb.auth.getUser()
+    const { error } = await sb.from('profiles').upsert({
+      id: user.id,
+      intervals_athlete_id: athleteId,
+      full_name: $('full-name').value.trim() || null,
+      updated_at: new Date().toISOString(),
+    })
+    if (error) throw error
+    await ensurePlan(user.id)
+    notify('')
+    await route()
+  } catch (e) {
+    notify(e.message, 'err')
+  } finally {
+    $('btn-setup').disabled = false
+  }
+}
+
+// Un plan actif est nécessaire : les séances importées s'y rattachent.
+async function ensurePlan(userId) {
+  const { data: plan } = await sb.from('training_plans')
+    .select('id').eq('user_id', userId).eq('status', 'active').maybeSingle()
+  if (plan) return
+  const start = new Date(), end = new Date()
+  end.setMonth(end.getMonth() + 6)
+  await sb.from('training_plans').insert({
+    user_id: userId,
+    start_date: start.toISOString().slice(0,10),
+    end_date: end.toISOString().slice(0,10),
+    status: 'active',
+  })
+}
+
+// ---------- tableau de bord ----------
+async function loadDashboard() {
+  const today = new Date().toISOString().slice(0,10)
+
+  const [readyRes, loadRes, sessRes, convRes] = await Promise.all([
+    sb.from('readiness')
+      .select('readiness_date,readiness_score,recommendation_flag,hrv,hrv_baseline')
+      .order('readiness_date', { ascending:false }).limit(1),
+    sb.from('user_load_status')
+      .select('load_date,total_daily_load,acute_load,chronic_load,acwr')
+      .order('load_date', { ascending:false }).limit(28),
+    sb.from('sessions')
+      .select('id,session_date,discipline,session_type,duration_planned_min,status')
+      .gte('session_date', today).order('session_date', { ascending:true }).limit(8),
+    sb.from('coach_conversations')
+      .select('role,message').order('created_at', { ascending:false }).limit(20),
+  ])
+
+  // Fraîcheur
+  const r = readyRes.data?.[0]
+  if (r?.readiness_score != null) {
+    $('score').textContent = Math.round(r.readiness_score)
+    const flag = $('flag')
+    const labels = { ok:'Prêt à travailler', monitor:'À surveiller', reduce:'Lève le pied' }
+    flag.textContent = labels[r.recommendation_flag] ?? r.recommendation_flag ?? ''
+    flag.className = 'flag ' + (r.recommendation_flag ?? '')
+    show(flag, !!r.recommendation_flag)
+    let note = 'Mesuré le ' + fmtDate(r.readiness_date) + '.'
+    if (r.hrv && r.hrv_baseline) {
+      const pct = Math.round((r.hrv / r.hrv_baseline - 1) * 100)
+      note += ` VFC ${r.hrv} contre ${r.hrv_baseline} de moyenne (${pct >= 0 ? '+' : ''}${pct} %).`
+    } else if (r.hrv) {
+      note += ` VFC ${r.hrv}. Moyenne personnelle en cours de constitution.`
+    }
+    $('score-note').textContent = note
+  }
+
+  // Charge
+  const rows = (loadRes.data ?? []).slice().reverse()
+  const last = rows[rows.length - 1]
+  if (last) {
+    $('acute').textContent   = Math.round(last.acute_load ?? 0)
+    $('chronic').textContent = Math.round(last.chronic_load ?? 0)
+    $('acwr').textContent    = last.acwr != null ? Number(last.acwr).toFixed(2) : '—'
+    const a = Number(last.acwr)
+    $('acwr-note').textContent =
+      !last.acwr ? '' :
+      a > 1.5  ? "Pic de charge : au-dessus de 1,5, le risque de blessure augmente." :
+      a < 0.8  ? "Charge en baisse par rapport à ton habitude." :
+                 "Progression dans une zone raisonnable."
+    $('acwr-note').style.color = a > 1.5 ? 'var(--alert)' : 'var(--muted)'
+    drawSpark(rows.map(x => Number(x.total_daily_load) || 0))
+  }
+
+  // Séances
+  const box = $('sessions'); box.innerHTML = ''
+  const sessions = sessRes.data ?? []
+  show($('sessions-empty'), sessions.length === 0)
+  for (const s of sessions) {
+    const el = document.createElement('div')
+    el.className = 'row'
+    el.innerHTML = `
+      <div class="mark">${DISC[s.discipline] ?? '?'}</div>
+      <div class="main">
+        <div class="t">${escapeHtml(s.session_type || DISC_LABEL[s.discipline] || '')}${
+          s.status === 'modified' ? '<span class="tag mod">ajustée</span>' : ''}</div>
+        <div class="s">${DISC_LABEL[s.discipline] ?? ''} · ${fmtDate(s.session_date)}</div>
+      </div>
+      <div class="r">${s.duration_planned_min ? s.duration_planned_min + ' min' : ''}</div>`
+    box.appendChild(el)
+  }
+
+  // Conversation
+  const chat = $('chat'); chat.innerHTML = ''
+  const history = (convRes.data ?? []).reverse()
+  show($('chat-empty'), history.length === 0)
+  for (const m of history) addMessage(m.role === 'user' ? 'me' : 'ai', m.message)
+  chat.scrollTop = chat.scrollHeight
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))
+}
+
+function drawSpark(values) {
+  const svg = $('spark')
+  svg.innerHTML = ''
+  if (!values.length) return
+  const max = Math.max(...values, 1)
+  const w = 300, h = 46, gap = 2
+  const bw = Math.max((w - gap * (values.length - 1)) / values.length, 1)
+  values.forEach((v, i) => {
+    const bh = Math.max((v / max) * (h - 4), v > 0 ? 3 : 1)
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('x', (i * (bw + gap)).toFixed(2))
+    rect.setAttribute('y', (h - bh).toFixed(2))
+    rect.setAttribute('width', bw.toFixed(2))
+    rect.setAttribute('height', bh.toFixed(2))
+    rect.setAttribute('rx', '1.5')
+    rect.setAttribute('fill', v > 0 ? 'var(--signal)' : 'var(--line)')
+    rect.setAttribute('opacity', v > 0 ? '0.85' : '1')
+    svg.appendChild(rect)
+  })
+}
+
+function addMessage(who, text) {
+  show($('chat-empty'), false)
+  const el = document.createElement('div')
+  el.className = 'msg ' + who
+  el.textContent = text
+  $('chat').appendChild(el)
+  $('chat').scrollTop = $('chat').scrollHeight
+  return el
+}
+
+// ---------- synchronisation ----------
+$('btn-sync').onclick = async () => {
+  const btn = $('btn-sync')
+  btn.disabled = true; btn.textContent = 'Synchronisation…'
+  $('sync-note').textContent = ''
+  try {
+    const { data, error } = await sb.functions.invoke('sync-intervals', { body: { days: 60 } })
+    if (error) throw error
+    if (data?.error) throw new Error(data.error)
+    $('sync-note').textContent =
+      `${data.seances_importees} séance(s) et ${data.jours_bien_etre_importes} jour(s) de données récupérés.`
+    $('sync-note').style.color = 'var(--calm)'
+    await loadDashboard()
+  } catch (e) {
+    $('sync-note').textContent = e.message || 'La synchronisation a échoué.'
+    $('sync-note').style.color = 'var(--alert)'
+  } finally {
+    btn.disabled = false; btn.textContent = 'Synchroniser intervals.icu'
+  }
+}
+
+// ---------- coach ----------
+async function send() {
+  const input = $('chat-input')
+  const text = input.value.trim()
+  if (!text) return
+  input.value = ''
+  addMessage('me', text)
+  $('btn-send').disabled = true
+  const pending = addMessage('ai', '…')
+  try {
+    const { data, error } = await sb.functions.invoke('coach', { body: { message: text } })
+    if (error) throw error
+    if (data?.error) throw new Error(data.error)
+    pending.textContent = data.reply
+    if (data.proposed_action_id) {
+      pending.textContent += '\n\n(Proposition en attente de validation.)'
+    }
+  } catch (e) {
+    pending.textContent = e.message || "Le coach n'a pas répondu."
+    pending.style.color = 'var(--alert)'
+  } finally {
+    $('btn-send').disabled = false
+    input.focus()
+  }
+}
+$('btn-send').onclick = send
+$('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') send() })
+$('password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-auth').click() })
+
+sb.auth.onAuthStateChange(() => route())
+route()
+</script>
+</body>
+</html>
