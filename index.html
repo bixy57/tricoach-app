@@ -39,12 +39,12 @@
   .field{margin-bottom:14px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
     padding:18px;margin-bottom:14px}
-  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
   .vitals div{background:var(--surface);border:1px solid var(--line);border-radius:11px;
-    padding:9px 4px;text-align:center}
-  .vitals .vv{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;
+    padding:9px 3px;text-align:center}
+  .vitals .vv{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;
     font-variant-numeric:tabular-nums}
-  .vitals .vk{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .vitals .vk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .hero{text-align:center;padding:24px 18px}
   .hero .score{font-size:78px;display:block}
   .hero .of{color:var(--muted);font-size:13px;margin-top:-4px}
@@ -58,7 +58,8 @@
   .stat .v{font-size:28px}
   .stat .k{font-size:11px;color:var(--muted);margin-top:2px}
   .spark{width:100%;height:42px;display:block;margin-top:10px}
-  .sess{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .sess{display:flex;align-items:center;gap:11px;padding:11px 0;
+    border-bottom:1px solid var(--line);cursor:pointer}
   .sess:last-child{border-bottom:0}
   .sess .mark{width:28px;height:28px;flex:0 0 28px;border-radius:8px;display:grid;
     place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;
@@ -145,6 +146,28 @@
     text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
   .warn{font-size:12px;color:var(--muted);font-style:italic;margin-top:12px;
     padding-top:12px;border-top:1px solid var(--line)}
+  .sheet{position:fixed;inset:0;background:rgba(5,14,24,.72);z-index:40;
+    display:flex;align-items:flex-end;justify-content:center;padding:0}
+  .sheet-in{background:var(--deep);border:1px solid var(--line);
+    border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;
+    overflow-y:auto;padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
+  .sheet-hd{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:12px;margin-bottom:6px}
+  .sheet-hd h2{margin:0}
+  .zone-box{background:var(--surface-2);border-radius:11px;padding:14px;margin:12px 0}
+  .zone-box .zk{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em}
+  .zone-box .zv{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:700;
+    color:var(--signal);font-variant-numeric:tabular-nums;line-height:1.1;margin-top:2px}
+  .zone-box .zf{font-size:14px;margin-top:8px;padding-top:8px;
+    border-top:1px solid var(--line)}
+  .step{padding:11px 0 11px 22px;position:relative;font-size:15px;
+    border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .step::before{content:'';position:absolute;left:5px;top:19px;width:7px;height:7px;
+    border-radius:50%;background:var(--signal)}
+  .phase-lbl{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.06em;margin:14px 0 2px}
   .chat{display:flex;flex-direction:column;gap:10px;max-height:56vh;overflow-y:auto;
     margin-bottom:12px}
   .msg{padding:11px 14px;border-radius:13px;max-width:88%;font-size:15px;
@@ -301,6 +324,8 @@
   </section>
 </div>
 
+<div class="sheet hide" id="sheet"><div class="sheet-in" id="sheet-in"></div></div>
+
 <nav id="nav" class="hide"><div class="inner">
   <button data-tab="today" class="on"><span class="ic">◉</span>Jour</button>
   <button data-tab="cal"><span class="ic">▤</span>Planning</button>
@@ -346,15 +371,11 @@ function fmtGoal(t){if(!t)return '—'
 function esc(s){return String(s).replace(/[&<>"']/g,c=>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function chipsFor(abilities){
-  const f=document.createDocumentFragment()
-  for(const k of Object.keys(abilities||{})){
-    const a=ABILITY[k];if(!a)continue
+function chipsFor(ab){const f=document.createDocumentFragment()
+  for(const k of Object.keys(ab||{})){const a=ABILITY[k];if(!a)continue
     const s=document.createElement('span');s.className='chip '+a[1];s.textContent=a[0]
-    f.appendChild(s)
-  }
-  return f
-}
+    f.appendChild(s)}
+  return f}
 
 function sessionRow(s){
   const el=document.createElement('div')
@@ -370,8 +391,74 @@ function sessionRow(s){
       s.status==='modified'?'<span class="badge mod">ajustée</span>':''}</div>
     <div class="s">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
     <div class="r">${dur}${load?`<br><span style="font-size:11px">${Math.round(load)} TSS</span>`:''}</div>`
-  return el
+  if(s.discipline!=='repos')el.onclick=()=>openSheet(s)
+  return el}
+
+// ---------- fiche séance ----------
+async function openSheet(s){
+  const sh=$('sheet'),box=$('sheet-in')
+  box.innerHTML=`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
+    <button class="ghost small" id="sheet-x">Fermer</button></div>
+    <p class="note-s" style="margin:0">Chargement…</p>`
+  show(sh);document.body.style.overflow='hidden'
+  $('sheet-x').onclick=closeSheet
+  sh.onclick=e=>{if(e.target===sh)closeSheet()}
+  try{
+    const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
+    if(error)throw error
+    let extra=''
+    if(s.discipline==='renfo'){
+      const r=await sb.rpc('strength_session',{p_user_id:userId,p_date:s.session_date})
+      if(!r.error&&r.data&&r.data.exercices){
+        const d=r.data
+        extra=`<div class="phase-lbl">${esc(d.titre||'')}</div>
+          <div class="zone-box"><div class="zk">Format</div>
+            <div style="font-size:14px;margin-top:4px">${esc(d.format||'')}</div>
+            <div class="zf">${esc(d.consigne_charge||'')}</div></div>
+          <div class="phase-lbl">Échauffement</div>
+          <div class="step">${esc(d.echauffement||'')}</div>
+          <div class="phase-lbl">Exercices</div>`
+        for(const e of d.exercices){
+          extra+=`<div class="step"><b>${esc(e.exercice)}</b> — ${
+            e.repetitions?`${e.series} × ${e.repetitions} rép`:`${e.series} × ${e.duree_s} s`}${
+            e.rir?`, RIR ${e.rir}`:''}, repos ${e.repos_s} s
+            <div class="note-s">${esc(e.execution)}</div>${
+            e.vigilance?`<div class="note-s" style="color:var(--alert)">${esc(e.vigilance)}</div>`:''}${
+            e.derniere_charge?.kg?`<div class="note-s">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
+        extra+=`<p class="warn">${esc(d.securite||'')}<br>${esc(d.avertissement||'')}</p>`
+      }
+    }
+    if(data.type==='repos'||data.message&&!data.corps){
+      box.innerHTML=`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
+        <button class="ghost small" id="sheet-x">Fermer</button></div>
+        ${extra||`<p>${esc(data.message||'')}</p>`}`
+    }else{
+      let steps=''
+      for(const c of (data.corps||[]))steps+=`<div class="step">${esc(c)}</div>`
+      box.innerHTML=`<div class="sheet-hd"><h2>${esc(data.seance||s.session_type||'')}</h2>
+        <button class="ghost small" id="sheet-x">Fermer</button></div>
+        <p class="note-s" style="margin:0">${LABEL[s.discipline]??''} · ${
+          data.duree_min} min · ${esc(data.focus||'')} · ${fmtDay(s.session_date)}</p>
+        <div class="zone-box"><div class="zk">Zone de travail</div>
+          <div class="zv">${esc(data.zone||'—')}</div>
+          ${data.fc?`<div class="zf">FC : ${esc(data.fc)}</div>`:''}
+          ${data.reference?`<div class="note-s">${esc(data.reference)}${
+            data.fc_reference?' · '+esc(data.fc_reference):''}</div>`:''}</div>
+        <div class="phase-lbl">Échauffement</div>
+        <div class="step">${esc(data.echauffement||'')}</div>
+        <div class="phase-lbl">Corps de séance</div>${steps}
+        <div class="phase-lbl">Retour au calme</div>
+        <div class="step">${esc(data.retour_calme||'')}</div>${extra}`
+    }
+    $('sheet-x').onclick=closeSheet
+  }catch(e){
+    box.innerHTML=`<div class="sheet-hd"><h2>Erreur</h2>
+      <button class="ghost small" id="sheet-x">Fermer</button></div>
+      <p style="color:var(--alert)">${esc(e.message)}</p>`
+    $('sheet-x').onclick=closeSheet}
 }
+function closeSheet(){show($('sheet'),false);document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
 
 document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
@@ -381,9 +468,7 @@ document.querySelectorAll('nav button').forEach(b=>{
     if(b.dataset.tab==='cal')loadCalendar()
     if(b.dataset.tab==='goals')loadGoals()
     if(b.dataset.tab==='fuel')loadFuel()
-    window.scrollTo({top:0})
-  }
-})
+    window.scrollTo({top:0})}})
 
 async function route(){
   const{data:{session}}=await sb.auth.getSession()
@@ -393,7 +478,7 @@ async function route(){
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg').eq('id',userId).maybeSingle()
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr').eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
     show($('vitals'),false)
@@ -402,11 +487,10 @@ async function route(){
     $('vitals').innerHTML=`
       <div><div class="vv">${p.ftp_watts??'—'}</div><div class="vk">FTP · W</div></div>
       <div><div class="vv">${p.vma_kmh??'—'}</div><div class="vk">VMA · km/h</div></div>
-      <div><div class="vv">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="vk">Poids · kg</div></div>`
+      <div><div class="vv">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="vk">Poids · kg</div></div>
+      <div><div class="vv">${p.max_hr??'—'}</div><div class="vk">FC max</div></div>`
     show($('vitals'))
-    show($('tab-today'));loadToday();loadChat()
-  }
-}
+    show($('tab-today'));loadToday();loadChat()}}
 
 $('btn-switch').onclick=()=>{
   mode=mode==='login'?'signup':'login'
@@ -459,8 +543,7 @@ async function loadToday(){
     sb.from('sessions').select('*').eq('session_date',today),
     sb.from('atp_weeks').select('*').eq('week_start',monday).maybeSingle(),
     sb.from('races').select('name,race_date').gte('race_date',today)
-      .order('race_date',{ascending:true}).limit(1).maybeSingle(),
-  ])
+      .order('race_date',{ascending:true}).limit(1).maybeSingle()])
 
   const r=ready.data?.[0]
   if(r?.readiness_score!=null){
@@ -498,8 +581,7 @@ async function loadToday(){
     const d=Math.round((new Date(race.data.race_date+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000)
     txt+=`${txt?' · ':''}${race.data.name} dans ${d} j`}
   $('today-week').textContent=txt
-  const c=$('today-chips');c.innerHTML='';if(w?.abilities)c.appendChild(chipsFor(w.abilities))
-}
+  const c=$('today-chips');c.innerHTML='';if(w?.abilities)c.appendChild(chipsFor(w.abilities))}
 
 function drawSpark(v){
   const svg=$('spark');svg.innerHTML='';if(!v.length)return
@@ -519,13 +601,11 @@ async function loadCalendar(){
   const start=addDays(mondayOf(new Date()),weekOffset*7),end=addDays(start,20)
   $('cal-range').textContent=start.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})
     +' → '+end.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})
-
   const[sessRes,atpRes,racesRes]=await Promise.all([
     sb.from('sessions').select('*').gte('session_date',iso(start)).lte('session_date',iso(end))
       .order('session_date',{ascending:true}),
     sb.from('atp_weeks').select('*').gte('week_start',iso(start)).lte('week_start',iso(end)),
-    sb.from('races').select('name,race_date,priority').order('race_date',{ascending:true}),
-  ])
+    sb.from('races').select('name,race_date,priority').order('race_date',{ascending:true})])
   const atpBy=new Map((atpRes.data??[]).map(w=>[w.week_start,w]))
   const races=racesRes.data??[]
 
@@ -536,14 +616,12 @@ async function loadCalendar(){
       s.session_date>=iso(wStart)&&s.session_date<=iso(wEnd))
     const meta=atpBy.get(iso(wStart))
     const card=document.createElement('div');card.className='card'
-
     const head=document.createElement('div');head.className='week-head'
     head.innerHTML=`<span>${wStart.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
       – ${wEnd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}${
       meta?` · ${meta.volume_hours} h`:''}</span>
       <span class="ph">${meta?esc(meta.period):''}</span>`
     card.appendChild(head)
-
     if(meta?.abilities){
       const c=document.createElement('div');c.className='chips'
       c.appendChild(chipsFor(meta.abilities))
@@ -552,7 +630,6 @@ async function loadCalendar(){
       if(meta.is_test_week){const s=document.createElement('span')
         s.className='chip vitesse';s.textContent='Semaine de test';c.appendChild(s)}
       card.appendChild(c)}
-
     const next=races.find(r=>r.race_date>=iso(wStart))
     if(next){
       const d=Math.round((new Date(next.race_date+'T00:00:00')-wEnd)/86400000)
@@ -560,14 +637,12 @@ async function loadCalendar(){
       t.innerHTML=`Prépare <b>${esc(next.name)}</b>${
         d>0?` — ${d} jours après cette semaine`:' — cette semaine'}`
       card.appendChild(t)}
-
     const done=inWeek.filter(s=>s.status==='completed')
     const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
     const doneTss=done.reduce((t,s)=>t+(Number(s.completed_data?.training_load)||0),0)
     const planMin=inWeek.filter(s=>s.status!=='completed')
       .reduce((t,s)=>t+(Number(s.duration_planned_min)||0),0)
     const cible=meta?Number(meta.volume_hours):((doneMin+planMin)/60)
-
     const recap=document.createElement('div');recap.className='recap'
     recap.innerHTML=`
       <div><div class="rv">${(doneMin/60).toFixed(1)}</div><div class="rk">h faites</div></div>
@@ -575,11 +650,9 @@ async function loadCalendar(){
       <div><div class="rv">${cible?cible.toFixed(1):'—'}</div><div class="rk">cible ATP</div></div>
       <div><div class="rv">${doneTss?Math.round(doneTss):'—'}</div><div class="rk">TSS</div></div>`
     card.appendChild(recap)
-
     if(cible>0){const pct=Math.min(doneMin/60/cible*100,100)
       const bar=document.createElement('div');bar.className='bar'
       bar.innerHTML=`<i style="width:${pct.toFixed(0)}%"></i>`;card.appendChild(bar)}
-
     const parDisc={}
     for(const s of inWeek){
       if(s.discipline==='repos')continue
@@ -591,19 +664,16 @@ async function loadCalendar(){
       d.style.marginBottom='8px'
       d.textContent=disc.map(([k,m])=>`${SHORT[k]??k} ${(m/60).toFixed(1)} h`).join(' · ')
       card.appendChild(d)}
-
     if(!inWeek.length){const p=document.createElement('p');p.className='empty'
       p.textContent='Rien sur cette semaine.';card.appendChild(p)}
     else inWeek.forEach(s=>card.appendChild(sessionRow(s)))
-    box.appendChild(card)}
-}
+    box.appendChild(card)}}
 
 async function loadGoals(){
   const[racesRes,atpRes,tgtRes]=await Promise.all([
     sb.from('races').select('*').order('race_date',{ascending:true}),
     sb.from('atp_weeks').select('*').order('week_start',{ascending:true}).limit(60),
-    sb.from('target_progress').select('*').order('target_date',{ascending:true}),
-  ])
+    sb.from('target_progress').select('*').order('target_date',{ascending:true})])
 
   const box=$('races');box.innerHTML=''
   const list=racesRes.data??[]
@@ -651,8 +721,7 @@ async function loadGoals(){
       w.is_test_week?' <span class="badge">test</span>':''}</td>
       <td class="per">${esc(w.period)}</td><td class="f">${w.strength_phase??'—'}</td>
       <td class="h">${w.volume_hours}</td>`
-    t.appendChild(tr)}
-}
+    t.appendChild(tr)}}
 
 async function loadFuel(){
   const nBox=$('nutrition'),rBox=$('recup'),lBox=$('recup-level'),mBox=$('mental')
@@ -660,8 +729,7 @@ async function loadFuel(){
   try{
     const[g,m]=await Promise.all([
       sb.rpc('daily_guidance',{p_user_id:userId}),
-      sb.rpc('mental_guidance',{p_user_id:userId}),
-    ])
+      sb.rpc('mental_guidance',{p_user_id:userId})])
     if(g.error)throw g.error
     const data=g.data,n=data.nutrition,r=data.recuperation
     $('fuel-context').textContent=
@@ -679,10 +747,8 @@ async function loadFuel(){
     for(const p of r.protocole){const li=document.createElement('li');li.textContent=p
       rBox.appendChild(li)}
     $('fuel-warn').textContent=data.avertissement
-
     if(!m.error&&m.data){
-      const md=m.data
-      mBox.innerHTML=''
+      const md=m.data;mBox.innerHTML=''
       const add=(k,v)=>{const d=document.createElement('div');d.className='gline'
         d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`;mBox.appendChild(d)}
       add(md.competence_mentale.theme,md.competence_mentale.pratique)
@@ -692,10 +758,8 @@ async function loadFuel(){
         $('floor').innerHTML=`<div class="h">Séance plancher — ${md.seance_plancher.duree_min} min</div>
           <div style="font-size:14px">${esc(md.seance_plancher.contenu)}</div>
           <p class="note-s">${esc(md.seance_plancher.regle)}</p>`
-        show($('floor'))}
-    }
-  }catch(e){nBox.innerHTML=`<p class="empty" style="color:var(--alert)">${esc(e.message)}</p>`}
-}
+        show($('floor'))}}
+  }catch(e){nBox.innerHTML=`<p class="empty" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
 $('btn-plan').onclick=async()=>{
   const b=$('btn-plan');b.disabled=true;b.textContent='Construction…'
