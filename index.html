@@ -5,502 +5,749 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TriCoach AI</title>
 <meta name="theme-color" content="#0A1826">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏊</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --deep:#0A1826;
-    --surface:#122636;
-    --surface-2:#1A3347;
-    --line:#22475F;
-    --ink:#EAF2F8;
-    --muted:#8EA9BE;
-    --signal:#FFC247;
-    --alert:#FF6B5A;
-    --calm:#5FD3A6;
-    --radius:14px;
-  }
+  :root{--deep:#0A1826;--surface:#122636;--surface-2:#1A3347;--line:#22475F;
+    --ink:#EAF2F8;--muted:#8EA9BE;--signal:#FFC247;--alert:#FF6B5A;--calm:#5FD3A6;
+    --nat:#4FC3E8;--velo:#FFC247;--cap:#FF8A65;--force:#B39DDB;--mob:#7FD4C1}
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{
-    background:var(--deep);color:var(--ink);
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
-    font-size:16px;line-height:1.55;
-    padding:0 0 env(safe-area-inset-bottom);
-    min-height:100vh;
-  }
-  .wrap{max-width:560px;margin:0 auto;padding:20px 18px 64px}
-  h1,h2,h3,.num{font-family:"Barlow Condensed",Impact,sans-serif;letter-spacing:.01em}
-  h1{font-size:30px;font-weight:700;line-height:1}
-  h2{font-size:22px;font-weight:600;margin-bottom:12px;color:var(--ink)}
+  body{background:var(--deep);color:var(--ink);font-family:Inter,system-ui,sans-serif;
+    font-size:16px;line-height:1.55;padding-bottom:calc(74px + env(safe-area-inset-bottom));
+    min-height:100vh}
+  .wrap{max-width:560px;margin:0 auto;padding:18px 16px 40px}
+  h1,h2,.num{font-family:"Barlow Condensed",Impact,sans-serif;letter-spacing:.01em}
+  h1{font-size:28px;font-weight:700;line-height:1}
+  h2{font-size:21px;font-weight:600;margin-bottom:12px}
   .num{font-weight:700;font-variant-numeric:tabular-nums;line-height:.9}
   p{color:var(--muted)}
-  a{color:var(--signal)}
-
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 22px}
-  .brand{display:flex;align-items:baseline;gap:9px}
-  .brand span{color:var(--signal);font-size:13px;font-weight:600;font-family:Inter,sans-serif}
-
+  header{display:flex;align-items:center;justify-content:space-between;padding:4px 0 14px}
+  .brand{display:flex;align-items:baseline;gap:8px}
+  .brand span{color:var(--signal);font-size:12px;font-weight:600;font-family:Inter,sans-serif}
   button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:11px 16px;
-    background:var(--signal);color:#0A1826;font-weight:600;transition:filter .15s}
-  button:hover:not(:disabled){filter:brightness(1.08)}
+    background:var(--signal);color:#0A1826;font-weight:600}
   button:disabled{opacity:.5;cursor:default}
   button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-  button.small{padding:8px 13px;font-size:14px}
+  button.small{padding:8px 12px;font-size:14px}
   button:focus-visible,input:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
-
-  input,select{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
+  input{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
     border:1px solid var(--line);background:var(--surface);color:var(--ink)}
   input::placeholder{color:#5F7C93}
   label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
   .field{margin-bottom:14px}
-
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:18px;margin-bottom:16px}
-
-  /* Hero fraîcheur */
-  .hero{text-align:center;padding:26px 18px}
-  .hero .score{font-size:84px;display:block}
-  .hero .of{color:var(--muted);font-size:14px;margin-top:-4px}
-  .flag{display:inline-block;margin-top:14px;padding:7px 16px;border-radius:999px;
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:18px;margin-bottom:14px}
+  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .vitals div{background:var(--surface);border:1px solid var(--line);border-radius:11px;
+    padding:9px 4px;text-align:center}
+  .vitals .vv{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;
+    font-variant-numeric:tabular-nums}
+  .vitals .vk{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .hero{text-align:center;padding:24px 18px}
+  .hero .score{font-size:78px;display:block}
+  .hero .of{color:var(--muted);font-size:13px;margin-top:-4px}
+  .flag{display:inline-block;margin-top:12px;padding:7px 16px;border-radius:999px;
     font-weight:600;font-size:14px}
   .flag.ok{background:rgba(95,211,166,.14);color:var(--calm)}
   .flag.monitor{background:rgba(255,194,71,.14);color:var(--signal)}
   .flag.reduce{background:rgba(255,107,90,.16);color:var(--alert)}
-  .hero .note{margin-top:12px;font-size:14px}
-
-  .rows{display:flex;flex-direction:column;gap:1px;background:var(--line);
-    border-radius:10px;overflow:hidden}
-  .row{background:var(--surface);display:flex;align-items:center;gap:12px;padding:13px 14px}
-  .row .mark{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:var(--surface-2);
-    display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;
-    font-weight:700;font-size:15px;color:var(--signal)}
-  .row .main{flex:1;min-width:0}
-  .row .t{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .row .s{font-size:13px;color:var(--muted)}
-  .row .r{font-size:14px;color:var(--muted);white-space:nowrap;
-    font-variant-numeric:tabular-nums}
-  .tag{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--surface-2);
-    color:var(--muted);margin-left:6px}
-  .tag.mod{background:rgba(255,194,71,.14);color:var(--signal)}
-
+  .hero .note{margin-top:11px;font-size:13px}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
-  .stat .v{font-size:30px}
-  .stat .k{font-size:12px;color:var(--muted);margin-top:2px}
-
-  .chat{display:flex;flex-direction:column;gap:11px;max-height:340px;overflow-y:auto;
-    margin-bottom:14px;padding-right:2px}
-  .msg{padding:11px 14px;border-radius:13px;max-width:88%;font-size:15px;line-height:1.5;
+  .stat .v{font-size:28px}
+  .stat .k{font-size:11px;color:var(--muted);margin-top:2px}
+  .spark{width:100%;height:42px;display:block;margin-top:10px}
+  .sess{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .sess:last-child{border-bottom:0}
+  .sess .mark{width:28px;height:28px;flex:0 0 28px;border-radius:8px;display:grid;
+    place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;
+    font-size:14px;color:#0A1826}
+  .m-natation{background:var(--nat)}.m-velo{background:var(--velo)}
+  .m-course{background:var(--cap)}.m-renfo{background:var(--force)}
+  .m-mobilite{background:var(--mob)}
+  .m-repos{background:var(--surface-2);color:var(--muted)}
+  .sess .main{flex:1;min-width:0}
+  .sess .t{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sess .s{font-size:12px;color:var(--muted)}
+  .sess .r{font-size:13px;color:var(--muted);white-space:nowrap;
+    font-variant-numeric:tabular-nums;text-align:right}
+  .sess.done .t{color:var(--calm)}
+  .sess.race{background:rgba(255,194,71,.08);margin:0 -8px;padding:11px 8px;border-radius:8px}
+  .sess.race .t{color:var(--signal);font-weight:600}
+  .badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface-2);
+    color:var(--muted);margin-left:5px;text-transform:uppercase;letter-spacing:.04em}
+  .badge.mod{background:rgba(255,194,71,.16);color:var(--signal)}
+  .week-head{display:flex;justify-content:space-between;align-items:baseline;
+    padding:0 0 8px;font-size:13px;color:var(--muted)}
+  .week-head .ph{font-family:"Barlow Condensed",sans-serif;font-size:16px;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--signal)}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+  .chip{font-size:11px;padding:3px 9px;border-radius:999px;background:var(--surface-2);
+    color:var(--ink);border:1px solid var(--line)}
+  .chip.force{color:var(--force);border-color:rgba(179,157,219,.4)}
+  .chip.seuil{color:var(--signal);border-color:rgba(255,194,71,.4)}
+  .chip.vitesse{color:var(--alert);border-color:rgba(255,107,90,.4)}
+  .chip.endu{color:var(--calm);border-color:rgba(95,211,166,.4)}
+  .target-line{font-size:12px;color:var(--muted);margin-bottom:8px;
+    padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .target-line b{color:var(--signal);font-weight:600}
+  .recap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+  .recap div{text-align:center;background:var(--surface-2);border-radius:8px;padding:7px 3px}
+  .recap .rv{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:700;
+    font-variant-numeric:tabular-nums}
+  .recap .rk{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .bar{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin:2px 0 10px}
+  .bar i{display:block;height:100%;background:var(--calm);border-radius:3px}
+  .race-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .race-row:last-child{border-bottom:0}
+  .race-row .d{text-align:center;flex:0 0 52px}
+  .race-row .d .n{font-size:24px;color:var(--signal)}
+  .race-row .d .u{font-size:10px;color:var(--muted);text-transform:uppercase}
+  .race-row .main{flex:1;min-width:0}
+  .race-row .t{font-size:15px;font-weight:500}
+  .race-row .s{font-size:12px;color:var(--muted)}
+  .race-row .goal{font-family:"Barlow Condensed",sans-serif;font-size:19px;
+    font-variant-numeric:tabular-nums}
+  .tgt{padding:12px 0;border-bottom:1px solid var(--line)}
+  .tgt:last-child{border-bottom:0}
+  .tgt .top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+  .tgt .vals{font-family:"Barlow Condensed",sans-serif;font-size:18px;
+    font-variant-numeric:tabular-nums}
+  .tgt .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .atp{width:100%;border-collapse:collapse;font-size:13px}
+  .atp th{text-align:left;font-weight:500;color:var(--muted);font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;padding:0 0 8px}
+  .atp td{padding:7px 0;border-top:1px solid var(--line)}
+  .atp .h{font-family:"Barlow Condensed",sans-serif;font-size:17px;
+    font-variant-numeric:tabular-nums;text-align:right}
+  .atp .per{color:var(--signal)}
+  .atp tr.now td{background:rgba(255,194,71,.07)}
+  .atp .f{font-size:11px;color:var(--muted)}
+  .gline{padding:12px 0;border-bottom:1px solid var(--line)}
+  .gline:last-child{border-bottom:0}
+  .gline .k{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;margin-bottom:3px}
+  .gline .v{font-size:15px;color:var(--ink)}
+  .proto{list-style:none;padding:0}
+  .proto li{padding:9px 0 9px 20px;position:relative;font-size:15px;
+    border-bottom:1px solid var(--line)}
+  .proto li:last-child{border-bottom:0}
+  .proto li::before{content:'';position:absolute;left:4px;top:17px;width:6px;height:6px;
+    border-radius:50%;background:var(--signal)}
+  .lvl{display:inline-block;padding:5px 13px;border-radius:999px;font-size:13px;
+    font-weight:600;margin-bottom:4px}
+  .lvl.Renforcé{background:rgba(255,107,90,.16);color:var(--alert)}
+  .lvl.Standard{background:rgba(255,194,71,.14);color:var(--signal)}
+  .lvl.Entretien{background:rgba(95,211,166,.14);color:var(--calm)}
+  .floor{background:var(--surface-2);border-radius:11px;padding:13px;margin-top:10px}
+  .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:16px;color:var(--signal);
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+  .warn{font-size:12px;color:var(--muted);font-style:italic;margin-top:12px;
+    padding-top:12px;border-top:1px solid var(--line)}
+  .chat{display:flex;flex-direction:column;gap:10px;max-height:56vh;overflow-y:auto;
+    margin-bottom:12px}
+  .msg{padding:11px 14px;border-radius:13px;max-width:88%;font-size:15px;
     white-space:pre-wrap;word-wrap:break-word}
   .msg.me{background:var(--signal);color:#0A1826;align-self:flex-end;border-bottom-right-radius:4px}
   .msg.ai{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
   .composer{display:flex;gap:8px}
-
-  .empty{color:var(--muted);font-size:14px;padding:6px 0}
-  .msgbar{padding:11px 14px;border-radius:10px;font-size:14px;margin-bottom:16px;
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,24,38,.96);
+    backdrop-filter:blur(10px);border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom);z-index:20}
+  nav .inner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+  nav button{background:none;border:0;border-radius:0;color:var(--muted);
+    padding:11px 2px;font-size:11px;font-weight:500}
+  nav button.on{color:var(--signal)}
+  nav .ic{display:block;font-size:18px;line-height:1.2;margin-bottom:1px}
+  .empty{color:var(--muted);font-size:14px;padding:8px 0}
+  .msgbar{padding:11px 14px;border-radius:10px;font-size:14px;margin-bottom:14px;
     border:1px solid var(--line);background:var(--surface)}
   .msgbar.err{border-color:var(--alert);color:var(--alert)}
   .msgbar.ok{border-color:var(--calm);color:var(--calm)}
   .hide{display:none!important}
   .center{text-align:center}
-  .mt{margin-top:14px}
-  .spark{width:100%;height:46px;display:block;margin-top:4px}
+  .note-s{font-size:12px;margin-top:8px}
   .auth-switch{background:none;border:0;color:var(--signal);padding:0;font-size:14px;
-    text-decoration:underline}
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+    text-decoration:underline;font-weight:400}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <header>
     <div class="brand"><h1>TriCoach</h1><span>AI</span></div>
-    <button id="btn-logout" class="ghost small hide">Déconnexion</button>
+    <button id="btn-logout" class="ghost small hide">Quitter</button>
   </header>
-
   <div id="msgbar" class="msgbar hide"></div>
+  <div class="vitals hide" id="vitals"></div>
 
-  <!-- ÉCRAN 1 : connexion -->
   <section id="view-auth" class="hide">
     <div class="card">
       <h2 id="auth-title">Connexion</h2>
-      <div class="field">
-        <label for="email">Adresse e-mail</label>
-        <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.fr">
-      </div>
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="8 caractères minimum">
-      </div>
+      <div class="field"><label for="email">Adresse e-mail</label>
+        <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.fr"></div>
+      <div class="field"><label for="password">Mot de passe</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="8 caractères min."></div>
       <button id="btn-auth" style="width:100%">Se connecter</button>
-      <p class="center mt" style="font-size:14px">
+      <p class="center" style="margin-top:14px;font-size:14px">
         <span id="auth-hint">Pas encore de compte ?</span>
-        <button id="btn-switch" class="auth-switch">Créer un compte</button>
-      </p>
+        <button id="btn-switch" class="auth-switch">Créer un compte</button></p>
     </div>
   </section>
 
-  <!-- ÉCRAN 2 : mise en route -->
   <section id="view-setup" class="hide">
     <div class="card">
-      <h2>Relier ton compte intervals.icu</h2>
-      <p style="margin-bottom:16px">Tes séances, ta VFC et ton sommeil remonteront automatiquement.</p>
-      <div class="field">
-        <label for="athlete-id">Identifiant athlète intervals.icu</label>
-        <input id="athlete-id" placeholder="i272820" autocapitalize="off" autocorrect="off">
-      </div>
-      <div class="field">
-        <label for="full-name">Ton prénom</label>
-        <input id="full-name" placeholder="Prénom">
-      </div>
-      <button id="btn-setup" style="width:100%">Enregistrer et continuer</button>
+      <h2>Relier intervals.icu</h2>
+      <p style="margin-bottom:16px">Séances, VFC et sommeil remonteront automatiquement.</p>
+      <div class="field"><label for="athlete-id">Identifiant athlète</label>
+        <input id="athlete-id" placeholder="i272820" autocapitalize="off"></div>
+      <div class="field"><label for="api-key">Clé API intervals.icu</label>
+        <input id="api-key" placeholder="Paramètres → Paramètres développeur" autocapitalize="off"></div>
+      <div class="field"><label for="full-name">Prénom</label>
+        <input id="full-name" placeholder="Prénom"></div>
+      <button id="btn-setup" style="width:100%">Continuer</button>
     </div>
   </section>
 
-  <!-- ÉCRAN 3 : tableau de bord -->
-  <section id="view-app" class="hide">
-
+  <section id="tab-today" class="hide">
     <div class="card hero">
       <span class="num score" id="score">—</span>
       <div class="of">fraîcheur du jour</div>
       <div id="flag" class="flag hide"></div>
-      <p class="note" id="score-note">Lance une synchronisation pour récupérer tes données.</p>
+      <p class="note" id="score-note">Synchronise pour récupérer tes données.</p>
     </div>
-
     <div class="card">
-      <h2>Charge d'entraînement</h2>
+      <h2>Au programme</h2>
+      <p class="note-s" id="today-week" style="margin:0 0 8px"></p>
+      <div class="chips" id="today-chips"></div>
+      <div id="today-sessions"></div>
+      <p class="empty hide" id="today-empty">Rien de prévu aujourd'hui.</p>
+      <div class="floor hide" id="floor"></div>
+    </div>
+    <div class="card">
+      <h2>Charge</h2>
       <div class="stats">
         <div class="stat"><div class="num v" id="acute">—</div><div class="k">aiguë · 7 j</div></div>
         <div class="stat"><div class="num v" id="chronic">—</div><div class="k">chronique · 28 j</div></div>
         <div class="stat"><div class="num v" id="acwr">—</div><div class="k">ratio</div></div>
       </div>
-      <svg class="spark" id="spark" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true"></svg>
-      <p id="acwr-note" style="font-size:13px;margin-top:8px"></p>
+      <svg class="spark" id="spark" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <p id="acwr-note" class="note-s"></p>
     </div>
-
     <div class="card">
-      <h2>Séances à venir</h2>
-      <div id="sessions" class="rows"></div>
-      <p class="empty hide" id="sessions-empty">Aucune séance planifiée pour l'instant.</p>
+      <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
+      <p id="sync-note" class="note-s"></p>
     </div>
+  </section>
 
+  <section id="tab-cal" class="hide">
+    <div class="card">
+      <div style="display:flex;gap:8px">
+        <button id="cal-prev" class="ghost small" style="flex:1">← Précédent</button>
+        <button id="cal-next" class="ghost small" style="flex:1">Suivant →</button>
+      </div>
+      <p class="center note-s" id="cal-range"></p>
+    </div>
+    <div id="cal-weeks"></div>
+  </section>
+
+  <section id="tab-goals" class="hide">
+    <div class="card">
+      <h2>Courses préparées</h2>
+      <div id="races"></div>
+      <p class="empty hide" id="races-empty">Aucun objectif enregistré.</p>
+    </div>
+    <div class="card">
+      <h2>Jalons</h2>
+      <div id="targets"></div>
+      <p class="empty hide" id="targets-empty">Aucun jalon défini.</p>
+    </div>
+    <div class="card">
+      <h2>Plan annuel</h2>
+      <div style="overflow-x:auto"><table class="atp" id="atp"></table></div>
+      <button id="btn-plan" class="ghost" style="width:100%;margin-top:14px">Régénérer le plan</button>
+      <p id="plan-note" class="note-s"></p>
+    </div>
+  </section>
+
+  <section id="tab-fuel" class="hide">
+    <div class="card">
+      <h2>Nutrition</h2>
+      <p class="note-s" id="fuel-context" style="margin:0 0 10px"></p>
+      <div id="nutrition"></div>
+    </div>
+    <div class="card">
+      <h2>Récupération</h2>
+      <div id="recup-level"></div>
+      <ul class="proto" id="recup"></ul>
+    </div>
+    <div class="card">
+      <h2>Mental</h2>
+      <div id="mental"></div>
+      <p class="warn" id="fuel-warn"></p>
+    </div>
+  </section>
+
+  <section id="tab-coach" class="hide">
     <div class="card">
       <h2>Coach</h2>
       <div class="chat" id="chat"></div>
-      <p class="empty" id="chat-empty">Pose une question sur ton entraînement, ta forme ou ta semaine.</p>
+      <p class="empty" id="chat-empty">Pose une question sur ta forme, ta semaine ou tes objectifs.</p>
       <div class="composer">
-        <input id="chat-input" placeholder="Comment je me situe cette semaine ?" autocomplete="off">
+        <input id="chat-input" placeholder="Où j'en suis cette semaine ?" autocomplete="off">
         <button id="btn-send" class="small">Envoyer</button>
       </div>
     </div>
-
-    <div class="card">
-      <h2>Données</h2>
-      <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
-      <p id="sync-note" style="font-size:13px;margin-top:10px"></p>
-    </div>
-
   </section>
 </div>
+
+<nav id="nav" class="hide"><div class="inner">
+  <button data-tab="today" class="on"><span class="ic">◉</span>Jour</button>
+  <button data-tab="cal"><span class="ic">▤</span>Planning</button>
+  <button data-tab="goals"><span class="ic">▲</span>Saison</button>
+  <button data-tab="fuel"><span class="ic">◇</span>Récup</button>
+  <button data-tab="coach"><span class="ic">✦</span>Coach</button>
+</div></nav>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-const SUPABASE_URL = 'https://dcwbzguiedgubqkbattt.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_8yLD29FFhAhLfQJnNsAjJg_pVamcF0y'
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
+const sb = createClient('https://dcwbzguiedgubqkbattt.supabase.co',
+  'sb_publishable_8yLD29FFhAhLfQJnNsAjJg_pVamcF0y')
 
-const $ = id => document.getElementById(id)
-const show = (el, on = true) => el.classList.toggle('hide', !on)
-const DISC = { natation:'N', velo:'V', course:'C', renfo:'R', repos:'—' }
-const DISC_LABEL = { natation:'Natation', velo:'Vélo', course:'Course', renfo:'Renfo', repos:'Repos' }
-let mode = 'login'
+const $=id=>document.getElementById(id)
+const show=(el,on=true)=>el.classList.toggle('hide',!on)
+const MARK={natation:'N',velo:'V',course:'C',renfo:'F',mobilite:'M',repos:'—'}
+const LABEL={natation:'Natation',velo:'Vélo',course:'Course à pied',
+  renfo:'Renforcement',mobilite:'Mobilité',repos:'Repos'}
+const SHORT={natation:'Nat',velo:'Vélo',course:'CAP',renfo:'Renfo',mobilite:'Mob'}
+const FORMAT={'10K':'10 km',SEMI:'Semi-marathon',MARATHON:'Marathon',S:'Triathlon S',
+  M:'Triathlon M',L_70_3:'Triathlon L',FULL:'Triathlon Full',IRONMAN:'Ironman'}
+const FORCE={AA:'Adaptation anatomique',MT:'Transition',MS:'Force maximale',SM:'Maintien'}
+const ABILITY={endurance_aerobie:['Endurance','endu'],technique:['Technique',''],
+  force_musculaire:['Force','force'],endurance_musculaire:['Seuil','seuil'],
+  capacite_aerobie:['VMA / PMA','vitesse'],puissance:['Puissance','vitesse']}
+const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','kg'],
+  threshold_pace_s_per_km:['Allure seuil','s/km'],css_s_per_100m:['Vitesse nat.','s/100m']}
+let mode='login',userId=null,weekOffset=0
 
-function notify(text, kind = '') {
-  const bar = $('msgbar')
-  bar.textContent = text
-  bar.className = 'msgbar ' + kind
-  show(bar, !!text)
-  if (text) window.scrollTo({ top: 0, behavior: 'smooth' })
-}
+const iso=d=>d.toISOString().slice(0,10)
+const mondayOf=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));
+  x.setHours(0,0,0,0);return x}
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function notify(t,k=''){const b=$('msgbar');b.textContent=t;b.className='msgbar '+k
+  show(b,!!t);if(t)window.scrollTo({top:0,behavior:'smooth'})}
+function fmtDay(s){const d=new Date(s+'T00:00:00'),t=new Date();t.setHours(0,0,0,0)
+  const n=Math.round((d-t)/86400000)
+  if(n===0)return "aujourd'hui";if(n===1)return 'demain';if(n===-1)return 'hier'
+  return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}
+function fmtGoal(t){if(!t)return '—'
+  const[h,m]=String(t).split(':');return Number(h)>0?`${Number(h)}h${m}`:`${Number(m)} min`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function fmtDate(iso) {
-  const d = new Date(iso + 'T00:00:00')
-  const today = new Date(); today.setHours(0,0,0,0)
-  const diff = Math.round((d - today) / 86400000)
-  if (diff === 0) return "aujourd'hui"
-  if (diff === 1) return 'demain'
-  return d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' })
-}
-
-// ---------- navigation ----------
-async function route() {
-  const { data:{ session } } = await sb.auth.getSession()
-  if (!session) {
-    show($('view-auth')); show($('view-setup'), false); show($('view-app'), false)
-    show($('btn-logout'), false)
-    return
+function chipsFor(abilities){
+  const f=document.createDocumentFragment()
+  for(const k of Object.keys(abilities||{})){
+    const a=ABILITY[k];if(!a)continue
+    const s=document.createElement('span');s.className='chip '+a[1];s.textContent=a[0]
+    f.appendChild(s)
   }
-  show($('btn-logout'))
-  const { data: profile } = await sb.from('profiles')
-    .select('intervals_athlete_id').eq('id', session.user.id).maybeSingle()
-
-  if (!profile?.intervals_athlete_id) {
-    show($('view-auth'), false); show($('view-setup')); show($('view-app'), false)
-  } else {
-    show($('view-auth'), false); show($('view-setup'), false); show($('view-app'))
-    loadDashboard()
-  }
+  return f
 }
 
-// ---------- connexion ----------
-$('btn-switch').onclick = () => {
-  mode = mode === 'login' ? 'signup' : 'login'
-  $('auth-title').textContent = mode === 'login' ? 'Connexion' : 'Créer un compte'
-  $('btn-auth').textContent  = mode === 'login' ? 'Se connecter' : 'Créer mon compte'
-  $('auth-hint').textContent = mode === 'login' ? 'Pas encore de compte ?' : 'Déjà inscrit ?'
-  $('btn-switch').textContent = mode === 'login' ? 'Créer un compte' : 'Se connecter'
-  $('password').autocomplete = mode === 'login' ? 'current-password' : 'new-password'
-  notify('')
-}
-
-$('btn-auth').onclick = async () => {
-  const email = $('email').value.trim(), password = $('password').value
-  if (!email || !password) return notify('Renseigne ton e-mail et ton mot de passe.', 'err')
-  $('btn-auth').disabled = true
-  notify('')
-  try {
-    if (mode === 'signup') {
-      const { data, error } = await sb.auth.signUp({ email, password })
-      if (error) throw error
-      if (!data.session) {
-        notify("Compte créé. Confirme ton adresse par e-mail, puis connecte-toi.", 'ok')
-        return
-      }
-      await sb.from('profiles').insert({ id: data.user.id })
-    } else {
-      const { error } = await sb.auth.signInWithPassword({ email, password })
-      if (error) throw error
-    }
-    await route()
-  } catch (e) {
-    notify(e.message === 'Invalid login credentials'
-      ? 'E-mail ou mot de passe incorrect.' : e.message, 'err')
-  } finally {
-    $('btn-auth').disabled = false
-  }
-}
-
-$('btn-logout').onclick = async () => { await sb.auth.signOut(); notify(''); route() }
-
-// ---------- mise en route ----------
-$('btn-setup').onclick = async () => {
-  const athleteId = $('athlete-id').value.trim()
-  if (!athleteId) return notify('Renseigne ton identifiant athlète intervals.icu.', 'err')
-  $('btn-setup').disabled = true
-  try {
-    const { data:{ user } } = await sb.auth.getUser()
-    const { error } = await sb.from('profiles').upsert({
-      id: user.id,
-      intervals_athlete_id: athleteId,
-      full_name: $('full-name').value.trim() || null,
-      updated_at: new Date().toISOString(),
-    })
-    if (error) throw error
-    await ensurePlan(user.id)
-    notify('')
-    await route()
-  } catch (e) {
-    notify(e.message, 'err')
-  } finally {
-    $('btn-setup').disabled = false
-  }
-}
-
-// Un plan actif est nécessaire : les séances importées s'y rattachent.
-async function ensurePlan(userId) {
-  const { data: plan } = await sb.from('training_plans')
-    .select('id').eq('user_id', userId).eq('status', 'active').maybeSingle()
-  if (plan) return
-  const start = new Date(), end = new Date()
-  end.setMonth(end.getMonth() + 6)
-  await sb.from('training_plans').insert({
-    user_id: userId,
-    start_date: start.toISOString().slice(0,10),
-    end_date: end.toISOString().slice(0,10),
-    status: 'active',
-  })
-}
-
-// ---------- tableau de bord ----------
-async function loadDashboard() {
-  const today = new Date().toISOString().slice(0,10)
-
-  const [readyRes, loadRes, sessRes, convRes] = await Promise.all([
-    sb.from('readiness')
-      .select('readiness_date,readiness_score,recommendation_flag,hrv,hrv_baseline')
-      .order('readiness_date', { ascending:false }).limit(1),
-    sb.from('user_load_status')
-      .select('load_date,total_daily_load,acute_load,chronic_load,acwr')
-      .order('load_date', { ascending:false }).limit(28),
-    sb.from('sessions')
-      .select('id,session_date,discipline,session_type,duration_planned_min,status')
-      .gte('session_date', today).order('session_date', { ascending:true }).limit(8),
-    sb.from('coach_conversations')
-      .select('role,message').order('created_at', { ascending:false }).limit(20),
-  ])
-
-  // Fraîcheur
-  const r = readyRes.data?.[0]
-  if (r?.readiness_score != null) {
-    $('score').textContent = Math.round(r.readiness_score)
-    const flag = $('flag')
-    const labels = { ok:'Prêt à travailler', monitor:'À surveiller', reduce:'Lève le pied' }
-    flag.textContent = labels[r.recommendation_flag] ?? r.recommendation_flag ?? ''
-    flag.className = 'flag ' + (r.recommendation_flag ?? '')
-    show(flag, !!r.recommendation_flag)
-    let note = 'Mesuré le ' + fmtDate(r.readiness_date) + '.'
-    if (r.hrv && r.hrv_baseline) {
-      const pct = Math.round((r.hrv / r.hrv_baseline - 1) * 100)
-      note += ` VFC ${r.hrv} contre ${r.hrv_baseline} de moyenne (${pct >= 0 ? '+' : ''}${pct} %).`
-    } else if (r.hrv) {
-      note += ` VFC ${r.hrv}. Moyenne personnelle en cours de constitution.`
-    }
-    $('score-note').textContent = note
-  }
-
-  // Charge
-  const rows = (loadRes.data ?? []).slice().reverse()
-  const last = rows[rows.length - 1]
-  if (last) {
-    $('acute').textContent   = Math.round(last.acute_load ?? 0)
-    $('chronic').textContent = Math.round(last.chronic_load ?? 0)
-    $('acwr').textContent    = last.acwr != null ? Number(last.acwr).toFixed(2) : '—'
-    const a = Number(last.acwr)
-    $('acwr-note').textContent =
-      !last.acwr ? '' :
-      a > 1.5  ? "Pic de charge : au-dessus de 1,5, le risque de blessure augmente." :
-      a < 0.8  ? "Charge en baisse par rapport à ton habitude." :
-                 "Progression dans une zone raisonnable."
-    $('acwr-note').style.color = a > 1.5 ? 'var(--alert)' : 'var(--muted)'
-    drawSpark(rows.map(x => Number(x.total_daily_load) || 0))
-  }
-
-  // Séances
-  const box = $('sessions'); box.innerHTML = ''
-  const sessions = sessRes.data ?? []
-  show($('sessions-empty'), sessions.length === 0)
-  for (const s of sessions) {
-    const el = document.createElement('div')
-    el.className = 'row'
-    el.innerHTML = `
-      <div class="mark">${DISC[s.discipline] ?? '?'}</div>
-      <div class="main">
-        <div class="t">${escapeHtml(s.session_type || DISC_LABEL[s.discipline] || '')}${
-          s.status === 'modified' ? '<span class="tag mod">ajustée</span>' : ''}</div>
-        <div class="s">${DISC_LABEL[s.discipline] ?? ''} · ${fmtDate(s.session_date)}</div>
-      </div>
-      <div class="r">${s.duration_planned_min ? s.duration_planned_min + ' min' : ''}</div>`
-    box.appendChild(el)
-  }
-
-  // Conversation
-  const chat = $('chat'); chat.innerHTML = ''
-  const history = (convRes.data ?? []).reverse()
-  show($('chat-empty'), history.length === 0)
-  for (const m of history) addMessage(m.role === 'user' ? 'me' : 'ai', m.message)
-  chat.scrollTop = chat.scrollHeight
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c =>
-    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))
-}
-
-function drawSpark(values) {
-  const svg = $('spark')
-  svg.innerHTML = ''
-  if (!values.length) return
-  const max = Math.max(...values, 1)
-  const w = 300, h = 46, gap = 2
-  const bw = Math.max((w - gap * (values.length - 1)) / values.length, 1)
-  values.forEach((v, i) => {
-    const bh = Math.max((v / max) * (h - 4), v > 0 ? 3 : 1)
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('x', (i * (bw + gap)).toFixed(2))
-    rect.setAttribute('y', (h - bh).toFixed(2))
-    rect.setAttribute('width', bw.toFixed(2))
-    rect.setAttribute('height', bh.toFixed(2))
-    rect.setAttribute('rx', '1.5')
-    rect.setAttribute('fill', v > 0 ? 'var(--signal)' : 'var(--line)')
-    rect.setAttribute('opacity', v > 0 ? '0.85' : '1')
-    svg.appendChild(rect)
-  })
-}
-
-function addMessage(who, text) {
-  show($('chat-empty'), false)
-  const el = document.createElement('div')
-  el.className = 'msg ' + who
-  el.textContent = text
-  $('chat').appendChild(el)
-  $('chat').scrollTop = $('chat').scrollHeight
+function sessionRow(s){
+  const el=document.createElement('div')
+  const isRace=(s.session_type||'').startsWith('COURSE —')
+  el.className='sess'+(s.status==='completed'?' done':'')+(isRace?' race':'')
+  const dur=s.status==='completed'
+    ?(s.completed_data?.duration_min?s.completed_data.duration_min+' min':'')
+    :(s.duration_planned_min?s.duration_planned_min+' min':'')
+  const load=s.completed_data?.training_load
+  el.innerHTML=`<div class="mark m-${s.discipline}">${MARK[s.discipline]??'?'}</div>
+    <div class="main"><div class="t">${s.status==='completed'?'✓ ':''}${
+      esc(s.session_type||LABEL[s.discipline]||'')}${
+      s.status==='modified'?'<span class="badge mod">ajustée</span>':''}</div>
+    <div class="s">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
+    <div class="r">${dur}${load?`<br><span style="font-size:11px">${Math.round(load)} TSS</span>`:''}</div>`
   return el
 }
 
-// ---------- synchronisation ----------
-$('btn-sync').onclick = async () => {
-  const btn = $('btn-sync')
-  btn.disabled = true; btn.textContent = 'Synchronisation…'
-  $('sync-note').textContent = ''
-  try {
-    const { data, error } = await sb.functions.invoke('sync-intervals', { body: { days: 60 } })
-    if (error) throw error
-    if (data?.error) throw new Error(data.error)
-    $('sync-note').textContent =
-      `${data.seances_importees} séance(s) et ${data.jours_bien_etre_importes} jour(s) de données récupérés.`
-    $('sync-note').style.color = 'var(--calm)'
-    await loadDashboard()
-  } catch (e) {
-    $('sync-note').textContent = e.message || 'La synchronisation a échoué.'
-    $('sync-note').style.color = 'var(--alert)'
-  } finally {
-    btn.disabled = false; btn.textContent = 'Synchroniser intervals.icu'
+document.querySelectorAll('nav button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'))
+    b.classList.add('on')
+    for(const t of ['today','cal','goals','fuel','coach'])show($('tab-'+t),t===b.dataset.tab)
+    if(b.dataset.tab==='cal')loadCalendar()
+    if(b.dataset.tab==='goals')loadGoals()
+    if(b.dataset.tab==='fuel')loadFuel()
+    window.scrollTo({top:0})
+  }
+})
+
+async function route(){
+  const{data:{session}}=await sb.auth.getSession()
+  const hideAll=()=>['today','cal','goals','fuel','coach'].forEach(t=>show($('tab-'+t),false))
+  if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
+    show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false);return}
+  userId=session.user.id
+  show($('btn-logout'))
+  const{data:p}=await sb.from('profiles')
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg').eq('id',userId).maybeSingle()
+  if(!p?.intervals_athlete_id){
+    show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
+    show($('vitals'),false)
+  }else{
+    show($('view-auth'),false);show($('view-setup'),false);show($('nav'))
+    $('vitals').innerHTML=`
+      <div><div class="vv">${p.ftp_watts??'—'}</div><div class="vk">FTP · W</div></div>
+      <div><div class="vv">${p.vma_kmh??'—'}</div><div class="vk">VMA · km/h</div></div>
+      <div><div class="vv">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="vk">Poids · kg</div></div>`
+    show($('vitals'))
+    show($('tab-today'));loadToday();loadChat()
   }
 }
 
-// ---------- coach ----------
-async function send() {
-  const input = $('chat-input')
-  const text = input.value.trim()
-  if (!text) return
-  input.value = ''
-  addMessage('me', text)
-  $('btn-send').disabled = true
-  const pending = addMessage('ai', '…')
-  try {
-    const { data, error } = await sb.functions.invoke('coach', { body: { message: text } })
-    if (error) throw error
-    if (data?.error) throw new Error(data.error)
-    pending.textContent = data.reply
-    if (data.proposed_action_id) {
-      pending.textContent += '\n\n(Proposition en attente de validation.)'
+$('btn-switch').onclick=()=>{
+  mode=mode==='login'?'signup':'login'
+  $('auth-title').textContent=mode==='login'?'Connexion':'Créer un compte'
+  $('btn-auth').textContent=mode==='login'?'Se connecter':'Créer mon compte'
+  $('auth-hint').textContent=mode==='login'?'Pas encore de compte ?':'Déjà inscrit ?'
+  $('btn-switch').textContent=mode==='login'?'Créer un compte':'Se connecter'
+  notify('')}
+$('btn-auth').onclick=async()=>{
+  const email=$('email').value.trim(),password=$('password').value
+  if(!email||!password)return notify('E-mail et mot de passe requis.','err')
+  $('btn-auth').disabled=true;notify('')
+  try{
+    if(mode==='signup'){
+      const{data,error}=await sb.auth.signUp({email,password});if(error)throw error
+      if(!data.session){notify('Compte créé. Confirme ton e-mail puis connecte-toi.','ok');return}
+      await sb.from('profiles').insert({id:data.user.id})
+    }else{const{error}=await sb.auth.signInWithPassword({email,password});if(error)throw error}
+    await route()
+  }catch(e){notify(e.message==='Invalid login credentials'
+    ?'E-mail ou mot de passe incorrect.':e.message,'err')}
+  finally{$('btn-auth').disabled=false}}
+$('btn-logout').onclick=async()=>{await sb.auth.signOut();notify('');route()}
+
+$('btn-setup').onclick=async()=>{
+  const a=$('athlete-id').value.trim()
+  if(!a)return notify('Identifiant athlète requis.','err')
+  $('btn-setup').disabled=true
+  try{
+    const{data:{user}}=await sb.auth.getUser()
+    const payload={id:user.id,intervals_athlete_id:a,
+      full_name:$('full-name').value.trim()||null,updated_at:new Date().toISOString()}
+    const k=$('api-key').value.trim();if(k)payload.intervals_api_key=k
+    const{error}=await sb.from('profiles').upsert(payload);if(error)throw error
+    const{data:plan}=await sb.from('training_plans').select('id')
+      .eq('user_id',user.id).eq('status','active').maybeSingle()
+    if(!plan){const s=new Date(),e=new Date();e.setMonth(e.getMonth()+12)
+      await sb.from('training_plans').insert({user_id:user.id,start_date:iso(s),
+        end_date:iso(e),status:'active'})}
+    notify('');await route()
+  }catch(e){notify(e.message,'err')}finally{$('btn-setup').disabled=false}}
+
+async function loadToday(){
+  const today=iso(new Date()),monday=iso(mondayOf(new Date()))
+  const[ready,load,sess,atp,race]=await Promise.all([
+    sb.from('readiness').select('readiness_date,readiness_score,recommendation_flag,hrv,hrv_baseline')
+      .order('readiness_date',{ascending:false}).limit(1),
+    sb.from('user_load_status').select('load_date,total_daily_load,acute_load,chronic_load,acwr')
+      .order('load_date',{ascending:false}).limit(28),
+    sb.from('sessions').select('*').eq('session_date',today),
+    sb.from('atp_weeks').select('*').eq('week_start',monday).maybeSingle(),
+    sb.from('races').select('name,race_date').gte('race_date',today)
+      .order('race_date',{ascending:true}).limit(1).maybeSingle(),
+  ])
+
+  const r=ready.data?.[0]
+  if(r?.readiness_score!=null){
+    $('score').textContent=Math.round(r.readiness_score)
+    const f=$('flag'),L={ok:'Prêt à travailler',monitor:'À surveiller',reduce:'Lève le pied'}
+    f.textContent=L[r.recommendation_flag]??'';f.className='flag '+(r.recommendation_flag??'')
+    show(f,!!r.recommendation_flag)
+    let n='Mesuré '+fmtDay(r.readiness_date)+'.'
+    if(r.hrv&&r.hrv_baseline){const p=Math.round((r.hrv/r.hrv_baseline-1)*100)
+      n+=` VFC ${r.hrv} contre ${r.hrv_baseline} de moyenne (${p>=0?'+':''}${p} %).`}
+    else if(r.hrv)n+=` VFC ${r.hrv}. Moyenne en constitution.`
+    $('score-note').textContent=n}
+
+  const rows=(load.data??[]).slice().reverse(),last=rows[rows.length-1]
+  if(last){
+    $('acute').textContent=Math.round(last.acute_load??0)
+    $('chronic').textContent=Math.round(last.chronic_load??0)
+    $('acwr').textContent=last.acwr!=null?Number(last.acwr).toFixed(2):'—'
+    const a=Number(last.acwr)
+    $('acwr-note').textContent=!last.acwr?'':a>1.5
+      ?"Pic de charge : au-delà de 1,5 le risque de blessure augmente."
+      :a<0.8?"Charge en baisse par rapport à ton habitude.":"Progression dans une zone raisonnable."
+    $('acwr-note').style.color=a>1.5?'var(--alert)':'var(--muted)'
+    drawSpark(rows.map(x=>Number(x.total_daily_load)||0))}
+
+  const box=$('today-sessions');box.innerHTML=''
+  const list=sess.data??[]
+  show($('today-empty'),list.length===0)
+  list.forEach(s=>box.appendChild(sessionRow(s)))
+
+  const w=atp.data
+  let txt=w?`${w.period} · ${w.volume_hours} h prévues${
+    w.strength_phase?` · force ${FORCE[w.strength_phase]??w.strength_phase}`:''}`:''
+  if(race.data){
+    const d=Math.round((new Date(race.data.race_date+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000)
+    txt+=`${txt?' · ':''}${race.data.name} dans ${d} j`}
+  $('today-week').textContent=txt
+  const c=$('today-chips');c.innerHTML='';if(w?.abilities)c.appendChild(chipsFor(w.abilities))
+}
+
+function drawSpark(v){
+  const svg=$('spark');svg.innerHTML='';if(!v.length)return
+  const max=Math.max(...v,1),w=300,h=42,gap=2
+  const bw=Math.max((w-gap*(v.length-1))/v.length,1)
+  v.forEach((x,i)=>{const bh=Math.max((x/max)*(h-4),x>0?3:1)
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect')
+    r.setAttribute('x',(i*(bw+gap)).toFixed(2));r.setAttribute('y',(h-bh).toFixed(2))
+    r.setAttribute('width',bw.toFixed(2));r.setAttribute('height',bh.toFixed(2))
+    r.setAttribute('rx','1.5');r.setAttribute('fill',x>0?'var(--signal)':'var(--line)')
+    svg.appendChild(r)})}
+
+$('cal-prev').onclick=()=>{weekOffset-=3;loadCalendar()}
+$('cal-next').onclick=()=>{weekOffset+=3;loadCalendar()}
+
+async function loadCalendar(){
+  const start=addDays(mondayOf(new Date()),weekOffset*7),end=addDays(start,20)
+  $('cal-range').textContent=start.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})
+    +' → '+end.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})
+
+  const[sessRes,atpRes,racesRes]=await Promise.all([
+    sb.from('sessions').select('*').gte('session_date',iso(start)).lte('session_date',iso(end))
+      .order('session_date',{ascending:true}),
+    sb.from('atp_weeks').select('*').gte('week_start',iso(start)).lte('week_start',iso(end)),
+    sb.from('races').select('name,race_date,priority').order('race_date',{ascending:true}),
+  ])
+  const atpBy=new Map((atpRes.data??[]).map(w=>[w.week_start,w]))
+  const races=racesRes.data??[]
+
+  const box=$('cal-weeks');box.innerHTML=''
+  for(let w=0;w<3;w++){
+    const wStart=addDays(start,w*7),wEnd=addDays(wStart,6)
+    const inWeek=(sessRes.data??[]).filter(s=>
+      s.session_date>=iso(wStart)&&s.session_date<=iso(wEnd))
+    const meta=atpBy.get(iso(wStart))
+    const card=document.createElement('div');card.className='card'
+
+    const head=document.createElement('div');head.className='week-head'
+    head.innerHTML=`<span>${wStart.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
+      – ${wEnd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}${
+      meta?` · ${meta.volume_hours} h`:''}</span>
+      <span class="ph">${meta?esc(meta.period):''}</span>`
+    card.appendChild(head)
+
+    if(meta?.abilities){
+      const c=document.createElement('div');c.className='chips'
+      c.appendChild(chipsFor(meta.abilities))
+      if(meta.strength_phase){const s=document.createElement('span')
+        s.className='chip force';s.textContent='Force '+meta.strength_phase;c.appendChild(s)}
+      if(meta.is_test_week){const s=document.createElement('span')
+        s.className='chip vitesse';s.textContent='Semaine de test';c.appendChild(s)}
+      card.appendChild(c)}
+
+    const next=races.find(r=>r.race_date>=iso(wStart))
+    if(next){
+      const d=Math.round((new Date(next.race_date+'T00:00:00')-wEnd)/86400000)
+      const t=document.createElement('div');t.className='target-line'
+      t.innerHTML=`Prépare <b>${esc(next.name)}</b>${
+        d>0?` — ${d} jours après cette semaine`:' — cette semaine'}`
+      card.appendChild(t)}
+
+    const done=inWeek.filter(s=>s.status==='completed')
+    const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
+    const doneTss=done.reduce((t,s)=>t+(Number(s.completed_data?.training_load)||0),0)
+    const planMin=inWeek.filter(s=>s.status!=='completed')
+      .reduce((t,s)=>t+(Number(s.duration_planned_min)||0),0)
+    const cible=meta?Number(meta.volume_hours):((doneMin+planMin)/60)
+
+    const recap=document.createElement('div');recap.className='recap'
+    recap.innerHTML=`
+      <div><div class="rv">${(doneMin/60).toFixed(1)}</div><div class="rk">h faites</div></div>
+      <div><div class="rv">${((doneMin+planMin)/60).toFixed(1)}</div><div class="rk">h totales</div></div>
+      <div><div class="rv">${cible?cible.toFixed(1):'—'}</div><div class="rk">cible ATP</div></div>
+      <div><div class="rv">${doneTss?Math.round(doneTss):'—'}</div><div class="rk">TSS</div></div>`
+    card.appendChild(recap)
+
+    if(cible>0){const pct=Math.min(doneMin/60/cible*100,100)
+      const bar=document.createElement('div');bar.className='bar'
+      bar.innerHTML=`<i style="width:${pct.toFixed(0)}%"></i>`;card.appendChild(bar)}
+
+    const parDisc={}
+    for(const s of inWeek){
+      if(s.discipline==='repos')continue
+      const m=s.status==='completed'?(Number(s.completed_data?.duration_min)||0)
+        :(Number(s.duration_planned_min)||0)
+      parDisc[s.discipline]=(parDisc[s.discipline]||0)+m}
+    const disc=Object.entries(parDisc).filter(([,m])=>m>0)
+    if(disc.length){const d=document.createElement('div');d.className='note-s'
+      d.style.marginBottom='8px'
+      d.textContent=disc.map(([k,m])=>`${SHORT[k]??k} ${(m/60).toFixed(1)} h`).join(' · ')
+      card.appendChild(d)}
+
+    if(!inWeek.length){const p=document.createElement('p');p.className='empty'
+      p.textContent='Rien sur cette semaine.';card.appendChild(p)}
+    else inWeek.forEach(s=>card.appendChild(sessionRow(s)))
+    box.appendChild(card)}
+}
+
+async function loadGoals(){
+  const[racesRes,atpRes,tgtRes]=await Promise.all([
+    sb.from('races').select('*').order('race_date',{ascending:true}),
+    sb.from('atp_weeks').select('*').order('week_start',{ascending:true}).limit(60),
+    sb.from('target_progress').select('*').order('target_date',{ascending:true}),
+  ])
+
+  const box=$('races');box.innerHTML=''
+  const list=racesRes.data??[]
+  show($('races-empty'),list.length===0)
+  const today=new Date();today.setHours(0,0,0,0)
+  for(const r of list){
+    const d=new Date(r.race_date+'T00:00:00')
+    const days=Math.round((d-today)/86400000)
+    const el=document.createElement('div');el.className='race-row'
+    el.innerHTML=`<div class="d"><div class="num n">${days>=0?days:'—'}</div>
+      <div class="u">${days>=0?'jours':'passée'}</div></div>
+      <div class="main"><div class="t">${esc(r.name)}${
+        r.priority?`<span class="badge">${r.priority}</span>`:''}</div>
+      <div class="s">${FORMAT[r.distance]??r.distance} · ${
+        d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div></div>
+      <div class="goal">${fmtGoal(r.target_time)}</div>`
+    box.appendChild(el)}
+
+  const tb=$('targets');tb.innerHTML=''
+  const tgts=tgtRes.data??[]
+  show($('targets-empty'),tgts.length===0)
+  for(const t of tgts){
+    const m=METRIC[t.metric]??[t.metric,'']
+    const cur=Number(t.current_value),tar=Number(t.target_value),base=Number(t.baseline_value||cur)
+    let pct=0
+    if(tar!==base)pct=Math.min(Math.max((cur-base)/(tar-base)*100,0),100)
+    const el=document.createElement('div');el.className='tgt'
+    el.innerHTML=`<div class="top"><span>${m[0]}${t.race_name?` — ${esc(t.race_name)}`:''}</span>
+      <span class="vals">${isNaN(cur)?'—':cur} → ${tar} ${m[1]}</span></div>
+      <div class="bar" style="margin:6px 0 2px"><i style="width:${pct.toFixed(0)}%"></i></div>
+      <div class="sub">${t.days_left>0?`${t.days_left} jours`:'échéance passée'} · ${
+        t.direction==='baisse'?'objectif à la baisse':'objectif à la hausse'}</div>`
+    tb.appendChild(el)}
+
+  const t=$('atp');t.innerHTML=''
+  const monday=iso(mondayOf(new Date()))
+  const head=document.createElement('tr')
+  head.innerHTML='<th>Semaine</th><th>Période</th><th>Force</th><th style="text-align:right">Heures</th>'
+  t.appendChild(head)
+  for(const w of atpRes.data??[]){
+    const tr=document.createElement('tr')
+    if(w.week_start===monday)tr.className='now'
+    const d=new Date(w.week_start+'T00:00:00')
+    tr.innerHTML=`<td>${d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}${
+      w.is_test_week?' <span class="badge">test</span>':''}</td>
+      <td class="per">${esc(w.period)}</td><td class="f">${w.strength_phase??'—'}</td>
+      <td class="h">${w.volume_hours}</td>`
+    t.appendChild(tr)}
+}
+
+async function loadFuel(){
+  const nBox=$('nutrition'),rBox=$('recup'),lBox=$('recup-level'),mBox=$('mental')
+  nBox.innerHTML='<p class="empty">Chargement…</p>';rBox.innerHTML='';lBox.innerHTML='';mBox.innerHTML=''
+  try{
+    const[g,m]=await Promise.all([
+      sb.rpc('daily_guidance',{p_user_id:userId}),
+      sb.rpc('mental_guidance',{p_user_id:userId}),
+    ])
+    if(g.error)throw g.error
+    const data=g.data,n=data.nutrition,r=data.recuperation
+    $('fuel-context').textContent=
+      `Période ${data.periode} · ${Math.round(data.volume_jour_min)} min prévues aujourd'hui`
+    nBox.innerHTML=''
+    for(const[k,v]of[['Cadre de la semaine',n.cadre_semaine],['Avant',n.avant],
+      ['Pendant',n.pendant],['Après',n.apres]]){
+      if(!v)continue
+      const d=document.createElement('div');d.className='gline'
+      d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`
+      nBox.appendChild(d)}
+    lBox.innerHTML=`<span class="lvl ${esc(r.niveau)}">${esc(r.niveau)}</span>
+      <p class="note-s" style="margin:4px 0 10px">${esc(r.motif)}</p>`
+    rBox.innerHTML=''
+    for(const p of r.protocole){const li=document.createElement('li');li.textContent=p
+      rBox.appendChild(li)}
+    $('fuel-warn').textContent=data.avertissement
+
+    if(!m.error&&m.data){
+      const md=m.data
+      mBox.innerHTML=''
+      const add=(k,v)=>{const d=document.createElement('div');d.className='gline'
+        d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`;mBox.appendChild(d)}
+      add(md.competence_mentale.theme,md.competence_mentale.pratique)
+      add('Respiration',md.respiration.protocole+' '+md.respiration.quand)
+      add('Assiduité — 4 semaines',md.assiduite)
+      if(md.seance_plancher?.applicable){
+        $('floor').innerHTML=`<div class="h">Séance plancher — ${md.seance_plancher.duree_min} min</div>
+          <div style="font-size:14px">${esc(md.seance_plancher.contenu)}</div>
+          <p class="note-s">${esc(md.seance_plancher.regle)}</p>`
+        show($('floor'))}
     }
-  } catch (e) {
-    pending.textContent = e.message || "Le coach n'a pas répondu."
-    pending.style.color = 'var(--alert)'
-  } finally {
-    $('btn-send').disabled = false
-    input.focus()
-  }
+  }catch(e){nBox.innerHTML=`<p class="empty" style="color:var(--alert)">${esc(e.message)}</p>`}
 }
-$('btn-send').onclick = send
-$('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') send() })
-$('password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-auth').click() })
 
-sb.auth.onAuthStateChange(() => route())
+$('btn-plan').onclick=async()=>{
+  const b=$('btn-plan');b.disabled=true;b.textContent='Construction…'
+  try{
+    const{data,error}=await sb.rpc('build_plan',{p_user_id:userId});if(error)throw error
+    $('plan-note').textContent=`${data.semaines} semaines, ${data.seances} séances.`
+    $('plan-note').style.color='var(--calm)';weekOffset=0;await loadGoals()
+  }catch(e){$('plan-note').textContent=e.message;$('plan-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Régénérer le plan'}}
+
+$('btn-sync').onclick=async()=>{
+  const b=$('btn-sync');b.disabled=true;b.textContent='Synchronisation…'
+  $('sync-note').textContent=''
+  try{
+    const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:60}})
+    if(error)throw error
+    if(data?.error)throw new Error(data.error)
+    const ign=Object.keys(data.types_ignores||{}).length
+    $('sync-note').textContent=`${data.seances_importees} séance(s), ${
+      data.jours_bien_etre_importes} jour(s) de données.${
+      ign?` ${ign} type(s) d'activité ignoré(s).`:''}`
+    $('sync-note').style.color='var(--calm)';await loadToday()
+  }catch(e){$('sync-note').textContent=e.message||'Échec.'
+    $('sync-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Synchroniser intervals.icu'}}
+
+function addMsg(who,text){show($('chat-empty'),false)
+  const el=document.createElement('div');el.className='msg '+who;el.textContent=text
+  $('chat').appendChild(el);$('chat').scrollTop=$('chat').scrollHeight;return el}
+async function loadChat(){
+  const{data}=await sb.from('coach_conversations').select('role,message')
+    .order('created_at',{ascending:false}).limit(20)
+  const h=(data??[]).reverse()
+  $('chat').innerHTML='';show($('chat-empty'),h.length===0)
+  h.forEach(m=>addMsg(m.role==='user'?'me':'ai',m.message))}
+async function send(){
+  const i=$('chat-input'),t=i.value.trim();if(!t)return
+  i.value='';addMsg('me',t);$('btn-send').disabled=true
+  const p=addMsg('ai','…')
+  try{
+    const{data,error}=await sb.functions.invoke('coach',{body:{message:t}})
+    if(error)throw error
+    if(data?.error)throw new Error(data.error)
+    p.textContent=data.reply
+    if(data.proposed_action_id)p.textContent+='\n\n(Proposition en attente de validation.)'
+  }catch(e){p.textContent=e.message||'Pas de réponse.';p.style.color='var(--alert)'}
+  finally{$('btn-send').disabled=false;i.focus()}}
+$('btn-send').onclick=send
+$('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')send()})
+$('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('btn-auth').click()})
+
+sb.auth.onAuthStateChange(()=>route())
 route()
 </script>
 </body>
