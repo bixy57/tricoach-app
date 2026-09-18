@@ -30,15 +30,19 @@
     background:var(--signal);color:#0A1826;font-weight:600}
   button:disabled{opacity:.5;cursor:default}
   button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  button.danger{background:transparent;color:var(--alert);border:1px solid rgba(255,107,90,.4)}
   button.small{padding:8px 12px;font-size:14px}
-  button:focus-visible,input:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
-  input{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
+  button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+  input,select{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
     border:1px solid var(--line);background:var(--surface);color:var(--ink)}
   input::placeholder{color:#5F7C93}
   label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
   .field{margin-bottom:14px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
     padding:18px;margin-bottom:14px}
+  .card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .card-hd h2{margin:0}
   .vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
   .vitals div{background:var(--surface);border:1px solid var(--line);border-radius:11px;
     padding:9px 3px;text-align:center}
@@ -79,6 +83,7 @@
   .badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface-2);
     color:var(--muted);margin-left:5px;text-transform:uppercase;letter-spacing:.04em}
   .badge.mod{background:rgba(255,194,71,.16);color:var(--signal)}
+  .badge.A{background:rgba(255,107,90,.16);color:var(--alert)}
   .week-head{display:flex;justify-content:space-between;align-items:baseline;
     padding:0 0 8px;font-size:13px;color:var(--muted)}
   .week-head .ph{font-family:"Barlow Condensed",sans-serif;font-size:16px;
@@ -100,7 +105,8 @@
   .recap .rk{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .bar{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin:2px 0 10px}
   .bar i{display:block;height:100%;background:var(--calm);border-radius:3px}
-  .race-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .race-row{display:flex;align-items:center;gap:12px;padding:14px 0;
+    border-bottom:1px solid var(--line);cursor:pointer}
   .race-row:last-child{border-bottom:0}
   .race-row .d{text-align:center;flex:0 0 52px}
   .race-row .d .n{font-size:24px;color:var(--signal)}
@@ -277,9 +283,12 @@
 
   <section id="tab-goals" class="hide">
     <div class="card">
-      <h2>Courses préparées</h2>
+      <div class="card-hd"><h2>Courses préparées</h2>
+        <button id="btn-add-race" class="small">+ Ajouter</button></div>
       <div id="races"></div>
       <p class="empty hide" id="races-empty">Aucun objectif enregistré.</p>
+      <p class="note-s">A : structure tout le plan · B : allègement 2 jours avant ·
+        C : course d'entraînement, aucun impact.</p>
     </div>
     <div class="card">
       <h2>Jalons</h2>
@@ -395,14 +404,19 @@ function sessionRow(s){
   if(s.discipline!=='repos')el.onclick=()=>openSheet(s)
   return el}
 
-async function openSheet(s){
+function openRaw(html){
   const sh=$('sheet'),box=$('sheet-in')
-  box.innerHTML=`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
-    <button class="ghost small" id="sheet-x">Fermer</button></div>
-    <p class="note-s" style="margin:0">Chargement…</p>`
-  show(sh);document.body.style.overflow='hidden'
-  $('sheet-x').onclick=closeSheet
+  box.innerHTML=html;show(sh);document.body.style.overflow='hidden'
   sh.onclick=e=>{if(e.target===sh)closeSheet()}
+  const x=$('sheet-x');if(x)x.onclick=closeSheet}
+function closeSheet(){show($('sheet'),false);document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
+
+// ---------- fiche séance ----------
+async function openSheet(s){
+  openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
+    <button class="ghost small" id="sheet-x">Fermer</button></div>
+    <p class="note-s" style="margin:0">Chargement…</p>`)
   try{
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
@@ -427,13 +441,13 @@ async function openSheet(s){
             e.derniere_charge?.kg?`<div class="note-s">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
         extra+=`<p class="warn">${esc(d.securite||'')}<br>${esc(d.avertissement||'')}</p>`}}
     if(data.type==='repos'||(data.message&&!data.corps)){
-      box.innerHTML=`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
+      openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
         <button class="ghost small" id="sheet-x">Fermer</button></div>
-        ${extra||`<p>${esc(data.message||'')}</p>`}`
+        ${extra||`<p>${esc(data.message||'')}</p>`}`)
     }else{
       let steps=''
       for(const c of (data.corps||[]))steps+=`<div class="step">${esc(c)}</div>`
-      box.innerHTML=`<div class="sheet-hd"><h2>${esc(data.seance||s.session_type||'')}</h2>
+      openRaw(`<div class="sheet-hd"><h2>${esc(data.seance||s.session_type||'')}</h2>
         <button class="ghost small" id="sheet-x">Fermer</button></div>
         <p class="note-s" style="margin:0">${LABEL[s.discipline]??''} · ${
           data.duree_min} min · ${esc(data.focus||'')} · ${fmtDay(s.session_date)}</p>
@@ -446,15 +460,71 @@ async function openSheet(s){
         <div class="step">${esc(data.echauffement||'')}</div>
         <div class="phase-lbl">Corps de séance</div>${steps}
         <div class="phase-lbl">Retour au calme</div>
-        <div class="step">${esc(data.retour_calme||'')}</div>${extra}`}
-    $('sheet-x').onclick=closeSheet
+        <div class="step">${esc(data.retour_calme||'')}</div>${extra}`)}
   }catch(e){
-    box.innerHTML=`<div class="sheet-hd"><h2>Erreur</h2>
+    openRaw(`<div class="sheet-hd"><h2>Erreur</h2>
       <button class="ghost small" id="sheet-x">Fermer</button></div>
-      <p style="color:var(--alert)">${esc(e.message)}</p>`
-    $('sheet-x').onclick=closeSheet}}
-function closeSheet(){show($('sheet'),false);document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
+      <p style="color:var(--alert)">${esc(e.message)}</p>`)}}
+
+// ---------- gestion des courses ----------
+function raceForm(r){
+  const opts=Object.entries(FORMAT).map(([k,v])=>
+    `<option value="${k}"${r&&r.distance===k?' selected':''}>${v}</option>`).join('')
+  const pri=['A','B','C'].map(p=>
+    `<option value="${p}"${r&&r.priority===p?' selected':''}>${p}</option>`).join('')
+  let hh='',mm=''
+  if(r?.target_time){const p=String(r.target_time).split(':');hh=Number(p[0]);mm=p[1]}
+  openRaw(`<div class="sheet-hd"><h2>${r?'Modifier la course':'Nouvelle course'}</h2>
+    <button class="ghost small" id="sheet-x">Fermer</button></div>
+    <div class="field"><label for="r-name">Nom</label>
+      <input id="r-name" value="${r?esc(r.name):''}" placeholder="Semi de Yutz"></div>
+    <div class="field"><label for="r-date">Date</label>
+      <input id="r-date" type="date" value="${r?r.race_date:''}"></div>
+    <div class="row2">
+      <div class="field"><label for="r-dist">Format</label>
+        <select id="r-dist">${opts}</select></div>
+      <div class="field"><label for="r-pri">Priorité</label>
+        <select id="r-pri">${pri}</select></div></div>
+    <div class="row2">
+      <div class="field"><label for="r-h">Objectif — heures</label>
+        <input id="r-h" type="number" min="0" max="24" value="${hh}" placeholder="1"></div>
+      <div class="field"><label for="r-m">Minutes</label>
+        <input id="r-m" type="number" min="0" max="59" value="${mm}" placeholder="45"></div></div>
+    <button id="r-save" style="width:100%">Enregistrer et régénérer le plan</button>
+    ${r?`<button id="r-del" class="danger" style="width:100%;margin-top:10px">Supprimer cette course</button>`:''}
+    <p id="r-note" class="note-s"></p>
+    <p class="warn">Toute modification reconstruit le plan complet : périodisation,
+      séances, tests et renforcement.</p>`)
+
+  $('r-save').onclick=async()=>{
+    const name=$('r-name').value.trim(),date=$('r-date').value
+    if(!name||!date){$('r-note').textContent='Nom et date requis.'
+      $('r-note').style.color='var(--alert)';return}
+    const h=parseInt($('r-h').value||'0',10),m=parseInt($('r-m').value||'0',10)
+    const tt=(h||m)?`${h||0}:${String(m||0).padStart(2,'0')}:00`:null
+    const payload={user_id:userId,name,race_date:date,
+      distance:$('r-dist').value,priority:$('r-pri').value,target_time:tt}
+    $('r-save').disabled=true;$('r-save').textContent='Enregistrement…'
+    try{
+      const q=r?sb.from('races').update(payload).eq('id',r.id)
+             :sb.from('races').insert(payload)
+      const{error}=await q;if(error)throw error
+      const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
+      closeSheet();await loadGoals();notify('Plan reconstruit.','ok')
+    }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
+      $('r-save').disabled=false;$('r-save').textContent='Enregistrer et régénérer le plan'}}
+
+  if(r){$('r-del').onclick=async()=>{
+    if(!confirm(`Supprimer « ${r.name} » ? Le plan sera reconstruit sans elle.`))return
+    $('r-del').disabled=true;$('r-del').textContent='Suppression…'
+    try{
+      const{error}=await sb.from('races').delete().eq('id',r.id);if(error)throw error
+      const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
+      closeSheet();await loadGoals();notify('Course supprimée, plan reconstruit.','ok')
+    }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
+      $('r-del').disabled=false;$('r-del').textContent='Supprimer cette course'}}}}
+
+$('btn-add-race').onclick=()=>raceForm(null)
 
 document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
@@ -682,10 +752,11 @@ async function loadGoals(){
     el.innerHTML=`<div class="d"><div class="num n">${days>=0?days:'—'}</div>
       <div class="u">${days>=0?'jours':'passée'}</div></div>
       <div class="main"><div class="t">${esc(r.name)}${
-        r.priority?`<span class="badge">${r.priority}</span>`:''}</div>
+        r.priority?`<span class="badge ${r.priority}">${r.priority}</span>`:''}</div>
       <div class="s">${FORMAT[r.distance]??r.distance} · ${
         d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div></div>
       <div class="goal">${fmtGoal(r.target_time)}</div>`
+    el.onclick=()=>raceForm(r)
     box.appendChild(el)}
 
   const tb=$('targets');tb.innerHTML=''
