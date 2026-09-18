@@ -4,242 +4,298 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TriCoach AI</title>
-<meta name="theme-color" content="#0A1826">
+<meta name="theme-color" content="#070F18">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--deep:#0A1826;--surface:#122636;--surface-2:#1A3347;--line:#22475F;
-    --ink:#EAF2F8;--muted:#8EA9BE;--signal:#FFC247;--alert:#FF6B5A;--calm:#5FD3A6;
-    --nat:#4FC3E8;--velo:#FFC247;--cap:#FF8A65;--force:#B39DDB;--mob:#7FD4C1}
+  :root{
+    --bg:#070F18;--panel:#0E1B28;--panel-2:#152634;--line:#1E3span;--line:#1D3446;
+    --ink:#F0F5F9;--dim:#7E97AC;--faint:#4F6B82;
+    --acc:#FFB020;--alert:#FF6B5A;--calm:#4FD1A5;
+    --nat:#38BDF8;--velo:#FFB020;--cap:#FB7C50;--force:#A78BFA;--mob:#5EEAD4;
+    --r:16px;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{background:var(--deep);color:var(--ink);font-family:Inter,system-ui,sans-serif;
-    font-size:16px;line-height:1.55;padding-bottom:calc(74px + env(safe-area-inset-bottom));
-    min-height:100vh}
-  .wrap{max-width:560px;margin:0 auto;padding:18px 16px 40px}
-  h1,h2,.num{font-family:"Barlow Condensed",Impact,sans-serif;letter-spacing:.01em}
-  h1{font-size:28px;font-weight:700;line-height:1}
-  h2{font-size:21px;font-weight:600;margin-bottom:12px}
-  .num{font-weight:700;font-variant-numeric:tabular-nums;line-height:.9}
-  p{color:var(--muted)}
-  header{display:flex;align-items:center;justify-content:space-between;padding:4px 0 14px}
-  .brand{display:flex;align-items:baseline;gap:8px}
-  .brand span{color:var(--signal);font-size:12px;font-weight:600;font-family:Inter,sans-serif}
-  button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:11px 16px;
-    background:var(--signal);color:#0A1826;font-weight:600}
-  button:disabled{opacity:.5;cursor:default}
-  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-  button.danger{background:transparent;color:var(--alert);border:1px solid rgba(255,107,90,.4)}
-  button.small{padding:8px 12px;font-size:14px}
-  button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
-  input,select{font:inherit;width:100%;padding:11px 13px;border-radius:10px;
-    border:1px solid var(--line);background:var(--surface);color:var(--ink)}
-  input::placeholder{color:#5F7C93}
-  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
-  .field{margin-bottom:14px}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
-    padding:18px;margin-bottom:14px}
-  .card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-  .card-hd h2{margin:0}
-  .vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
-  .vitals div{background:var(--surface);border:1px solid var(--line);border-radius:11px;
-    padding:9px 3px;text-align:center}
-  .vitals .vv{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;
-    font-variant-numeric:tabular-nums}
-  .vitals .vk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-  .mantra{background:linear-gradient(180deg,rgba(255,194,71,.09),rgba(255,194,71,.03));
-    border:1px solid rgba(255,194,71,.28);border-radius:14px;padding:20px 18px;margin-bottom:14px}
-  .mantra .q{font-family:"Barlow Condensed",sans-serif;font-size:25px;font-weight:600;
-    line-height:1.2;color:var(--signal)}
-  .mantra .m{font-size:14px;color:var(--ink);margin-top:11px;line-height:1.5}
-  .hero{text-align:center;padding:24px 18px}
-  .hero .score{font-size:78px;display:block}
-  .hero .of{color:var(--muted);font-size:13px;margin-top:-4px}
-  .flag{display:inline-block;margin-top:12px;padding:7px 16px;border-radius:999px;
-    font-weight:600;font-size:14px}
-  .flag.ok{background:rgba(95,211,166,.14);color:var(--calm)}
-  .flag.monitor{background:rgba(255,194,71,.14);color:var(--signal)}
-  .flag.reduce{background:rgba(255,107,90,.16);color:var(--alert)}
-  .hero .note{margin-top:11px;font-size:13px}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
-  .stat .v{font-size:28px}
-  .stat .k{font-size:11px;color:var(--muted);margin-top:2px}
-  .spark{width:100%;height:42px;display:block;margin-top:10px}
-  .gauge{display:flex;align-items:center;gap:14px}
-  .gauge svg{flex:0 0 78px}
-  .gauge .g-main{flex:1;min-width:0}
-  .gauge .g-v{font-family:"Barlow Condensed",sans-serif;font-size:15px;color:var(--ink)}
-  .sess{display:flex;align-items:center;gap:11px;padding:11px 0;
-    border-bottom:1px solid var(--line);cursor:pointer}
-  .sess:last-child{border-bottom:0}
-  .sess .mark{width:28px;height:28px;flex:0 0 28px;border-radius:8px;display:grid;
-    place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;
-    font-size:14px;color:#0A1826}
-  .m-natation{background:var(--nat)}.m-velo{background:var(--velo)}
-  .m-course{background:var(--cap)}.m-renfo{background:var(--force)}
-  .m-mobilite{background:var(--mob)}
-  .m-repos{background:var(--surface-2);color:var(--muted)}
-  .sess .main{flex:1;min-width:0}
-  .sess .t{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sess .s{font-size:12px;color:var(--muted)}
-  .sess .r{font-size:13px;color:var(--muted);white-space:nowrap;
-    font-variant-numeric:tabular-nums;text-align:right}
-  .sess.done .t{color:var(--calm)}
-  .sess.race{background:rgba(255,194,71,.08);margin:0 -8px;padding:11px 8px;border-radius:8px}
-  .sess.race .t{color:var(--signal);font-weight:600}
-  .badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface-2);
-    color:var(--muted);margin-left:5px;text-transform:uppercase;letter-spacing:.04em}
-  .badge.mod{background:rgba(255,194,71,.16);color:var(--signal)}
-  .badge.A{background:rgba(255,107,90,.16);color:var(--alert)}
-  .week-head{display:flex;justify-content:space-between;align-items:baseline;
-    padding:0 0 8px;font-size:13px;color:var(--muted)}
-  .week-head .ph{font-family:"Barlow Condensed",sans-serif;font-size:16px;
-    text-transform:uppercase;letter-spacing:.05em;color:var(--signal)}
-  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
-  .chip{font-size:11px;padding:3px 9px;border-radius:999px;background:var(--surface-2);
-    color:var(--ink);border:1px solid var(--line)}
-  .chip.force{color:var(--force);border-color:rgba(179,157,219,.4)}
-  .chip.seuil{color:var(--signal);border-color:rgba(255,194,71,.4)}
-  .chip.vitesse{color:var(--alert);border-color:rgba(255,107,90,.4)}
-  .chip.endu{color:var(--calm);border-color:rgba(95,211,166,.4)}
-  .target-line{font-size:12px;color:var(--muted);margin-bottom:8px;
-    padding-bottom:8px;border-bottom:1px solid var(--line)}
-  .target-line b{color:var(--signal);font-weight:600}
-  .recap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
-  .recap div{text-align:center;background:var(--surface-2);border-radius:8px;padding:7px 3px}
-  .recap .rv{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:700;
-    font-variant-numeric:tabular-nums}
-  .recap .rk{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-  .bar{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin:2px 0 10px}
-  .bar i{display:block;height:100%;background:var(--calm);border-radius:3px}
-  .race-row{display:flex;align-items:center;gap:12px;padding:14px 0;
-    border-bottom:1px solid var(--line);cursor:pointer}
-  .race-row:last-child{border-bottom:0}
-  .race-row .d{text-align:center;flex:0 0 52px}
-  .race-row .d .n{font-size:24px;color:var(--signal)}
-  .race-row .d .u{font-size:10px;color:var(--muted);text-transform:uppercase}
-  .race-row .main{flex:1;min-width:0}
-  .race-row .t{font-size:15px;font-weight:500}
-  .race-row .s{font-size:12px;color:var(--muted)}
-  .race-row .goal{font-family:"Barlow Condensed",sans-serif;font-size:19px;
-    font-variant-numeric:tabular-nums}
-  .tgt{padding:12px 0;border-bottom:1px solid var(--line)}
-  .tgt:last-child{border-bottom:0}
-  .tgt .top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
-  .tgt .vals{font-family:"Barlow Condensed",sans-serif;font-size:18px;
-    font-variant-numeric:tabular-nums}
-  .tgt .sub{font-size:11px;color:var(--muted);margin-top:2px}
-  .atp{width:100%;border-collapse:collapse;font-size:13px}
-  .atp th{text-align:left;font-weight:500;color:var(--muted);font-size:11px;
-    text-transform:uppercase;letter-spacing:.05em;padding:0 0 8px}
-  .atp td{padding:7px 0;border-top:1px solid var(--line)}
-  .atp .h{font-family:"Barlow Condensed",sans-serif;font-size:17px;
-    font-variant-numeric:tabular-nums;text-align:right}
-  .atp .per{color:var(--signal)}
-  .atp tr.now td{background:rgba(255,194,71,.07)}
-  .atp .f{font-size:11px;color:var(--muted)}
-  .gline{padding:12px 0;border-bottom:1px solid var(--line)}
-  .gline:last-child{border-bottom:0}
-  .gline .k{font-size:11px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.05em;margin-bottom:3px}
-  .gline .v{font-size:15px;color:var(--ink)}
-  .proto{list-style:none;padding:0}
-  .proto li{padding:9px 0 9px 20px;position:relative;font-size:15px;
-    border-bottom:1px solid var(--line)}
-  .proto li:last-child{border-bottom:0}
-  .proto li::before{content:'';position:absolute;left:4px;top:17px;width:6px;height:6px;
-    border-radius:50%;background:var(--signal)}
-  .lvl{display:inline-block;padding:5px 13px;border-radius:999px;font-size:13px;
-    font-weight:600;margin-bottom:4px}
-  .lvl.Renforcé{background:rgba(255,107,90,.16);color:var(--alert)}
-  .lvl.Standard{background:rgba(255,194,71,.14);color:var(--signal)}
-  .lvl.Entretien{background:rgba(95,211,166,.14);color:var(--calm)}
-  .floor{background:var(--surface-2);border-radius:11px;padding:13px;margin-top:10px}
-  .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:16px;color:var(--signal);
-    text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-  .warn{font-size:12px;color:var(--muted);font-style:italic;margin-top:12px;
-    padding-top:12px;border-top:1px solid var(--line)}
-  .sheet{position:fixed;inset:0;background:rgba(5,14,24,.72);z-index:40;
-    display:flex;align-items:flex-end;justify-content:center}
-  .sheet-in{background:var(--deep);border:1px solid var(--line);
-    border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;
-    overflow-y:auto;padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
-  .sheet-hd{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:12px;margin-bottom:6px}
-  .sheet-hd h2{margin:0}
-  .zone-box{background:var(--surface-2);border-radius:11px;padding:14px;margin:12px 0}
-  .zone-box .zk{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .zone-box .zv{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:700;
-    color:var(--signal);font-variant-numeric:tabular-nums;line-height:1.1;margin-top:2px}
-  .zone-box .zf{font-size:14px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
-  .step{padding:11px 0 11px 22px;position:relative;font-size:15px;
-    border-bottom:1px solid var(--line)}
-  .step:last-child{border-bottom:0}
-  .step::before{content:'';position:absolute;left:5px;top:19px;width:7px;height:7px;
-    border-radius:50%;background:var(--signal)}
-  .phase-lbl{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.06em;margin:14px 0 2px}
-  .chat{display:flex;flex-direction:column;gap:10px;max-height:56vh;overflow-y:auto;
+  body{background:var(--bg);color:var(--ink);
+    font-family:Inter,system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;
+    padding-bottom:calc(78px + env(safe-area-inset-bottom));min-height:100vh;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:540px;margin:0 auto;padding:16px 18px 32px}
+  .disp{font-family:"Barlow Condensed",Impact,sans-serif;font-variant-numeric:tabular-nums}
+  h1{font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:700;
+    letter-spacing:-.01em;line-height:1}
+  p{color:var(--dim)}
+
+  /* Étiquette de section : petites capitales espacées */
+  .lbl{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.14em;color:var(--faint);
+    margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+  .lbl::after{content:'';flex:1;height:1px;background:var(--line)}
+  .lbl:first-child{margin-top:8px}
+  .lbl button{margin-left:auto}
+
+  header{display:flex;align-items:center;justify-content:space-between;
+    padding:6px 0 4px;position:sticky;top:0;background:var(--bg);z-index:10}
+  .brand{display:flex;align-items:baseline;gap:7px}
+  .brand em{color:var(--acc);font-size:11px;font-weight:600;font-style:normal;
+    font-family:Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+
+  button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:12px 18px;
+    background:var(--acc);color:#0A1420;font-weight:600;transition:opacity .15s}
+  button:active{opacity:.75}
+  button:disabled{opacity:.45;cursor:default}
+  .gh{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+  .dg{background:transparent;color:var(--alert);border:1px solid rgba(255,107,90,.35)}
+  .sm{padding:7px 13px;font-size:13px;border-radius:9px}
+  button:focus-visible,input:focus-visible,select:focus-visible{
+    outline:2px solid var(--acc);outline-offset:2px}
+  input,select{font:inherit;width:100%;padding:12px 14px;border-radius:11px;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+  input::placeholder{color:var(--faint)}
+  label{display:block;font-size:12px;color:var(--dim);margin:0 0 6px}
+  .fld{margin-bottom:15px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+  .panel{background:var(--panel);border-radius:var(--r);padding:18px}
+  .panel+.panel{margin-top:11px}
+  .flat{padding:0}
+
+  /* Bandeau des constantes */
+  .vit{display:flex;gap:0;background:var(--panel);border-radius:14px;overflow:hidden;
+    margin-top:12px}
+  .vit div{flex:1;padding:11px 4px;text-align:center;position:relative}
+  .vit div+div::before{content:'';position:absolute;left:0;top:22%;bottom:22%;
+    width:1px;background:var(--line)}
+  .vit .v{font-family:"Barlow Condensed",sans-serif;font-size:21px;font-weight:700;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .vit .k{font-size:9px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.09em;margin-top:3px}
+
+  /* Mantra */
+  .mantra{padding:22px 20px;border-radius:var(--r);margin-top:14px;
+    background:linear-gradient(145deg,rgba(255,176,32,.11),rgba(255,176,32,.02));
+    border-left:3px solid var(--acc)}
+  .mantra .q{font-family:"Barlow Condensed",sans-serif;font-size:27px;font-weight:600;
+    line-height:1.15;color:var(--acc);letter-spacing:-.005em}
+  .mantra .m{font-size:14px;margin-top:12px;line-height:1.55;color:var(--ink);opacity:.86}
+
+  /* Cadran de fraîcheur */
+  .dial{display:flex;align-items:center;gap:20px;padding:20px 18px}
+  .dial svg{flex:0 0 116px}
+  .dial .side{flex:1;min-width:0}
+  .dial .st{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;
+    line-height:1.15}
+  .dial .sn{font-size:12.5px;color:var(--dim);margin-top:7px;line-height:1.5}
+
+  /* Séances */
+  .s{display:flex;align-items:center;gap:13px;padding:13px 0;cursor:pointer}
+  .s+.s{border-top:1px solid var(--line)}
+  .s .k{width:3px;height:34px;border-radius:2px;flex:0 0 3px}
+  .k-natation{background:var(--nat)}.k-velo{background:var(--velo)}
+  .k-course{background:var(--cap)}.k-renfo{background:var(--force)}
+  .k-mobilite{background:var(--mob)}.k-repos{background:var(--line)}
+  .s .mid{flex:1;min-width:0}
+  .s .t{font-size:14.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .s .u{font-size:11.5px;color:var(--faint);margin-top:1px;text-transform:uppercase;
+    letter-spacing:.06em}
+  .s .r{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;
+    color:var(--dim);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .s .r em{display:block;font-size:10px;font-style:normal;color:var(--faint);
+    font-family:Inter,sans-serif;letter-spacing:.05em}
+  .s.done .t{color:var(--calm)}
+  .s.race{background:rgba(255,176,32,.07);margin:0 -12px;padding:13px 12px;
+    border-radius:11px}
+  .s.race .t{color:var(--acc);font-weight:600}
+
+  .tag{font-size:9.5px;padding:2px 7px;border-radius:5px;background:var(--panel-2);
+    color:var(--dim);margin-left:6px;text-transform:uppercase;letter-spacing:.07em;
+    font-weight:600;vertical-align:1px}
+  .tag.mod{background:rgba(255,176,32,.16);color:var(--acc)}
+  .tag.A{background:rgba(255,107,90,.16);color:var(--alert)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .chip{font-size:11px;padding:4px 10px;border-radius:7px;background:var(--panel-2);
+    color:var(--dim);font-weight:500;letter-spacing:.02em}
+  .chip.force{color:var(--force)}.chip.seuil{color:var(--acc)}
+  .chip.vitesse{color:var(--cap)}.chip.endu{color:var(--calm)}
+
+  /* Trio de chiffres */
+  .trio{display:flex;text-align:center}
+  .trio div{flex:1;position:relative;padding:4px 2px}
+  .trio div+div::before{content:'';position:absolute;left:0;top:14%;bottom:14%;
+    width:1px;background:var(--line)}
+  .trio .v{font-family:"Barlow Condensed",sans-serif;font-size:31px;font-weight:700;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .trio .k{font-size:10px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.09em;margin-top:5px}
+  .spark{width:100%;height:46px;display:block;margin-top:16px}
+
+  /* Jauge */
+  .jauge{display:flex;align-items:center;gap:18px}
+  .jauge svg{flex:0 0 84px}
+  .jauge .side{flex:1;min-width:0}
+
+  /* Semaine */
+  .wk{display:flex;justify-content:space-between;align-items:baseline;
     margin-bottom:12px}
-  .msg{padding:11px 14px;border-radius:13px;max-width:88%;font-size:15px;
-    white-space:pre-wrap;word-wrap:break-word}
-  .msg.me{background:var(--signal);color:#0A1826;align-self:flex-end;border-bottom-right-radius:4px}
-  .msg.ai{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
-  .composer{display:flex;gap:8px}
-  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,24,38,.96);
-    backdrop-filter:blur(10px);border-top:1px solid var(--line);
-    padding-bottom:env(safe-area-inset-bottom);z-index:20}
-  nav .inner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-  nav button{background:none;border:0;border-radius:0;color:var(--muted);
-    padding:11px 2px;font-size:11px;font-weight:500}
-  nav button.on{color:var(--signal)}
-  nav .ic{display:block;font-size:18px;line-height:1.2;margin-bottom:1px}
-  .empty{color:var(--muted);font-size:14px;padding:8px 0}
-  .msgbar{padding:11px 14px;border-radius:10px;font-size:14px;margin-bottom:14px;
-    border:1px solid var(--line);background:var(--surface)}
-  .msgbar.err{border-color:var(--alert);color:var(--alert)}
-  .msgbar.ok{border-color:var(--calm);color:var(--calm)}
+  .wk .d{font-size:12.5px;color:var(--dim)}
+  .wk .p{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.09em;color:var(--acc)}
+  .quad{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;
+    margin-bottom:12px}
+  .quad div{position:relative;padding:2px}
+  .quad div+div::before{content:'';position:absolute;left:0;top:15%;bottom:15%;
+    width:1px;background:var(--line)}
+  .quad .v{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .quad .k{font-size:9px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.07em;margin-top:3px}
+  .bar{height:4px;background:var(--panel-2);border-radius:2px;overflow:hidden;
+    margin:0 0 13px}
+  .bar i{display:block;height:100%;background:var(--calm);border-radius:2px}
+  .prep{font-size:12px;color:var(--dim);margin-bottom:12px}
+  .prep b{color:var(--acc);font-weight:600}
+
+  /* Courses */
+  .rc{display:flex;align-items:center;gap:15px;padding:15px 0;cursor:pointer}
+  .rc+.rc{border-top:1px solid var(--line)}
+  .rc .cd{text-align:center;flex:0 0 46px}
+  .rc .cd .n{font-family:"Barlow Condensed",sans-serif;font-size:27px;font-weight:700;
+    color:var(--acc);line-height:1;font-variant-numeric:tabular-nums}
+  .rc .cd .u{font-size:9px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.08em;margin-top:2px}
+  .rc .mid{flex:1;min-width:0}
+  .rc .t{font-size:14.5px;font-weight:500}
+  .rc .u2{font-size:11.5px;color:var(--faint);margin-top:1px}
+  .rc .g{font-family:"Barlow Condensed",sans-serif;font-size:21px;font-weight:600;
+    font-variant-numeric:tabular-nums}
+
+  .tg{padding:14px 0}
+  .tg+.tg{border-top:1px solid var(--line)}
+  .tg .r1{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:13.5px;margin-bottom:8px}
+  .tg .vv{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:600;
+    font-variant-numeric:tabular-nums}
+  .tg .r2{font-size:11px;color:var(--faint);margin-top:6px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:500;color:var(--faint);font-size:10px;
+    text-transform:uppercase;letter-spacing:.09em;padding:0 0 10px}
+  td{padding:9px 0;border-top:1px solid var(--line)}
+  .th{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;
+    font-variant-numeric:tabular-nums;text-align:right}
+  .tp{color:var(--acc);font-weight:500}
+  tr.now td{background:rgba(255,176,32,.06)}
+
+  .kv{padding:14px 0}
+  .kv+.kv{border-top:1px solid var(--line)}
+  .kv .k{font-size:10px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.09em;margin-bottom:5px}
+  .kv .v{font-size:14.5px;line-height:1.55}
+
+  ul.pr{list-style:none}
+  ul.pr li{padding:11px 0 11px 18px;position:relative;font-size:14.5px;line-height:1.5}
+  ul.pr li+li{border-top:1px solid var(--line)}
+  ul.pr li::before{content:'';position:absolute;left:2px;top:19px;width:5px;height:5px;
+    border-radius:50%;background:var(--acc)}
+
+  .lv{display:inline-block;padding:5px 14px;border-radius:8px;font-size:12px;
+    font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .lv.Renforcé{background:rgba(255,107,90,.16);color:var(--alert)}
+  .lv.Standard{background:rgba(255,176,32,.14);color:var(--acc)}
+  .lv.Entretien{background:rgba(79,209,165,.14);color:var(--calm)}
+
+  .floor{background:var(--panel-2);border-radius:12px;padding:15px;margin-top:14px}
+  .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;color:var(--acc);
+    text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;font-weight:600}
+  .warn{font-size:11.5px;color:var(--faint);margin-top:14px;padding-top:13px;
+    border-top:1px solid var(--line);line-height:1.5}
+  .hint{font-size:12.5px;color:var(--dim);line-height:1.55;margin-bottom:14px}
+
+  .sheet{position:fixed;inset:0;background:rgba(3,8,14,.8);z-index:50;
+    display:flex;align-items:flex-end;justify-content:center}
+  .sheet-in{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:540px;
+    max-height:90vh;overflow-y:auto;padding:22px 18px calc(30px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line)}
+  .shd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+    margin-bottom:4px}
+  .shd h1{font-size:23px}
+  .zone{background:var(--panel);border-radius:13px;padding:16px;margin:16px 0}
+  .zone .zk{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.09em}
+  .zone .zv{font-family:"Barlow Condensed",sans-serif;font-size:27px;font-weight:700;
+    color:var(--acc);font-variant-numeric:tabular-nums;line-height:1.1;margin-top:3px}
+  .zone .zf{font-size:13.5px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+  .stp{padding:12px 0 12px 19px;position:relative;font-size:14.5px;line-height:1.5}
+  .stp+.stp{border-top:1px solid var(--line)}
+  .stp::before{content:'';position:absolute;left:2px;top:20px;width:6px;height:6px;
+    border-radius:50%;background:var(--acc)}
+
+  .chat{display:flex;flex-direction:column;gap:11px;max-height:58vh;overflow-y:auto;
+    margin-bottom:14px}
+  .bub{padding:12px 15px;border-radius:14px;max-width:87%;font-size:14.5px;
+    white-space:pre-wrap;word-wrap:break-word;line-height:1.5}
+  .bub.me{background:var(--acc);color:#0A1420;align-self:flex-end;
+    border-bottom-right-radius:5px}
+  .bub.ai{background:var(--panel);align-self:flex-start;border-bottom-left-radius:5px}
+  .comp{display:flex;gap:9px}
+
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,15,24,.94);
+    backdrop-filter:blur(16px);border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom);z-index:30}
+  nav .in{max-width:540px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+  nav button{background:none;border:0;border-radius:0;color:var(--faint);
+    padding:12px 2px 11px;font-size:10px;font-weight:600;letter-spacing:.05em;
+    text-transform:uppercase}
+  nav button.on{color:var(--acc)}
+  nav .ic{display:block;font-size:17px;line-height:1.3;margin-bottom:2px;
+    font-weight:400;letter-spacing:0}
+
+  .none{color:var(--faint);font-size:13.5px;padding:10px 0}
+  .flash{padding:12px 15px;border-radius:11px;font-size:13.5px;margin-top:12px;
+    background:var(--panel);border-left:3px solid var(--line)}
+  .flash.err{border-left-color:var(--alert);color:var(--alert)}
+  .flash.ok{border-left-color:var(--calm);color:var(--calm)}
   .hide{display:none!important}
-  .center{text-align:center}
-  .note-s{font-size:12px;margin-top:8px}
-  .auth-switch{background:none;border:0;color:var(--signal);padding:0;font-size:14px;
-    text-decoration:underline;font-weight:400}
+  .ctr{text-align:center}
+  .nt{font-size:12px;margin-top:10px;color:var(--dim);line-height:1.5}
+  .lnk{background:none;border:0;color:var(--acc);padding:0;font-size:13.5px;
+    text-decoration:underline;font-weight:500}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand"><h1>TriCoach</h1><span>AI</span></div>
-    <button id="btn-logout" class="ghost small hide">Quitter</button>
+    <div class="brand"><h1>TriCoach</h1><em>AI</em></div>
+    <button id="btn-logout" class="gh sm hide">Quitter</button>
   </header>
-  <div id="msgbar" class="msgbar hide"></div>
-  <div class="vitals hide" id="vitals"></div>
+  <div id="msgbar" class="flash hide"></div>
+  <div class="vit hide" id="vitals"></div>
 
   <section id="view-auth" class="hide">
-    <div class="card">
-      <h2 id="auth-title">Connexion</h2>
-      <div class="field"><label for="email">Adresse e-mail</label>
+    <div class="lbl" id="auth-title">Connexion</div>
+    <div class="panel">
+      <div class="fld"><label for="email">Adresse e-mail</label>
         <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.fr"></div>
-      <div class="field"><label for="password">Mot de passe</label>
+      <div class="fld"><label for="password">Mot de passe</label>
         <input id="password" type="password" autocomplete="current-password" placeholder="8 caractères min."></div>
       <button id="btn-auth" style="width:100%">Se connecter</button>
-      <p class="center" style="margin-top:14px;font-size:14px">
-        <span id="auth-hint">Pas encore de compte ?</span>
-        <button id="btn-switch" class="auth-switch">Créer un compte</button></p>
+      <p class="ctr nt"><span id="auth-hint">Pas encore de compte ?</span>
+        <button id="btn-switch" class="lnk">Créer un compte</button></p>
     </div>
   </section>
 
   <section id="view-setup" class="hide">
-    <div class="card">
-      <h2>Relier intervals.icu</h2>
-      <p style="margin-bottom:16px">Séances, VFC et sommeil remonteront automatiquement.</p>
-      <div class="field"><label for="athlete-id">Identifiant athlète</label>
+    <div class="lbl">Relier intervals.icu</div>
+    <div class="panel">
+      <p class="hint">Séances, VFC et sommeil remonteront automatiquement.</p>
+      <div class="fld"><label for="athlete-id">Identifiant athlète</label>
         <input id="athlete-id" placeholder="i272820" autocapitalize="off"></div>
-      <div class="field"><label for="api-key">Clé API intervals.icu</label>
+      <div class="fld"><label for="api-key">Clé API intervals.icu</label>
         <input id="api-key" placeholder="Paramètres → Paramètres développeur" autocapitalize="off"></div>
-      <div class="field"><label for="full-name">Prénom</label>
+      <div class="fld"><label for="full-name">Prénom</label>
         <input id="full-name" placeholder="Prénom"></div>
       <button id="btn-setup" style="width:100%">Continuer</button>
     </div>
@@ -251,128 +307,138 @@
       <div class="m" id="brief"></div>
     </div>
 
-    <div class="card hero">
-      <span class="num score" id="score">—</span>
-      <div class="of">fraîcheur du jour</div>
-      <div id="flag" class="flag hide"></div>
-      <p class="note" id="score-note">Synchronise pour récupérer tes données.</p>
+    <div class="lbl">Fraîcheur</div>
+    <div class="panel dial">
+      <svg viewBox="0 0 120 120" width="116" height="116" id="dial-svg"></svg>
+      <div class="side">
+        <div class="st" id="flag-txt">—</div>
+        <div class="sn" id="score-note">Synchronise pour récupérer tes données.</div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Au programme</h2>
-      <p class="note-s" id="today-week" style="margin:0 0 8px"></p>
+    <div class="lbl">Au programme</div>
+    <div class="panel">
+      <p class="nt" id="today-week" style="margin:0 0 11px"></p>
       <div class="chips" id="today-chips"></div>
       <div id="today-sessions"></div>
-      <p class="empty hide" id="today-empty">Rien de prévu aujourd'hui.</p>
+      <p class="none hide" id="today-empty">Rien de prévu aujourd'hui.</p>
       <div class="floor hide" id="floor"></div>
     </div>
 
-    <div class="card">
-      <h2>Assiduité</h2>
-      <div class="gauge">
-        <svg viewBox="0 0 80 80" width="78" height="78" id="gauge-svg"></svg>
-        <div class="g-main">
-          <div class="g-v" id="gauge-txt">—</div>
-          <p class="note-s" id="gauge-note" style="margin-top:6px"></p>
+    <div class="lbl">Assiduité</div>
+    <div class="panel">
+      <div class="jauge">
+        <svg viewBox="0 0 84 84" width="84" height="84" id="gauge-svg"></svg>
+        <div class="side">
+          <div class="st" style="font-size:16px" id="gauge-txt">—</div>
+          <p class="nt" id="gauge-note"></p>
         </div>
       </div>
-      <div class="gline" style="border-bottom:0;padding-bottom:0">
+      <div class="kv" style="margin-top:6px;border-top:1px solid var(--line)">
         <div class="k" id="disc-title">Discipline</div>
         <div class="v" id="disc-text">—</div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Charge</h2>
-      <div class="stats">
-        <div class="stat"><div class="num v" id="acute">—</div><div class="k">aiguë · 7 j</div></div>
-        <div class="stat"><div class="num v" id="chronic">—</div><div class="k">chronique · 28 j</div></div>
-        <div class="stat"><div class="num v" id="acwr">—</div><div class="k">ratio</div></div>
+    <div class="lbl">Charge</div>
+    <div class="panel">
+      <div class="trio">
+        <div><div class="v" id="acute">—</div><div class="k">Aiguë 7 j</div></div>
+        <div><div class="v" id="chronic">—</div><div class="k">Chronique 28 j</div></div>
+        <div><div class="v" id="acwr">—</div><div class="k">Ratio</div></div>
       </div>
-      <svg class="spark" id="spark" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true"></svg>
-      <p id="acwr-note" class="note-s"></p>
+      <svg class="spark" id="spark" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <p id="acwr-note" class="nt"></p>
     </div>
 
-    <div class="card">
-      <h2>Volume de pointe</h2>
-      <p style="margin-bottom:12px">Semaine la plus chargée de l'année. Toutes les autres
-        en sont une fraction. Monte par paliers d'une heure, pas d'un bloc.</p>
-      <div class="row2" style="align-items:end">
-        <div class="field" style="margin:0"><label for="peak">Heures</label>
+    <div class="lbl">Volume de pointe</div>
+    <div class="panel">
+      <p class="hint">C'est le nombre d'heures de ta <b>semaine la plus chargée de
+        l'année</b> — jamais une moyenne. Toutes les autres semaines en découlent :
+        une semaine de fondation tourne autour de 65 % de ce chiffre, une semaine
+        d'assimilation autour de 47 %, une semaine de course autour de 47 % aussi.
+        Le fixer trop haut produit un plan que tu ne tiendras pas ; trop bas, un
+        plan qui ne te fait pas progresser. Monte-le par paliers d'une heure,
+        et laisse trois semaines avant le palier suivant.</p>
+      <div class="g2" style="align-items:end">
+        <div class="fld" style="margin:0"><label for="peak">Heures par semaine</label>
           <input id="peak" type="number" min="3" max="30" step="0.5"></div>
-        <button id="btn-peak" class="ghost">Appliquer</button>
+        <button id="btn-peak" class="gh">Appliquer</button>
       </div>
-      <p id="peak-note" class="note-s"></p>
+      <p id="peak-note" class="nt"></p>
     </div>
 
-    <div class="card">
-      <h2>Données</h2>
-      <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
-      <p id="sync-note" class="note-s"></p>
-      <button id="btn-push" class="ghost" style="width:100%;margin-top:10px">Envoyer 14 jours à la montre</button>
-      <p id="push-note" class="note-s"></p>
+    <div class="lbl">Données</div>
+    <div class="panel">
+      <button id="btn-sync" class="gh" style="width:100%">Synchroniser intervals.icu</button>
+      <p id="sync-note" class="nt"></p>
+      <button id="btn-push" class="gh" style="width:100%;margin-top:11px">Envoyer 14 jours à la montre</button>
+      <p id="push-note" class="nt"></p>
     </div>
   </section>
 
   <section id="tab-cal" class="hide">
-    <div class="card">
-      <div style="display:flex;gap:8px">
-        <button id="cal-prev" class="ghost small" style="flex:1">← Précédent</button>
-        <button id="cal-next" class="ghost small" style="flex:1">Suivant →</button>
+    <div class="lbl">Planning</div>
+    <div class="panel">
+      <div style="display:flex;gap:9px">
+        <button id="cal-prev" class="gh sm" style="flex:1">← Précédent</button>
+        <button id="cal-next" class="gh sm" style="flex:1">Suivant →</button>
       </div>
-      <p class="center note-s" id="cal-range"></p>
+      <p class="ctr nt" id="cal-range"></p>
     </div>
     <div id="cal-weeks"></div>
   </section>
 
   <section id="tab-goals" class="hide">
-    <div class="card">
-      <div class="card-hd"><h2>Courses préparées</h2>
-        <button id="btn-add-race" class="small">+ Ajouter</button></div>
+    <div class="lbl">Courses préparées
+      <button id="btn-add-race" class="sm">+ Ajouter</button></div>
+    <div class="panel">
       <div id="races"></div>
-      <p class="empty hide" id="races-empty">Aucun objectif enregistré.</p>
-      <p class="note-s">Clique sur une course pour la modifier. A : structure tout le plan ·
+      <p class="none hide" id="races-empty">Aucun objectif enregistré.</p>
+      <p class="warn">Clique sur une course pour la modifier. A : structure tout le plan ·
         B : allègement 2 jours avant · C : course d'entraînement, aucun impact.</p>
     </div>
-    <div class="card">
-      <h2>Jalons</h2>
+
+    <div class="lbl">Jalons</div>
+    <div class="panel">
       <div id="targets"></div>
-      <p class="empty hide" id="targets-empty">Aucun jalon défini.</p>
+      <p class="none hide" id="targets-empty">Aucun jalon défini.</p>
     </div>
-    <div class="card">
-      <h2>Plan annuel</h2>
-      <div style="overflow-x:auto"><table class="atp" id="atp"></table></div>
-      <button id="btn-plan" class="ghost" style="width:100%;margin-top:14px">Régénérer le plan</button>
-      <p id="plan-note" class="note-s"></p>
+
+    <div class="lbl">Plan annuel</div>
+    <div class="panel">
+      <div style="overflow-x:auto"><table id="atp"></table></div>
+      <button id="btn-plan" class="gh" style="width:100%;margin-top:16px">Régénérer le plan</button>
+      <p id="plan-note" class="nt"></p>
     </div>
   </section>
 
   <section id="tab-fuel" class="hide">
-    <div class="card">
-      <h2>Nutrition</h2>
-      <p class="note-s" id="fuel-context" style="margin:0 0 10px"></p>
+    <div class="lbl">Nutrition</div>
+    <div class="panel">
+      <p class="nt" id="fuel-context" style="margin:0 0 4px"></p>
       <div id="nutrition"></div>
     </div>
-    <div class="card">
-      <h2>Récupération</h2>
+    <div class="lbl">Récupération</div>
+    <div class="panel">
       <div id="recup-level"></div>
-      <ul class="proto" id="recup"></ul>
+      <ul class="pr" id="recup"></ul>
     </div>
-    <div class="card">
-      <h2>Mental</h2>
+    <div class="lbl">Mental</div>
+    <div class="panel">
       <div id="mental"></div>
       <p class="warn" id="fuel-warn"></p>
     </div>
   </section>
 
   <section id="tab-coach" class="hide">
-    <div class="card">
-      <h2>Coach</h2>
+    <div class="lbl">Coach</div>
+    <div class="panel">
       <div class="chat" id="chat"></div>
-      <p class="empty" id="chat-empty">Pose une question sur ta forme, ta semaine ou tes objectifs.</p>
-      <div class="composer">
+      <p class="none" id="chat-empty">Pose une question sur ta forme, ta semaine ou tes objectifs.</p>
+      <div class="comp">
         <input id="chat-input" placeholder="Où j'en suis cette semaine ?" autocomplete="off">
-        <button id="btn-send" class="small">Envoyer</button>
+        <button id="btn-send" class="sm">Envoyer</button>
       </div>
     </div>
   </section>
@@ -380,7 +446,7 @@
 
 <div class="sheet hide" id="sheet"><div class="sheet-in" id="sheet-in"></div></div>
 
-<nav id="nav" class="hide"><div class="inner">
+<nav id="nav" class="hide"><div class="in">
   <button data-tab="today" class="on"><span class="ic">◉</span>Jour</button>
   <button data-tab="cal"><span class="ic">▤</span>Planning</button>
   <button data-tab="goals"><span class="ic">▲</span>Saison</button>
@@ -396,7 +462,6 @@ const sb = createClient('https://dcwbzguiedgubqkbattt.supabase.co',
 
 const $=id=>document.getElementById(id)
 const show=(el,on=true)=>el.classList.toggle('hide',!on)
-const MARK={natation:'N',velo:'V',course:'C',renfo:'F',mobilite:'M',repos:'—'}
 const LABEL={natation:'Natation',velo:'Vélo',course:'Course à pied',
   renfo:'Renforcement',mobilite:'Mobilité',repos:'Repos'}
 const SHORT={natation:'Nat',velo:'Vélo',course:'CAP',renfo:'Renfo',mobilite:'Mob'}
@@ -414,7 +479,7 @@ const iso=d=>d.toISOString().slice(0,10)
 const mondayOf=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));
   x.setHours(0,0,0,0);return x}
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x}
-function notify(t,k=''){const b=$('msgbar');b.textContent=t;b.className='msgbar '+k
+function notify(t,k=''){const b=$('msgbar');b.textContent=t;b.className='flash '+k
   show(b,!!t);if(t)window.scrollTo({top:0,behavior:'smooth'})}
 function fmtDay(s){const d=new Date(s+'T00:00:00'),t=new Date();t.setHours(0,0,0,0)
   const n=Math.round((d-t)/86400000)
@@ -424,6 +489,7 @@ function fmtGoal(t){if(!t)return '—'
   const[h,m]=String(t).split(':');return Number(h)>0?`${Number(h)}h${m}`:`${Number(m)} min`}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const NS='http://www.w3.org/2000/svg'
 
 function chipsFor(ab){const f=document.createDocumentFragment()
   for(const k of Object.keys(ab||{})){const a=ABILITY[k];if(!a)continue
@@ -431,41 +497,46 @@ function chipsFor(ab){const f=document.createDocumentFragment()
     f.appendChild(s)}
   return f}
 
-function drawGauge(pct){
-  const svg=$('gauge-svg');svg.innerHTML=''
-  const r=32,c=2*Math.PI*r,v=Math.min(Math.max(pct||0,0),100)
-  const col=v>=85?'var(--calm)':v>=60?'var(--signal)':'var(--alert)'
-  const bg=document.createElementNS('http://www.w3.org/2000/svg','circle')
-  bg.setAttribute('cx','40');bg.setAttribute('cy','40');bg.setAttribute('r',r)
-  bg.setAttribute('fill','none');bg.setAttribute('stroke','var(--surface-2)')
-  bg.setAttribute('stroke-width','8');svg.appendChild(bg)
-  const fg=document.createElementNS('http://www.w3.org/2000/svg','circle')
-  fg.setAttribute('cx','40');fg.setAttribute('cy','40');fg.setAttribute('r',r)
+function arc(svg,size,r,w,pct,col,txt,sub){
+  svg.innerHTML=''
+  const c=2*Math.PI*r,v=Math.min(Math.max(pct||0,0),100),m=size/2
+  const bg=document.createElementNS(NS,'circle')
+  bg.setAttribute('cx',m);bg.setAttribute('cy',m);bg.setAttribute('r',r)
+  bg.setAttribute('fill','none');bg.setAttribute('stroke','var(--panel-2)')
+  bg.setAttribute('stroke-width',w);svg.appendChild(bg)
+  const fg=document.createElementNS(NS,'circle')
+  fg.setAttribute('cx',m);fg.setAttribute('cy',m);fg.setAttribute('r',r)
   fg.setAttribute('fill','none');fg.setAttribute('stroke',col)
-  fg.setAttribute('stroke-width','8');fg.setAttribute('stroke-linecap','round')
+  fg.setAttribute('stroke-width',w);fg.setAttribute('stroke-linecap','round')
   fg.setAttribute('stroke-dasharray',`${(v/100*c).toFixed(1)} ${c.toFixed(1)}`)
-  fg.setAttribute('transform','rotate(-90 40 40)');svg.appendChild(fg)
-  const t=document.createElementNS('http://www.w3.org/2000/svg','text')
-  t.setAttribute('x','40');t.setAttribute('y','46');t.setAttribute('text-anchor','middle')
-  t.setAttribute('fill',col);t.setAttribute('font-size','21')
+  fg.setAttribute('transform',`rotate(-90 ${m} ${m})`);svg.appendChild(fg)
+  const t=document.createElementNS(NS,'text')
+  t.setAttribute('x',m);t.setAttribute('y',sub?m+2:m+7)
+  t.setAttribute('text-anchor','middle');t.setAttribute('fill',col)
+  t.setAttribute('font-size',size>100?36:23)
   t.setAttribute('font-family','Barlow Condensed, sans-serif')
-  t.setAttribute('font-weight','700');t.textContent=Math.round(v)+'%'
-  svg.appendChild(t)}
+  t.setAttribute('font-weight','700');t.textContent=txt;svg.appendChild(t)
+  if(sub){const s=document.createElementNS(NS,'text')
+    s.setAttribute('x',m);s.setAttribute('y',m+20);s.setAttribute('text-anchor','middle')
+    s.setAttribute('fill','var(--faint)');s.setAttribute('font-size','10')
+    s.setAttribute('letter-spacing','1.4')
+    s.setAttribute('font-family','Inter, sans-serif');s.textContent=sub;svg.appendChild(s)}}
 
 function sessionRow(s){
   const el=document.createElement('div')
   const isRace=(s.session_type||'').startsWith('COURSE —')
-  el.className='sess'+(s.status==='completed'?' done':'')+(isRace?' race':'')
+  el.className='s'+(s.status==='completed'?' done':'')+(isRace?' race':'')
   const dur=s.status==='completed'
-    ?(s.completed_data?.duration_min?s.completed_data.duration_min+' min':'')
-    :(s.duration_planned_min?s.duration_planned_min+' min':'')
+    ?(s.completed_data?.duration_min?s.completed_data.duration_min:'')
+    :(s.duration_planned_min||'')
   const load=s.completed_data?.training_load
-  el.innerHTML=`<div class="mark m-${s.discipline}">${MARK[s.discipline]??'?'}</div>
-    <div class="main"><div class="t">${s.status==='completed'?'✓ ':''}${
+  el.innerHTML=`<div class="k k-${s.discipline}"></div>
+    <div class="mid"><div class="t">${s.status==='completed'?'✓ ':''}${
       esc(s.session_type||LABEL[s.discipline]||'')}${
-      s.status==='modified'?'<span class="badge mod">ajustée</span>':''}</div>
-    <div class="s">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
-    <div class="r">${dur}${load?`<br><span style="font-size:11px">${Math.round(load)} TSS</span>`:''}</div>`
+      s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
+    <div class="u">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
+    <div class="r">${dur?dur+'<em>min</em>':''}${
+      load?`<em>${Math.round(load)} TSS</em>`:''}</div>`
   if(s.discipline!=='repos')el.onclick=()=>openSheet(s)
   return el}
 
@@ -487,17 +558,16 @@ function attachPush(s){
       if(data?.error)throw new Error(data.error)
       $('s-push-note').textContent=data.envoyees
         ?(data.structurees?'Séance structurée envoyée à intervals.icu.'
-                          :'Envoyée en rappel simple.')
-        :'Rien envoyé.'
-      $('s-push-note').style.color=data.envoyees?'var(--calm)':'var(--signal)'
+                          :'Envoyée en rappel simple.'):'Rien envoyé.'
+      $('s-push-note').style.color=data.envoyees?'var(--calm)':'var(--acc)'
     }catch(e){$('s-push-note').textContent=e.message||'Échec.'
       $('s-push-note').style.color='var(--alert)'}
     finally{bp.disabled=false;bp.textContent='Envoyer à la montre'}}}
 
 async function openSheet(s){
-  openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
-    <button class="ghost small" id="sheet-x">Fermer</button></div>
-    <p class="note-s" style="margin:0">Chargement…</p>`)
+  openRaw(`<div class="shd"><h1>${esc(s.session_type||'')}</h1>
+    <button class="gh sm" id="sheet-x">Fermer</button></div>
+    <p class="nt">Chargement…</p>`)
   try{
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
@@ -506,48 +576,48 @@ async function openSheet(s){
       const r=await sb.rpc('strength_session',{p_user_id:userId,p_date:s.session_date})
       if(!r.error&&r.data&&r.data.exercices){
         const d=r.data
-        extra=`<div class="phase-lbl">${esc(d.titre||'')}</div>
-          <div class="zone-box"><div class="zk">Format</div>
-            <div style="font-size:14px;margin-top:4px">${esc(d.format||'')}</div>
+        extra=`<div class="lbl">${esc(d.titre||'')}</div>
+          <div class="zone"><div class="zk">Format</div>
+            <div style="font-size:14px;margin-top:5px">${esc(d.format||'')}</div>
             <div class="zf">${esc(d.consigne_charge||'')}</div></div>
-          <div class="phase-lbl">Échauffement</div>
-          <div class="step">${esc(d.echauffement||'')}</div>
-          <div class="phase-lbl">Exercices</div>`
+          <div class="lbl">Échauffement</div>
+          <div class="stp">${esc(d.echauffement||'')}</div>
+          <div class="lbl">Exercices</div>`
         for(const e of d.exercices){
-          extra+=`<div class="step"><b>${esc(e.exercice)}</b> — ${
+          extra+=`<div class="stp"><b>${esc(e.exercice)}</b> — ${
             e.repetitions?`${e.series} × ${e.repetitions} rép`:`${e.series} × ${e.duree_s} s`}${
             e.rir?`, RIR ${e.rir}`:''}, repos ${e.repos_s} s
-            <div class="note-s">${esc(e.execution)}</div>${
-            e.vigilance?`<div class="note-s" style="color:var(--alert)">${esc(e.vigilance)}</div>`:''}${
-            e.derniere_charge?.kg?`<div class="note-s">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
+            <div class="nt">${esc(e.execution)}</div>${
+            e.vigilance?`<div class="nt" style="color:var(--alert)">${esc(e.vigilance)}</div>`:''}${
+            e.derniere_charge?.kg?`<div class="nt">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
         extra+=`<p class="warn">${esc(d.securite||'')}<br>${esc(d.avertissement||'')}</p>`}}
-    const pushBtn=`<button id="s-push" class="ghost" style="width:100%;margin-top:16px">Envoyer à la montre</button>
-      <p id="s-push-note" class="note-s"></p>`
+    const pb=`<button id="s-push" class="gh" style="width:100%;margin-top:20px">Envoyer à la montre</button>
+      <p id="s-push-note" class="nt"></p>`
     if(data.type==='repos'||(data.message&&!data.corps)){
-      openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
-        <button class="ghost small" id="sheet-x">Fermer</button></div>
-        ${extra||`<p>${esc(data.message||'')}</p>`}${pushBtn}`)
+      openRaw(`<div class="shd"><h1>${esc(s.session_type||'')}</h1>
+        <button class="gh sm" id="sheet-x">Fermer</button></div>
+        ${extra||`<p class="hint">${esc(data.message||'')}</p>`}${pb}`)
     }else{
       let steps=''
-      for(const c of (data.corps||[]))steps+=`<div class="step">${esc(c)}</div>`
-      openRaw(`<div class="sheet-hd"><h2>${esc(data.seance||s.session_type||'')}</h2>
-        <button class="ghost small" id="sheet-x">Fermer</button></div>
-        <p class="note-s" style="margin:0">${LABEL[s.discipline]??''} · ${
+      for(const c of (data.corps||[]))steps+=`<div class="stp">${esc(c)}</div>`
+      openRaw(`<div class="shd"><h1>${esc(data.seance||s.session_type||'')}</h1>
+        <button class="gh sm" id="sheet-x">Fermer</button></div>
+        <p class="nt" style="margin:0">${LABEL[s.discipline]??''} · ${
           data.duree_min} min · ${esc(data.focus||'')} · ${fmtDay(s.session_date)}</p>
-        <div class="zone-box"><div class="zk">Zone de travail</div>
+        <div class="zone"><div class="zk">Zone de travail</div>
           <div class="zv">${esc(data.zone||'—')}</div>
           ${data.fc?`<div class="zf">FC : ${esc(data.fc)}</div>`:''}
-          ${data.reference?`<div class="note-s">${esc(data.reference)}${
+          ${data.reference?`<div class="nt">${esc(data.reference)}${
             data.fc_reference?' · '+esc(data.fc_reference):''}</div>`:''}</div>
-        <div class="phase-lbl">Échauffement</div>
-        <div class="step">${esc(data.echauffement||'')}</div>
-        <div class="phase-lbl">Corps de séance</div>${steps}
-        <div class="phase-lbl">Retour au calme</div>
-        <div class="step">${esc(data.retour_calme||'')}</div>${extra}${pushBtn}`)}
+        <div class="lbl">Échauffement</div>
+        <div class="stp">${esc(data.echauffement||'')}</div>
+        <div class="lbl">Corps de séance</div>${steps}
+        <div class="lbl">Retour au calme</div>
+        <div class="stp">${esc(data.retour_calme||'')}</div>${extra}${pb}`)}
     attachPush(s)
   }catch(e){
-    openRaw(`<div class="sheet-hd"><h2>Erreur</h2>
-      <button class="ghost small" id="sheet-x">Fermer</button></div>
+    openRaw(`<div class="shd"><h1>Erreur</h1>
+      <button class="gh sm" id="sheet-x">Fermer</button></div>
       <p style="color:var(--alert)">${esc(e.message)}</p>`)}}
 
 function raceForm(r){
@@ -557,25 +627,26 @@ function raceForm(r){
     `<option value="${p}"${r&&r.priority===p?' selected':''}>${p}</option>`).join('')
   let hh='',mm=''
   if(r?.target_time){const p=String(r.target_time).split(':');hh=Number(p[0]);mm=p[1]}
-  openRaw(`<div class="sheet-hd"><h2>${r?'Modifier la course':'Nouvelle course'}</h2>
-    <button class="ghost small" id="sheet-x">Fermer</button></div>
-    <div class="field"><label for="r-name">Nom</label>
+  openRaw(`<div class="shd"><h1>${r?'Modifier la course':'Nouvelle course'}</h1>
+    <button class="gh sm" id="sheet-x">Fermer</button></div>
+    <div style="margin-top:18px"></div>
+    <div class="fld"><label for="r-name">Nom</label>
       <input id="r-name" value="${r?esc(r.name):''}" placeholder="Semi de Yutz"></div>
-    <div class="field"><label for="r-date">Date</label>
+    <div class="fld"><label for="r-date">Date</label>
       <input id="r-date" type="date" value="${r?r.race_date:''}"></div>
-    <div class="row2">
-      <div class="field"><label for="r-dist">Format</label>
+    <div class="g2">
+      <div class="fld"><label for="r-dist">Format</label>
         <select id="r-dist">${opts}</select></div>
-      <div class="field"><label for="r-pri">Priorité</label>
+      <div class="fld"><label for="r-pri">Priorité</label>
         <select id="r-pri">${pri}</select></div></div>
-    <div class="row2">
-      <div class="field"><label for="r-h">Objectif — heures</label>
+    <div class="g2">
+      <div class="fld"><label for="r-h">Objectif — heures</label>
         <input id="r-h" type="number" min="0" max="24" value="${hh}" placeholder="1"></div>
-      <div class="field"><label for="r-m">Minutes</label>
+      <div class="fld"><label for="r-m">Minutes</label>
         <input id="r-m" type="number" min="0" max="59" value="${mm}" placeholder="45"></div></div>
     <button id="r-save" style="width:100%">Enregistrer et régénérer le plan</button>
-    ${r?`<button id="r-del" class="danger" style="width:100%;margin-top:10px">Supprimer cette course</button>`:''}
-    <p id="r-note" class="note-s"></p>
+    ${r?`<button id="r-del" class="dg" style="width:100%;margin-top:11px">Supprimer cette course</button>`:''}
+    <p id="r-note" class="nt"></p>
     <p class="warn">Toute modification reconstruit le plan complet.</p>`)
 
   $('r-save').onclick=async()=>{
@@ -634,10 +705,10 @@ async function route(){
   }else{
     show($('view-auth'),false);show($('view-setup'),false);show($('nav'))
     $('vitals').innerHTML=`
-      <div><div class="vv">${p.ftp_watts??'—'}</div><div class="vk">FTP · W</div></div>
-      <div><div class="vv">${p.vma_kmh??'—'}</div><div class="vk">VMA · km/h</div></div>
-      <div><div class="vv">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="vk">Poids · kg</div></div>
-      <div><div class="vv">${p.max_hr??'—'}</div><div class="vk">FC max</div></div>`
+      <div><div class="v">${p.ftp_watts??'—'}</div><div class="k">FTP · W</div></div>
+      <div><div class="v">${p.vma_kmh??'—'}</div><div class="k">VMA · km/h</div></div>
+      <div><div class="v">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="k">Poids · kg</div></div>
+      <div><div class="v">${p.max_hr??'—'}</div><div class="k">FC max</div></div>`
     show($('vitals'))
     $('peak').value=p.peak_week_hours??12
     show($('tab-today'));loadToday();loadChat();loadBrief()}}
@@ -693,8 +764,7 @@ $('btn-peak').onclick=async()=>{
     const{data,error}=await sb.rpc('apply_peak_hours',{p_user_id:userId,p_hours:h})
     if(error)throw error
     $('peak-note').textContent=`Plan reconstruit : ${data.seances} séances sur ${data.semaines} semaines.`
-    $('peak-note').style.color='var(--calm)'
-    await loadToday()
+    $('peak-note').style.color='var(--calm)';await loadToday()
   }catch(e){$('peak-note').textContent=e.message;$('peak-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer'}}
 
@@ -724,15 +794,19 @@ async function loadToday(){
 
   const r=ready.data?.[0]
   if(r?.readiness_score!=null){
-    $('score').textContent=Math.round(r.readiness_score)
-    const f=$('flag'),L={ok:'Prêt à travailler',monitor:'À surveiller',reduce:'Lève le pied'}
-    f.textContent=L[r.recommendation_flag]??'';f.className='flag '+(r.recommendation_flag??'')
-    show(f,!!r.recommendation_flag)
+    const sc=Math.round(r.readiness_score)
+    const col=r.recommendation_flag==='reduce'?'var(--alert)'
+      :r.recommendation_flag==='monitor'?'var(--acc)':'var(--calm)'
+    arc($('dial-svg'),120,50,9,sc,col,sc,'/100')
+    const L={ok:'Prêt à travailler',monitor:'À surveiller',reduce:'Lève le pied'}
+    $('flag-txt').textContent=L[r.recommendation_flag]??'—'
+    $('flag-txt').style.color=col
     let n='Mesuré '+fmtDay(r.readiness_date)+'.'
     if(r.hrv&&r.hrv_baseline){const p=Math.round((r.hrv/r.hrv_baseline-1)*100)
       n+=` VFC ${r.hrv} contre ${r.hrv_baseline} de moyenne (${p>=0?'+':''}${p} %).`}
     else if(r.hrv)n+=` VFC ${r.hrv}. Moyenne en constitution.`
-    $('score-note').textContent=n}
+    $('score-note').textContent=n
+  }else arc($('dial-svg'),120,50,9,0,'var(--faint)','—','/100')
 
   const rows=(load.data??[]).slice().reverse(),last=rows[rows.length-1]
   if(last){
@@ -740,17 +814,18 @@ async function loadToday(){
     $('chronic').textContent=Math.round(last.chronic_load??0)
     $('acwr').textContent=last.acwr!=null?Number(last.acwr).toFixed(2):'—'
     const a=Number(last.acwr)
+    $('acwr').style.color=a>1.5?'var(--alert)':'var(--ink)'
     $('acwr-note').textContent=!last.acwr?'':a>1.5
       ?"Pic de charge : au-delà de 1,5 le risque de blessure augmente."
       :a<0.8?"Charge en baisse par rapport à ton habitude.":"Progression dans une zone raisonnable."
-    $('acwr-note').style.color=a>1.5?'var(--alert)':'var(--muted)'
+    $('acwr-note').style.color=a>1.5?'var(--alert)':'var(--dim)'
     drawSpark(rows.map(x=>Number(x.total_daily_load)||0))}
 
-  const ad=adh.data
-  drawGauge(ad?.taux_pct??0)
+  const ad=adh.data,tx=ad?.taux_pct??0
+  arc($('gauge-svg'),84,33,7,tx,tx>=85?'var(--calm)':tx>=60?'var(--acc)':'var(--alert)',
+    Math.round(tx)+'%')
   $('gauge-txt').textContent=ad?.prevues
-    ?`${ad.faites} séances réalisées sur ${ad.prevues} prévues — 28 derniers jours`
-    :'Pas encore assez de recul.'
+    ?`${ad.faites} sur ${ad.prevues} séances — 28 jours`:'Pas encore assez de recul.'
   if(ment.data?.assiduite)$('gauge-note').textContent=ment.data.assiduite
   if(ment.data?.competence_mentale){
     $('disc-title').textContent=ment.data.competence_mentale.theme
@@ -765,7 +840,7 @@ async function loadToday(){
     const f=ment.data.seance_plancher
     $('floor').innerHTML=`<div class="h">Séance plancher — ${f.duree_min} min</div>
       <div style="font-size:14px">${esc(f.contenu)}</div>
-      <p class="note-s">${esc(f.regle)}</p>`
+      <p class="nt">${esc(f.regle)}</p>`
     show($('floor'))}else show($('floor'),false)
 
   const w=atp.data
@@ -779,13 +854,13 @@ async function loadToday(){
 
 function drawSpark(v){
   const svg=$('spark');svg.innerHTML='';if(!v.length)return
-  const max=Math.max(...v,1),w=300,h=42,gap=2
+  const max=Math.max(...v,1),w=300,h=46,gap=2.5
   const bw=Math.max((w-gap*(v.length-1))/v.length,1)
-  v.forEach((x,i)=>{const bh=Math.max((x/max)*(h-4),x>0?3:1)
-    const r=document.createElementNS('http://www.w3.org/2000/svg','rect')
+  v.forEach((x,i)=>{const bh=Math.max((x/max)*(h-4),x>0?3:1.5)
+    const r=document.createElementNS(NS,'rect')
     r.setAttribute('x',(i*(bw+gap)).toFixed(2));r.setAttribute('y',(h-bh).toFixed(2))
     r.setAttribute('width',bw.toFixed(2));r.setAttribute('height',bh.toFixed(2))
-    r.setAttribute('rx','1.5');r.setAttribute('fill',x>0?'var(--signal)':'var(--line)')
+    r.setAttribute('rx','1.5');r.setAttribute('fill',x>0?'var(--acc)':'var(--panel-2)')
     svg.appendChild(r)})}
 
 $('cal-prev').onclick=()=>{weekOffset-=3;loadCalendar()}
@@ -809,12 +884,13 @@ async function loadCalendar(){
     const inWeek=(sessRes.data??[]).filter(s=>
       s.session_date>=iso(wStart)&&s.session_date<=iso(wEnd))
     const meta=atpBy.get(iso(wStart))
-    const card=document.createElement('div');card.className='card'
-    const head=document.createElement('div');head.className='week-head'
-    head.innerHTML=`<span>${wStart.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
+    const card=document.createElement('div');card.className='panel'
+    card.style.marginTop='11px'
+    const head=document.createElement('div');head.className='wk'
+    head.innerHTML=`<span class="d">${wStart.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
       – ${wEnd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}${
       meta?` · ${meta.volume_hours} h`:''}</span>
-      <span class="ph">${meta?esc(meta.period):''}</span>`
+      <span class="p">${meta?esc(meta.period):''}</span>`
     card.appendChild(head)
     if(meta?.abilities){
       const c=document.createElement('div');c.className='chips'
@@ -827,7 +903,7 @@ async function loadCalendar(){
     const next=races.find(r=>r.race_date>=iso(wStart))
     if(next){
       const d=Math.round((new Date(next.race_date+'T00:00:00')-wEnd)/86400000)
-      const t=document.createElement('div');t.className='target-line'
+      const t=document.createElement('div');t.className='prep'
       t.innerHTML=`Prépare <b>${esc(next.name)}</b>${
         d>0?` — ${d} jours après cette semaine`:' — cette semaine'}`
       card.appendChild(t)}
@@ -837,13 +913,13 @@ async function loadCalendar(){
     const planMin=inWeek.filter(s=>s.status!=='completed')
       .reduce((t,s)=>t+(Number(s.duration_planned_min)||0),0)
     const cible=meta?Number(meta.volume_hours):((doneMin+planMin)/60)
-    const recap=document.createElement('div');recap.className='recap'
-    recap.innerHTML=`
-      <div><div class="rv">${(doneMin/60).toFixed(1)}</div><div class="rk">h faites</div></div>
-      <div><div class="rv">${((doneMin+planMin)/60).toFixed(1)}</div><div class="rk">h totales</div></div>
-      <div><div class="rv">${cible?cible.toFixed(1):'—'}</div><div class="rk">cible ATP</div></div>
-      <div><div class="rv">${doneTss?Math.round(doneTss):'—'}</div><div class="rk">TSS</div></div>`
-    card.appendChild(recap)
+    const q=document.createElement('div');q.className='quad'
+    q.innerHTML=`
+      <div><div class="v">${(doneMin/60).toFixed(1)}</div><div class="k">Faites</div></div>
+      <div><div class="v">${((doneMin+planMin)/60).toFixed(1)}</div><div class="k">Totales</div></div>
+      <div><div class="v">${cible?cible.toFixed(1):'—'}</div><div class="k">Cible</div></div>
+      <div><div class="v">${doneTss?Math.round(doneTss):'—'}</div><div class="k">TSS</div></div>`
+    card.appendChild(q)
     if(cible>0){const pct=Math.min(doneMin/60/cible*100,100)
       const bar=document.createElement('div');bar.className='bar'
       bar.innerHTML=`<i style="width:${pct.toFixed(0)}%"></i>`;card.appendChild(bar)}
@@ -854,11 +930,11 @@ async function loadCalendar(){
         :(Number(s.duration_planned_min)||0)
       parDisc[s.discipline]=(parDisc[s.discipline]||0)+m}
     const disc=Object.entries(parDisc).filter(([,m])=>m>0)
-    if(disc.length){const d=document.createElement('div');d.className='note-s'
-      d.style.marginBottom='8px'
+    if(disc.length){const d=document.createElement('div');d.className='nt'
+      d.style.margin='0 0 10px'
       d.textContent=disc.map(([k,m])=>`${SHORT[k]??k} ${(m/60).toFixed(1)} h`).join(' · ')
       card.appendChild(d)}
-    if(!inWeek.length){const p=document.createElement('p');p.className='empty'
+    if(!inWeek.length){const p=document.createElement('p');p.className='none'
       p.textContent='Rien sur cette semaine.';card.appendChild(p)}
     else inWeek.forEach(s=>card.appendChild(sessionRow(s)))
     box.appendChild(card)}}
@@ -876,14 +952,14 @@ async function loadGoals(){
   for(const r of list){
     const d=new Date(r.race_date+'T00:00:00')
     const days=Math.round((d-today)/86400000)
-    const el=document.createElement('div');el.className='race-row'
-    el.innerHTML=`<div class="d"><div class="num n">${days>=0?days:'—'}</div>
+    const el=document.createElement('div');el.className='rc'
+    el.innerHTML=`<div class="cd"><div class="n">${days>=0?days:'—'}</div>
       <div class="u">${days>=0?'jours':'passée'}</div></div>
-      <div class="main"><div class="t">${esc(r.name)}${
-        r.priority?`<span class="badge ${r.priority}">${r.priority}</span>`:''}</div>
-      <div class="s">${FORMAT[r.distance]??r.distance} · ${
+      <div class="mid"><div class="t">${esc(r.name)}${
+        r.priority?`<span class="tag ${r.priority}">${r.priority}</span>`:''}</div>
+      <div class="u2">${FORMAT[r.distance]??r.distance} · ${
         d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div></div>
-      <div class="goal">${fmtGoal(r.target_time)}</div>`
+      <div class="g">${fmtGoal(r.target_time)}</div>`
     el.onclick=()=>raceForm(r)
     box.appendChild(el)}
 
@@ -895,11 +971,11 @@ async function loadGoals(){
     const cur=Number(t.current_value),tar=Number(t.target_value),base=Number(t.baseline_value||cur)
     let pct=0
     if(tar!==base)pct=Math.min(Math.max((cur-base)/(tar-base)*100,0),100)
-    const el=document.createElement('div');el.className='tgt'
-    el.innerHTML=`<div class="top"><span>${m[0]}${t.race_name?` — ${esc(t.race_name)}`:''}</span>
-      <span class="vals">${isNaN(cur)?'—':cur} → ${tar} ${m[1]}</span></div>
-      <div class="bar" style="margin:6px 0 2px"><i style="width:${pct.toFixed(0)}%"></i></div>
-      <div class="sub">${t.days_left>0?`${t.days_left} jours`:'échéance passée'} · ${
+    const el=document.createElement('div');el.className='tg'
+    el.innerHTML=`<div class="r1"><span>${m[0]}${t.race_name?` — ${esc(t.race_name)}`:''}</span>
+      <span class="vv">${isNaN(cur)?'—':cur} → ${tar} ${m[1]}</span></div>
+      <div class="bar" style="margin:0"><i style="width:${pct.toFixed(0)}%"></i></div>
+      <div class="r2">${t.days_left>0?`${t.days_left} jours`:'échéance passée'} · ${
         t.direction==='baisse'?'objectif à la baisse':'objectif à la hausse'}</div>`
     tb.appendChild(el)}
 
@@ -913,14 +989,15 @@ async function loadGoals(){
     if(w.week_start===monday)tr.className='now'
     const d=new Date(w.week_start+'T00:00:00')
     tr.innerHTML=`<td>${d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}${
-      w.is_test_week?' <span class="badge">test</span>':''}</td>
-      <td class="per">${esc(w.period)}</td><td class="f">${w.strength_phase??'—'}</td>
-      <td class="h">${w.volume_hours}</td>`
+      w.is_test_week?' <span class="tag">test</span>':''}</td>
+      <td class="tp">${esc(w.period)}</td>
+      <td style="color:var(--faint);font-size:11px">${w.strength_phase??'—'}</td>
+      <td class="th">${w.volume_hours}</td>`
     t.appendChild(tr)}}
 
 async function loadFuel(){
   const nBox=$('nutrition'),rBox=$('recup'),lBox=$('recup-level'),mBox=$('mental')
-  nBox.innerHTML='<p class="empty">Chargement…</p>';rBox.innerHTML='';lBox.innerHTML='';mBox.innerHTML=''
+  nBox.innerHTML='<p class="none">Chargement…</p>';rBox.innerHTML='';lBox.innerHTML='';mBox.innerHTML=''
   try{
     const[g,m]=await Promise.all([
       sb.rpc('daily_guidance',{p_user_id:userId}),
@@ -933,23 +1010,23 @@ async function loadFuel(){
     for(const[k,v]of[['Cadre de la semaine',n.cadre_semaine],['Avant',n.avant],
       ['Pendant',n.pendant],['Après',n.apres]]){
       if(!v)continue
-      const d=document.createElement('div');d.className='gline'
+      const d=document.createElement('div');d.className='kv'
       d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`
       nBox.appendChild(d)}
-    lBox.innerHTML=`<span class="lvl ${esc(r.niveau)}">${esc(r.niveau)}</span>
-      <p class="note-s" style="margin:4px 0 10px">${esc(r.motif)}</p>`
+    lBox.innerHTML=`<span class="lv ${esc(r.niveau)}">${esc(r.niveau)}</span>
+      <p class="nt" style="margin:8px 0 4px">${esc(r.motif)}</p>`
     rBox.innerHTML=''
     for(const p of r.protocole){const li=document.createElement('li');li.textContent=p
       rBox.appendChild(li)}
     $('fuel-warn').textContent=data.avertissement
     if(!m.error&&m.data){
       const md=m.data;mBox.innerHTML=''
-      const add=(k,v)=>{const d=document.createElement('div');d.className='gline'
+      const add=(k,v)=>{const d=document.createElement('div');d.className='kv'
         d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`;mBox.appendChild(d)}
       add(md.competence_mentale.theme,md.competence_mentale.pratique)
       add('Respiration',md.respiration.protocole+' '+md.respiration.quand)
       add('Assiduité — 4 semaines',md.assiduite)}
-  }catch(e){nBox.innerHTML=`<p class="empty" style="color:var(--alert)">${esc(e.message)}</p>`}}
+  }catch(e){nBox.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
 $('btn-plan').onclick=async()=>{
   const b=$('btn-plan');b.disabled=true;b.textContent='Construction…'
@@ -986,13 +1063,13 @@ $('btn-push').onclick=async()=>{
     $('push-note').textContent=`${data.envoyees} séance(s) envoyée(s) — ${
       data.structurees} structurée(s), ${data.simple_rappel} en rappel simple.`+
       (data.erreurs?.length?` Erreurs : ${data.erreurs[0]}`:'')
-    $('push-note').style.color=data.erreurs?.length?'var(--signal)':'var(--calm)'
+    $('push-note').style.color=data.erreurs?.length?'var(--acc)':'var(--calm)'
   }catch(e){$('push-note').textContent=e.message||'Échec.'
     $('push-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Envoyer 14 jours à la montre'}}
 
 function addMsg(who,text){show($('chat-empty'),false)
-  const el=document.createElement('div');el.className='msg '+who;el.textContent=text
+  const el=document.createElement('div');el.className='bub '+who;el.textContent=text
   $('chat').appendChild(el);$('chat').scrollTop=$('chat').scrollHeight;return el}
 async function loadChat(){
   const{data}=await sb.from('coach_conversations').select('role,message')
