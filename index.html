@@ -265,7 +265,7 @@
       <h2>Données</h2>
       <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
       <p id="sync-note" class="note-s"></p>
-      <button id="btn-push" class="ghost" style="width:100%;margin-top:10px">Envoyer les séances à la montre</button>
+      <button id="btn-push" class="ghost" style="width:100%;margin-top:10px">Envoyer 14 jours à la montre</button>
       <p id="push-note" class="note-s"></p>
     </div>
   </section>
@@ -287,8 +287,8 @@
         <button id="btn-add-race" class="small">+ Ajouter</button></div>
       <div id="races"></div>
       <p class="empty hide" id="races-empty">Aucun objectif enregistré.</p>
-      <p class="note-s">A : structure tout le plan · B : allègement 2 jours avant ·
-        C : course d'entraînement, aucun impact.</p>
+      <p class="note-s">Clique sur une course pour la modifier. A : structure tout le plan ·
+        B : allègement 2 jours avant · C : course d'entraînement, aucun impact.</p>
     </div>
     <div class="card">
       <h2>Jalons</h2>
@@ -412,7 +412,23 @@ function openRaw(html){
 function closeSheet(){show($('sheet'),false);document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
 
-// ---------- fiche séance ----------
+function attachPush(s){
+  const bp=$('s-push');if(!bp)return
+  bp.onclick=async()=>{
+    bp.disabled=true;bp.textContent='Envoi…'
+    try{
+      const{data,error}=await sb.functions.invoke('push-workouts',{body:{session_id:s.id}})
+      if(error)throw error
+      if(data?.error)throw new Error(data.error)
+      $('s-push-note').textContent=data.envoyees
+        ?(data.structurees?'Séance structurée envoyée à intervals.icu.'
+                          :'Envoyée en rappel simple (pas de structure exploitable).')
+        :'Rien envoyé.'
+      $('s-push-note').style.color=data.envoyees?'var(--calm)':'var(--signal)'
+    }catch(e){$('s-push-note').textContent=e.message||'Échec.'
+      $('s-push-note').style.color='var(--alert)'}
+    finally{bp.disabled=false;bp.textContent='Envoyer à la montre'}}}
+
 async function openSheet(s){
   openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
     <button class="ghost small" id="sheet-x">Fermer</button></div>
@@ -440,10 +456,12 @@ async function openSheet(s){
             e.vigilance?`<div class="note-s" style="color:var(--alert)">${esc(e.vigilance)}</div>`:''}${
             e.derniere_charge?.kg?`<div class="note-s">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
         extra+=`<p class="warn">${esc(d.securite||'')}<br>${esc(d.avertissement||'')}</p>`}}
+    const pushBtn=`<button id="s-push" class="ghost" style="width:100%;margin-top:16px">Envoyer à la montre</button>
+      <p id="s-push-note" class="note-s"></p>`
     if(data.type==='repos'||(data.message&&!data.corps)){
       openRaw(`<div class="sheet-hd"><h2>${esc(s.session_type||'')}</h2>
         <button class="ghost small" id="sheet-x">Fermer</button></div>
-        ${extra||`<p>${esc(data.message||'')}</p>`}`)
+        ${extra||`<p>${esc(data.message||'')}</p>`}${pushBtn}`)
     }else{
       let steps=''
       for(const c of (data.corps||[]))steps+=`<div class="step">${esc(c)}</div>`
@@ -460,13 +478,13 @@ async function openSheet(s){
         <div class="step">${esc(data.echauffement||'')}</div>
         <div class="phase-lbl">Corps de séance</div>${steps}
         <div class="phase-lbl">Retour au calme</div>
-        <div class="step">${esc(data.retour_calme||'')}</div>${extra}`)}
+        <div class="step">${esc(data.retour_calme||'')}</div>${extra}${pushBtn}`)}
+    attachPush(s)
   }catch(e){
     openRaw(`<div class="sheet-hd"><h2>Erreur</h2>
       <button class="ghost small" id="sheet-x">Fermer</button></div>
       <p style="color:var(--alert)">${esc(e.message)}</p>`)}}
 
-// ---------- gestion des courses ----------
 function raceForm(r){
   const opts=Object.entries(FORMAT).map(([k,v])=>
     `<option value="${k}"${r&&r.distance===k?' selected':''}>${v}</option>`).join('')
@@ -866,7 +884,7 @@ $('btn-push').onclick=async()=>{
     $('push-note').style.color=data.erreurs?.length?'var(--signal)':'var(--calm)'
   }catch(e){$('push-note').textContent=e.message||'Échec.'
     $('push-note').style.color='var(--alert)'}
-  finally{b.disabled=false;b.textContent='Envoyer les séances à la montre'}}
+  finally{b.disabled=false;b.textContent='Envoyer 14 jours à la montre'}}
 
 function addMsg(who,text){show($('chat-empty'),false)
   const el=document.createElement('div');el.className='msg '+who;el.textContent=text
