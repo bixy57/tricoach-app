@@ -49,6 +49,11 @@
   .vitals .vv{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;
     font-variant-numeric:tabular-nums}
   .vitals .vk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .mantra{background:linear-gradient(180deg,rgba(255,194,71,.09),rgba(255,194,71,.03));
+    border:1px solid rgba(255,194,71,.28);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+  .mantra .q{font-family:"Barlow Condensed",sans-serif;font-size:25px;font-weight:600;
+    line-height:1.2;color:var(--signal)}
+  .mantra .m{font-size:14px;color:var(--ink);margin-top:11px;line-height:1.5}
   .hero{text-align:center;padding:24px 18px}
   .hero .score{font-size:78px;display:block}
   .hero .of{color:var(--muted);font-size:13px;margin-top:-4px}
@@ -62,6 +67,10 @@
   .stat .v{font-size:28px}
   .stat .k{font-size:11px;color:var(--muted);margin-top:2px}
   .spark{width:100%;height:42px;display:block;margin-top:10px}
+  .gauge{display:flex;align-items:center;gap:14px}
+  .gauge svg{flex:0 0 78px}
+  .gauge .g-main{flex:1;min-width:0}
+  .gauge .g-v{font-family:"Barlow Condensed",sans-serif;font-size:15px;color:var(--ink)}
   .sess{display:flex;align-items:center;gap:11px;padding:11px 0;
     border-bottom:1px solid var(--line);cursor:pointer}
   .sess:last-child{border-bottom:0}
@@ -237,12 +246,18 @@
   </section>
 
   <section id="tab-today" class="hide">
+    <div class="mantra hide" id="mantra-box">
+      <div class="q" id="mantra"></div>
+      <div class="m" id="brief"></div>
+    </div>
+
     <div class="card hero">
       <span class="num score" id="score">—</span>
       <div class="of">fraîcheur du jour</div>
       <div id="flag" class="flag hide"></div>
       <p class="note" id="score-note">Synchronise pour récupérer tes données.</p>
     </div>
+
     <div class="card">
       <h2>Au programme</h2>
       <p class="note-s" id="today-week" style="margin:0 0 8px"></p>
@@ -251,6 +266,22 @@
       <p class="empty hide" id="today-empty">Rien de prévu aujourd'hui.</p>
       <div class="floor hide" id="floor"></div>
     </div>
+
+    <div class="card">
+      <h2>Assiduité</h2>
+      <div class="gauge">
+        <svg viewBox="0 0 80 80" width="78" height="78" id="gauge-svg"></svg>
+        <div class="g-main">
+          <div class="g-v" id="gauge-txt">—</div>
+          <p class="note-s" id="gauge-note" style="margin-top:6px"></p>
+        </div>
+      </div>
+      <div class="gline" style="border-bottom:0;padding-bottom:0">
+        <div class="k" id="disc-title">Discipline</div>
+        <div class="v" id="disc-text">—</div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>Charge</h2>
       <div class="stats">
@@ -261,6 +292,19 @@
       <svg class="spark" id="spark" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true"></svg>
       <p id="acwr-note" class="note-s"></p>
     </div>
+
+    <div class="card">
+      <h2>Volume de pointe</h2>
+      <p style="margin-bottom:12px">Semaine la plus chargée de l'année. Toutes les autres
+        en sont une fraction. Monte par paliers d'une heure, pas d'un bloc.</p>
+      <div class="row2" style="align-items:end">
+        <div class="field" style="margin:0"><label for="peak">Heures</label>
+          <input id="peak" type="number" min="3" max="30" step="0.5"></div>
+        <button id="btn-peak" class="ghost">Appliquer</button>
+      </div>
+      <p id="peak-note" class="note-s"></p>
+    </div>
+
     <div class="card">
       <h2>Données</h2>
       <button id="btn-sync" class="ghost" style="width:100%">Synchroniser intervals.icu</button>
@@ -387,6 +431,27 @@ function chipsFor(ab){const f=document.createDocumentFragment()
     f.appendChild(s)}
   return f}
 
+function drawGauge(pct){
+  const svg=$('gauge-svg');svg.innerHTML=''
+  const r=32,c=2*Math.PI*r,v=Math.min(Math.max(pct||0,0),100)
+  const col=v>=85?'var(--calm)':v>=60?'var(--signal)':'var(--alert)'
+  const bg=document.createElementNS('http://www.w3.org/2000/svg','circle')
+  bg.setAttribute('cx','40');bg.setAttribute('cy','40');bg.setAttribute('r',r)
+  bg.setAttribute('fill','none');bg.setAttribute('stroke','var(--surface-2)')
+  bg.setAttribute('stroke-width','8');svg.appendChild(bg)
+  const fg=document.createElementNS('http://www.w3.org/2000/svg','circle')
+  fg.setAttribute('cx','40');fg.setAttribute('cy','40');fg.setAttribute('r',r)
+  fg.setAttribute('fill','none');fg.setAttribute('stroke',col)
+  fg.setAttribute('stroke-width','8');fg.setAttribute('stroke-linecap','round')
+  fg.setAttribute('stroke-dasharray',`${(v/100*c).toFixed(1)} ${c.toFixed(1)}`)
+  fg.setAttribute('transform','rotate(-90 40 40)');svg.appendChild(fg)
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text')
+  t.setAttribute('x','40');t.setAttribute('y','46');t.setAttribute('text-anchor','middle')
+  t.setAttribute('fill',col);t.setAttribute('font-size','21')
+  t.setAttribute('font-family','Barlow Condensed, sans-serif')
+  t.setAttribute('font-weight','700');t.textContent=Math.round(v)+'%'
+  svg.appendChild(t)}
+
 function sessionRow(s){
   const el=document.createElement('div')
   const isRace=(s.session_type||'').startsWith('COURSE —')
@@ -422,7 +487,7 @@ function attachPush(s){
       if(data?.error)throw new Error(data.error)
       $('s-push-note').textContent=data.envoyees
         ?(data.structurees?'Séance structurée envoyée à intervals.icu.'
-                          :'Envoyée en rappel simple (pas de structure exploitable).')
+                          :'Envoyée en rappel simple.')
         :'Rien envoyé.'
       $('s-push-note').style.color=data.envoyees?'var(--calm)':'var(--signal)'
     }catch(e){$('s-push-note').textContent=e.message||'Échec.'
@@ -511,8 +576,7 @@ function raceForm(r){
     <button id="r-save" style="width:100%">Enregistrer et régénérer le plan</button>
     ${r?`<button id="r-del" class="danger" style="width:100%;margin-top:10px">Supprimer cette course</button>`:''}
     <p id="r-note" class="note-s"></p>
-    <p class="warn">Toute modification reconstruit le plan complet : périodisation,
-      séances, tests et renforcement.</p>`)
+    <p class="warn">Toute modification reconstruit le plan complet.</p>`)
 
   $('r-save').onclick=async()=>{
     const name=$('r-name').value.trim(),date=$('r-date').value
@@ -562,7 +626,8 @@ async function route(){
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr').eq('id',userId).maybeSingle()
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours')
+    .eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
     show($('vitals'),false)
@@ -574,7 +639,8 @@ async function route(){
       <div><div class="vv">${p.weight_kg?Number(p.weight_kg).toFixed(1):'—'}</div><div class="vk">Poids · kg</div></div>
       <div><div class="vv">${p.max_hr??'—'}</div><div class="vk">FC max</div></div>`
     show($('vitals'))
-    show($('tab-today'));loadToday();loadChat()}}
+    $('peak').value=p.peak_week_hours??12
+    show($('tab-today'));loadToday();loadChat();loadBrief()}}
 
 $('btn-switch').onclick=()=>{
   mode=mode==='login'?'signup':'login'
@@ -617,9 +683,34 @@ $('btn-setup').onclick=async()=>{
     notify('');await route()
   }catch(e){notify(e.message,'err')}finally{$('btn-setup').disabled=false}}
 
+$('btn-peak').onclick=async()=>{
+  const h=parseFloat($('peak').value)
+  if(!h||h<3||h>30){$('peak-note').textContent='Valeur entre 3 et 30 h.'
+    $('peak-note').style.color='var(--alert)';return}
+  if(!confirm(`Passer le volume de pointe à ${h} h ? Tout le plan sera reconstruit.`))return
+  const b=$('btn-peak');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('apply_peak_hours',{p_user_id:userId,p_hours:h})
+    if(error)throw error
+    $('peak-note').textContent=`Plan reconstruit : ${data.seances} séances sur ${data.semaines} semaines.`
+    $('peak-note').style.color='var(--calm)'
+    await loadToday()
+  }catch(e){$('peak-note').textContent=e.message;$('peak-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Appliquer'}}
+
+async function loadBrief(){
+  try{
+    const{data,error}=await sb.functions.invoke('daily-brief',{body:{}})
+    if(error)throw error
+    if(data?.error){show($('mantra-box'),false);return}
+    $('mantra').textContent=data.mantra||''
+    $('brief').textContent=data.message||''
+    show($('mantra-box'),!!data.mantra)
+  }catch(e){show($('mantra-box'),false)}}
+
 async function loadToday(){
   const today=iso(new Date()),monday=iso(mondayOf(new Date()))
-  const[ready,load,sess,atp,race]=await Promise.all([
+  const[ready,load,sess,atp,race,adh,ment]=await Promise.all([
     sb.from('readiness').select('readiness_date,readiness_score,recommendation_flag,hrv,hrv_baseline')
       .order('readiness_date',{ascending:false}).limit(1),
     sb.from('user_load_status').select('load_date,total_daily_load,acute_load,chronic_load,acwr')
@@ -627,7 +718,9 @@ async function loadToday(){
     sb.from('sessions').select('*').eq('session_date',today),
     sb.from('atp_weeks').select('*').eq('week_start',monday).maybeSingle(),
     sb.from('races').select('name,race_date').gte('race_date',today)
-      .order('race_date',{ascending:true}).limit(1).maybeSingle()])
+      .order('race_date',{ascending:true}).limit(1).maybeSingle(),
+    sb.from('adherence').select('prevues,faites,taux_pct').maybeSingle(),
+    sb.rpc('mental_guidance',{p_user_id:userId})])
 
   const r=ready.data?.[0]
   if(r?.readiness_score!=null){
@@ -653,10 +746,27 @@ async function loadToday(){
     $('acwr-note').style.color=a>1.5?'var(--alert)':'var(--muted)'
     drawSpark(rows.map(x=>Number(x.total_daily_load)||0))}
 
+  const ad=adh.data
+  drawGauge(ad?.taux_pct??0)
+  $('gauge-txt').textContent=ad?.prevues
+    ?`${ad.faites} séances réalisées sur ${ad.prevues} prévues — 28 derniers jours`
+    :'Pas encore assez de recul.'
+  if(ment.data?.assiduite)$('gauge-note').textContent=ment.data.assiduite
+  if(ment.data?.competence_mentale){
+    $('disc-title').textContent=ment.data.competence_mentale.theme
+    $('disc-text').textContent=ment.data.competence_mentale.pratique}
+
   const box=$('today-sessions');box.innerHTML=''
   const list=sess.data??[]
   show($('today-empty'),list.length===0)
   list.forEach(s=>box.appendChild(sessionRow(s)))
+
+  if(ment.data?.seance_plancher?.applicable){
+    const f=ment.data.seance_plancher
+    $('floor').innerHTML=`<div class="h">Séance plancher — ${f.duree_min} min</div>
+      <div style="font-size:14px">${esc(f.contenu)}</div>
+      <p class="note-s">${esc(f.regle)}</p>`
+    show($('floor'))}else show($('floor'),false)
 
   const w=atp.data
   let txt=w?`${w.period} · ${w.volume_hours} h prévues${
@@ -838,12 +948,7 @@ async function loadFuel(){
         d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`;mBox.appendChild(d)}
       add(md.competence_mentale.theme,md.competence_mentale.pratique)
       add('Respiration',md.respiration.protocole+' '+md.respiration.quand)
-      add('Assiduité — 4 semaines',md.assiduite)
-      if(md.seance_plancher?.applicable){
-        $('floor').innerHTML=`<div class="h">Séance plancher — ${md.seance_plancher.duree_min} min</div>
-          <div style="font-size:14px">${esc(md.seance_plancher.contenu)}</div>
-          <p class="note-s">${esc(md.seance_plancher.regle)}</p>`
-        show($('floor'))}}
+      add('Assiduité — 4 semaines',md.assiduite)}
   }catch(e){nBox.innerHTML=`<p class="empty" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
 $('btn-plan').onclick=async()=>{
