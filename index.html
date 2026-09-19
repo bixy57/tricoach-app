@@ -18,7 +18,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
   body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;
-    font-size:15px;line-height:1.55;padding-bottom:calc(78px + env(safe-area-inset-bottom));
+    font-size:15px;line-height:1.55;padding-bottom:calc(76px + env(safe-area-inset-bottom));
     min-height:100vh;-webkit-font-smoothing:antialiased}
   .wrap{max-width:520px;margin:0 auto;padding:14px 16px 28px}
   h1{font-family:"Barlow Condensed",sans-serif;font-size:25px;font-weight:700;line-height:1}
@@ -51,13 +51,13 @@
   .panel+.panel{margin-top:10px}
   details.panel{padding:0}
   details.panel>summary{padding:15px 16px;cursor:pointer;list-style:none;
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    display:flex;align-items:center;gap:10px;
     font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600}
   details.panel>summary::-webkit-details-marker{display:none}
   details.panel>summary::after{content:'+';color:var(--acc);font-size:19px;font-weight:400}
   details.panel[open]>summary::after{content:'–'}
-  details.panel>summary span{font-family:Inter,sans-serif;font-size:12px;
-    color:var(--faint);font-weight:400;margin-left:auto;margin-right:8px}
+  details.panel>summary span{font-family:Inter,sans-serif;font-size:11.5px;
+    color:var(--faint);font-weight:400;margin-left:auto}
   details.panel>.inner{padding:0 16px 16px}
   .vit{display:flex;background:var(--panel);border:1px solid var(--line);
     border-radius:12px;overflow:hidden;margin-top:10px}
@@ -104,11 +104,10 @@
     font-weight:600;vertical-align:1px}
   .tag.mod{background:var(--acc-soft);color:var(--acc)}
   .tag.A{background:var(--alert-soft);color:var(--alert)}
+  .tag.br{background:rgba(95,68,184,.12);color:var(--force)}
   .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
   .chip{font-size:10.5px;padding:3px 9px;border-radius:6px;background:var(--panel-2);
     color:var(--dim);font-weight:500}
-  .chip.force{color:var(--force)}.chip.seuil{color:var(--acc)}
-  .chip.vitesse{color:var(--cap)}.chip.endu{color:var(--calm)}
   .acwr{display:flex;align-items:center;gap:14px}
   .acwr .n{font-family:"Barlow Condensed",sans-serif;font-size:38px;font-weight:700;
     font-variant-numeric:tabular-nums;line-height:1;flex:0 0 auto}
@@ -181,11 +180,15 @@
     color:var(--dim);border:1px solid var(--line);font-weight:500}
   .days button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
   .days button.lg{background:var(--acc-soft);color:var(--acc);border-color:var(--acc)}
-  .lv{display:inline-block;padding:4px 12px;border-radius:7px;font-size:11.5px;
-    font-weight:600;text-transform:uppercase}
-  .lv.Renforcé{background:var(--alert-soft);color:var(--alert)}
-  .lv.Standard{background:var(--acc-soft);color:var(--acc)}
-  .lv.Entretien{background:var(--calm-soft);color:var(--calm)}
+  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 0}
+  .sw .t{font-size:14px;font-weight:500}
+  .toggle{width:48px;height:27px;border-radius:14px;background:var(--line);
+    position:relative;flex:0 0 48px;cursor:pointer;border:0;padding:0}
+  .toggle.on{background:var(--acc)}
+  .toggle i{position:absolute;top:3px;left:3px;width:21px;height:21px;
+    border-radius:50%;background:#fff;transition:left .15s}
+  .toggle.on i{left:24px}
   .floor{background:var(--panel-2);border-radius:10px;padding:13px;margin-top:12px}
   .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--acc);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600}
@@ -198,6 +201,9 @@
     max-height:90vh;overflow-y:auto;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
   .shd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .shd h1{font-size:22px}
+  .code{font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.1em;
+    color:var(--acc);background:var(--acc-soft);padding:2px 8px;border-radius:5px;
+    display:inline-block;margin-top:6px}
   .zone{background:var(--panel);border:1px solid var(--line);border-radius:11px;
     padding:15px;margin:14px 0}
   .zone .zk{font-size:9.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
@@ -208,6 +214,8 @@
   .stp+.stp{border-top:1px solid var(--line)}
   .stp::before{content:'';position:absolute;left:2px;top:19px;width:6px;height:6px;
     border-radius:50%;background:var(--acc)}
+  .stp .sub{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.45}
+  .stp .dgr{font-size:12px;color:var(--alert);margin-top:4px;line-height:1.45}
   .met{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
     border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:12px 0}
   .met div{background:#fff;padding:11px 5px;text-align:center}
@@ -288,7 +296,7 @@
       <div class="fld"><label for="athlete-id">Identifiant athlète</label>
         <input id="athlete-id" placeholder="i272820" autocapitalize="off"></div>
       <div class="fld"><label for="api-key">Clé API intervals.icu</label>
-        <input id="api-key" placeholder="Paramètres → Paramètres développeur" autocapitalize="off"></div>
+        <input id="api-key" placeholder="Paramètres → développeur" autocapitalize="off"></div>
       <div class="fld"><label for="full-name">Prénom</label><input id="full-name"></div>
       <button id="btn-setup" style="width:100%">Continuer</button>
     </div>
@@ -390,21 +398,39 @@
       <div id="races"></div>
       <p class="none hide" id="races-empty">Aucun objectif enregistré.</p>
       <p class="warn">Clique sur une course pour la modifier. A : structure tout le plan ·
-        B : allègement 2 jours avant · C : course d'entraînement, aucun impact.</p>
+        B : allègement 2 jours avant · C : course d'entraînement.</p>
     </div>
 
     <details class="panel" open>
       <summary>Jours disponibles <span id="days-sum"></span></summary>
       <div class="inner">
         <p class="hint">Sur quels jours peux-tu t'entraîner ? Le volume se répartit
-          uniquement sur eux. Moins de jours ne veut pas dire moins de volume, mais
-          des séances plus denses — ce qui vaut mieux qu'un plan qu'on ne suit pas.</p>
+          uniquement sur eux. Moins de jours ne veut pas dire moins de volume, mais des
+          séances plus denses — ce qui vaut mieux qu'un plan qu'on ne suit pas.</p>
         <label>Jours d'entraînement</label>
         <div class="days" id="days-dispo"></div>
         <label>Jours pouvant accueillir une sortie longue</label>
         <div class="days" id="days-longs"></div>
         <button id="btn-days" class="gh" style="width:100%">Appliquer et reconstruire</button>
         <p id="days-note" class="nt"></p>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Musculation <span id="fm-sum"></span></summary>
+      <div class="inner">
+        <p class="hint">La phase de <b>force maximale</b> se place en Fondamentale 1,
+          à 85-95 % de ta charge maximale, 3 à 6 répétitions. Friel conseille aux
+          triathlètes novices de la sauter : ils progressent surtout en nageant,
+          roulant et courant, et réduisent nettement le risque de blessure.
+          Désactivée, cette période reste en transition musculaire — 70-80 %,
+          8 à 12 répétitions — ce qui construit de la force sans les charges
+          les plus risquées.</p>
+        <div class="sw">
+          <div class="t">Phase de force maximale</div>
+          <button class="toggle" id="tg-fm"><i></i></button>
+        </div>
+        <p id="fm-note" class="nt"></p>
       </div>
     </details>
 
@@ -420,9 +446,9 @@
       <summary>Volume de pointe <span id="peak-sum"></span></summary>
       <div class="inner">
         <p class="hint">Le nombre d'heures de ta <b>semaine la plus chargée de l'année</b> —
-          jamais une moyenne. Les autres en découlent : fondation autour de 65 %,
-          assimilation autour de 47 %. Monte par paliers d'une heure, trois semaines
-          entre chaque.</p>
+          jamais une moyenne. Formule de Friel pour un athlète limité par le temps :
+          heures hebdomadaires disponibles × 45 donne le volume annuel. Monte par
+          paliers d'une heure, trois semaines entre chaque.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="peak">Heures par semaine</label>
             <input id="peak" type="number" min="3" max="30" step="0.5"></div>
@@ -538,19 +564,20 @@ const $=id=>document.getElementById(id)
 const show=(el,on=true)=>el.classList.toggle('hide',!on)
 const LABEL={natation:'Natation',velo:'Vélo',course:'Course à pied',
   renfo:'Renforcement',mobilite:'Mobilité',repos:'Repos'}
-const SHORT={natation:'Nat',velo:'Vélo',course:'CAP',renfo:'Renfo',mobilite:'Mob'}
 const FORMAT={'10K':'10 km',SEMI:'Semi-marathon',MARATHON:'Marathon',S:'Triathlon S',
   M:'Triathlon M',L_70_3:'Triathlon L',FULL:'Triathlon Full',IRONMAN:'Ironman'}
-const FORCE={AA:'Adaptation anatomique',MT:'Transition',MS:'Force maximale',SM:'Maintien'}
-const ABILITY={endurance_aerobie:['Endurance','endu'],technique:['Technique',''],
-  force_musculaire:['Force','force'],endurance_musculaire:['Seuil','seuil'],
-  capacite_aerobie:['VMA / PMA','vitesse'],puissance:['Puissance','vitesse']}
+const FORCE={AA:'Adaptation anatomique',TM:'Transition musculaire',
+  FM:'Force maximale',EF:'Entretien force'}
+const ABILITY={endurance_aerobie:'Endurance',technique:'Technique',
+  force_musculaire:'Force',vitesse:'Vitesse',endurance_musculaire:'Endurance musculaire',
+  endurance_anaerobie:'Endurance anaérobie',vitesse_sprint:'Vitesse au sprint',
+  simulation_course:'Simulation de course',intensite_course:'Intensité de course'}
 const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','kg'],
-  body_fat_pct:['Masse grasse','%'],
-  threshold_pace_s_per_km:['Allure seuil','s/km'],css_s_per_100m:['Vitesse nat.','s/100m']}
+  body_fat_pct:['Masse grasse','%'],threshold_pace_s_per_km:['Allure seuil','s/km'],
+  css_s_per_100m:['Vitesse nat.','s/100m']}
 const JOURS=['L','M','M','J','V','S','D']
 let mode='login',userId=null,weekOffset=0,glossCache=null
-let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7]
+let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true
 
 const iso=d=>d.toISOString().slice(0,10)
 const mondayOf=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));
@@ -564,13 +591,14 @@ function fmtDay(s){const d=new Date(s+'T00:00:00'),t=new Date();t.setHours(0,0,0
   return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}
 function fmtGoal(t){if(!t)return '—'
   const[h,m]=String(t).split(':');return Number(h)>0?`${Number(h)}h${m}`:`${Number(m)} min`}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 const NS='http://www.w3.org/2000/svg'
 
 function chipsFor(ab){const f=document.createDocumentFragment()
-  for(const k of Object.keys(ab||{})){const a=ABILITY[k];if(!a)continue
-    const s=document.createElement('span');s.className='chip '+a[1];s.textContent=a[0]
+  for(const[k,v]of Object.entries(ab||{})){const n=ABILITY[k];if(!n)continue
+    const s=document.createElement('span');s.className='chip'
+    s.textContent=n+(v==='entretien'?' (entretien)':v==='peu'?' (un peu)':'')
     f.appendChild(s)}
   return f}
 
@@ -607,7 +635,8 @@ function sessionRow(s){
   const load=s.completed_data?.training_load
   el.innerHTML=`<div class="k k-${s.discipline}"></div>
     <div class="mid"><div class="t">${s.status==='completed'?'✓ ':''}${
-      esc(s.session_type||LABEL[s.discipline]||'')}${
+      esc(s.session_type||LABEL[s.discipline])}${
+      s.brick_type?'<span class="tag br">imbriquée</span>':''}${
       s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
     <div class="u">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
     <div class="r">${dur?dur+'<em>min</em>':''}${load?`<em>${Math.round(load)} TSS</em>`:''}</div>`
@@ -648,8 +677,7 @@ function attachActions(s){
       if(error)throw error
       if(data?.error)throw new Error(data.error)
       $('s-note').textContent=data.envoyees
-        ?(data.structurees?'Séance structurée envoyée.':'Envoyée en rappel simple.')
-        :'Rien envoyé.'
+        ?(data.structurees?'Séance structurée envoyée.':'Envoyée en rappel simple.'):'Rien envoyé.'
       $('s-note').style.color=data.envoyees?'var(--calm)':'var(--acc)'
     }catch(e){$('s-note').textContent=e.message||'Échec.'
       $('s-note').style.color='var(--alert)'}
@@ -672,14 +700,15 @@ function attachActions(s){
 
 async function openSheet(s){
   const done=s.status==='completed'
-  openRaw(`<div class="shd"><h1>${esc(s.session_type||'')}</h1>
+  openRaw(`<div class="shd"><h1>${esc(s.session_type)}</h1>
     <button class="gh sm" id="sheet-x">Fermer</button></div><p class="nt">Chargement…</p>`)
   try{
     const cd=s.completed_data||{}
-    let head=`<div class="shd"><h1>${esc(s.session_type||'')}</h1>
+    let head=`<div class="shd"><h1>${esc(s.session_type)}</h1>
       <button class="gh sm" id="sheet-x">Fermer</button></div>
       <p class="nt" style="margin:4px 0 0">${LABEL[s.discipline]??''} · ${
         fmtDay(s.session_date)}${done?' · réalisée':''}</p>`
+
     if(done){
       const km=cd.distance_m?(cd.distance_m/1000).toFixed(1):null
       head+=`<div class="met">
@@ -694,46 +723,78 @@ async function openSheet(s){
 
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
-    let extra=''
+    const p=data.pourquoi||{},f=data.fiche,br=data.imbriquee
+    let html=head
+
+    if(f)html+=`<div class="code">${esc(f.code)} · ${esc(f.nom)}</div>`
+
+    if(br){
+      html+=`<div class="zone"><div class="zk">${esc(br.type)}</div>
+        <div class="zf" style="border-top:0;margin-top:6px;padding-top:0">${esc(br.pourquoi)}</div></div>
+        <div class="lbl">${esc(br.partie_1.discipline)} — ${br.partie_1.duree_min} min</div>
+        <div class="stp">${esc(br.partie_1.consigne)}</div>
+        <div class="lbl">Transition</div><div class="stp">${esc(br.transition)}</div>
+        <div class="lbl">${esc(br.partie_2.discipline)} — ${br.partie_2.duree_min} min</div>
+        <div class="stp">${esc(br.partie_2.consigne)}</div>
+        <p class="warn">${esc(br.vigilance)}</p>`
+    }else if(data.zone){
+      html+=`<div class="zone"><div class="zk">Zone de travail</div>
+        <div class="zv">${esc(data.zone)}</div>
+        ${data.fc?`<div class="zf">FC : ${esc(data.fc)}</div>`:''}
+        ${data.reference?`<div class="nt">${esc(data.reference)}</div>`:''}</div>`
+      if(f){html+=`<div class="lbl">Structure</div><div class="stp">${esc(f.structure)}
+        <div class="sub">Intensité : ${esc(f.intensite)}</div>
+        ${f.vigilance?`<div class="dgr">${esc(f.vigilance)}</div>`:''}
+        ${f.frequence_max?`<div class="sub">Fréquence : ${esc(f.frequence_max)}</div>`:''}</div>`
+      }else if(data.corps){
+        html+=`<div class="lbl">Échauffement</div><div class="stp">${esc(data.echauffement)}</div>
+          <div class="lbl">Corps de séance</div>`
+        for(const c of data.corps)html+=`<div class="stp">${esc(c)}</div>`
+        html+=`<div class="lbl">Retour au calme</div><div class="stp">${esc(data.retour_calme)}</div>`}
+    }
+
     if(s.discipline==='renfo'){
       const r=await sb.rpc('strength_session',{p_user_id:userId,p_date:s.session_date})
-      if(!r.error&&r.data&&r.data.exercices){
+      if(!r.error&&r.data?.applicable){
         const d=r.data
-        extra=`<div class="lbl">${esc(d.titre||'')}</div>
-          <div class="zone"><div class="zk">Format</div>
-            <div style="font-size:13.5px;margin-top:4px">${esc(d.format||'')}</div>
-            <div class="zf">${esc(d.consigne_charge||'')}</div></div>
-          <div class="lbl">Exercices</div>`
+        html+=`<div class="zone"><div class="zk">${esc(d.nom_phase)} · ${esc(d.periode)}</div>
+          <div class="zv">${esc(d.charge)}</div>
+          <div class="zf">${esc(d.objectif)}</div>
+          <div class="nt">${d.seances_par_semaine} séance(s) par semaine · ${esc(d.volume_total)}</div></div>
+          ${d.note_phase?`<p class="nt">${esc(d.note_phase)}</p>`:''}
+          <div class="lbl">Échauffement</div>`
+        for(const x of d.regles.echauffement)html+=`<div class="stp">${esc(x)}</div>`
+        html+=`<div class="lbl">Exercices</div>`
         for(const e of d.exercices){
-          extra+=`<div class="stp"><b>${esc(e.exercice)}</b> — ${
-            e.repetitions?`${e.series} × ${e.repetitions}`:`${e.series} × ${e.duree_s} s`}${
-            e.rir?`, RIR ${e.rir}`:''}, repos ${e.repos_s} s
-            <div class="nt">${esc(e.execution)}</div>${
-            e.vigilance?`<div class="nt" style="color:var(--alert)">${esc(e.vigilance)}</div>`:''}${
-            e.derniere_charge?.kg?`<div class="nt">Dernière charge : ${e.derniere_charge.kg} kg</div>`:''}</div>`}
-        extra+=`<p class="warn">${esc(d.securite||'')}<br>${esc(d.avertissement||'')}</p>`}}
-    const actions=`<div class="lbl">Actions</div>
+          html+=`<div class="stp"><b>${e.ordre}. ${esc(e.exercice)}</b> — ${esc(e.series)} séries
+            × ${esc(e.repetitions)} rép à ${esc(e.charge)}, repos ${esc(e.recuperation_min)} min
+            <div class="sub">${esc(e.execution)}</div>
+            ${e.vigilance?`<div class="dgr">${esc(e.vigilance)}</div>`:''}</div>`}
+        html+=`<div class="lbl">Retour au calme</div>
+          <div class="stp">${esc(d.regles.retour_au_calme)}</div>
+          <div class="lbl">Règles</div>
+          <div class="stp">${esc(d.regles.echec)}</div>
+          <div class="stp">${esc(d.regles.ordre[2])}</div>
+          <div class="stp">${esc(d.regles.apres_seance)}</div>
+          <p class="warn">${esc(d.securite)}<br>${esc(d.avertissement)}</p>`}
+    }
+
+    if(p.filiere){
+      html+=`<div class="lbl">Pourquoi cette séance</div>
+        <div class="kv" style="padding-top:0"><div class="k">${esc(p.priorite_libelle)}</div>
+          <div class="v">${esc(p.filiere)}</div></div>
+        <div class="kv"><div class="k">Place dans le plan</div><div class="v">${esc(p.role)}</div></div>
+        <div class="kv"><div class="k">Enchaînement</div><div class="v">${esc(p.enchainement)}</div></div>`}
+
+    html+=`<div class="lbl">Actions</div>
       <button id="s-push" class="gh" style="width:100%">Envoyer à la montre</button>
       <div class="g2" style="margin-top:10px;align-items:end">
         <div class="fld" style="margin:0"><label for="s-date">Déplacer au</label>
           <input id="s-date" type="date" value="${s.session_date}"></div>
         <button id="s-move" class="gh">Déplacer</button></div>
       <p id="s-note" class="nt"></p>`
-    if(data.type==='repos'||(data.message&&!data.corps)){
-      openRaw(head+(extra||`<p class="hint" style="margin-top:12px">${esc(data.message||'')}</p>`)+actions)
-    }else{
-      let steps=''
-      for(const c of (data.corps||[]))steps+=`<div class="stp">${esc(c)}</div>`
-      openRaw(head+`
-        <div class="zone"><div class="zk">Zone de travail</div>
-          <div class="zv">${esc(data.zone||'—')}</div>
-          ${data.fc?`<div class="zf">FC : ${esc(data.fc)}</div>`:''}
-          ${data.reference?`<div class="nt">${esc(data.reference)}</div>`:''}</div>
-        <div class="lbl">Échauffement</div><div class="stp">${esc(data.echauffement||'')}</div>
-        <div class="lbl">Corps de séance</div>${steps}
-        <div class="lbl">Retour au calme</div><div class="stp">${esc(data.retour_calme||'')}</div>
-        ${extra}${actions}`)}
-    attachActions(s)
+
+    openRaw(html);attachActions(s)
   }catch(e){
     openRaw(`<div class="shd"><h1>Erreur</h1>
       <button class="gh sm" id="sheet-x">Fermer</button></div>
@@ -821,6 +882,24 @@ $('btn-days').onclick=async()=>{
   }catch(e){$('days-note').textContent=e.message;$('days-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer et reconstruire'}}
 
+function renderFM(){
+  $('tg-fm').classList.toggle('on',fmOn)
+  $('fm-sum').textContent=fmOn?'force max activée':'transition seulement'}
+
+$('tg-fm').onclick=async()=>{
+  const next=!fmOn
+  if(!confirm(next?'Activer la phase de force maximale ? Le plan sera reconstruit.'
+    :'Désactiver la force maximale ? Fondamentale 1 restera en transition musculaire.'))return
+  $('tg-fm').disabled=true
+  try{
+    const{data,error}=await sb.rpc('set_force_max',{p_user_id:userId,p_actif:next})
+    if(error)throw error
+    fmOn=next;renderFM()
+    $('fm-note').textContent=data.effet
+    $('fm-note').style.color='var(--calm)';await loadGoals()
+  }catch(e){$('fm-note').textContent=e.message;$('fm-note').style.color='var(--alert)'}
+  finally{$('tg-fm').disabled=false}}
+
 document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'))
@@ -842,7 +921,7 @@ async function route(){
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs')
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs,force_max_activee')
     .eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
@@ -864,7 +943,8 @@ async function route(){
     if(p.body_fat_pct)$('in-fat').value=p.body_fat_pct
     if(p.height_cm)$('in-height').value=p.height_cm
     selDispo=p.jours_dispo??[1,2,3,4,5,6,7];selLongs=p.jours_longs??[6,7]
-    renderDays()
+    fmOn=p.force_max_activee!==false
+    renderDays();renderFM()
     show($('tab-today'));loadToday();loadChat();loadBrief();loadProjection();loadWellness()}}
 
 $('btn-switch').onclick=()=>{
@@ -917,7 +997,8 @@ $('btn-peak').onclick=async()=>{
   try{
     const{data,error}=await sb.rpc('apply_peak_hours',{p_user_id:userId,p_hours:h})
     if(error)throw error
-    $('peak-note').textContent=`Reconstruit : ${data.seances} séances.`
+    $('peak-note').textContent=`Reconstruit : ${data.seances} séances. Volume annuel ≈ ${
+      Math.round(h*45)} h.`
     $('peak-note').style.color='var(--calm)';$('peak-sum').textContent=h+' h';await loadGoals()
   }catch(e){$('peak-note').textContent=e.message;$('peak-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer'}}
@@ -971,15 +1052,15 @@ async function loadWellness(){
     if(error)throw error
     if(data?.error)throw new Error(data.error)
     $('well-sum').textContent=(data.focus||'')+' · '+data.duree_totale_min+' min'
-    let html=`<p class="nt" style="margin:0 0 8px">${esc(data.lecture||'')}</p>`
+    let html=`<p class="nt" style="margin:0 0 8px">${esc(data.lecture)}</p>`
     for(const b of (data.moments||[])){
       html+=`<div class="lbl">${esc(b.quand)}</div>`
       for(const m of b.mouvements){
         html+=`<div class="stp"><b>${esc(m.nom)}</b> — ${m.duree_min} min · ${esc(m.cible)}
-          <div class="nt">${esc(m.consigne)}</div>${
-          m.vigilance?`<div class="nt" style="color:var(--alert)">${esc(m.vigilance)}</div>`:''}</div>`}}
+          <div class="sub">${esc(m.consigne)}</div>${
+          m.vigilance?`<div class="dgr">${esc(m.vigilance)}</div>`:''}</div>`}}
     if(data.pourquoi)html+=`<p class="nt">${esc(data.pourquoi)}</p>`
-    html+=`<p class="warn">${esc(data.avertissement||'')}</p>`
+    html+=`<p class="warn">${esc(data.avertissement)}</p>`
     box.innerHTML=html
   }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
@@ -1106,7 +1187,7 @@ async function loadToday(){
 
   const w=atp.data
   let txt=w?`${w.period} · ${w.volume_hours} h${
-    w.strength_phase?` · force ${FORCE[w.strength_phase]??w.strength_phase}`:''}`:''
+    w.strength_phase?` · ${FORCE[w.strength_phase]??w.strength_phase}`:''}`:''
   if(race.data){
     const d=Math.round((new Date(race.data.race_date+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000)
     txt+=`${txt?' · ':''}${race.data.name} dans ${d} j`}
@@ -1156,9 +1237,10 @@ async function loadCalendar(){
       const c=document.createElement('div');c.className='chips'
       c.appendChild(chipsFor(meta.abilities))
       if(meta.strength_phase){const s=document.createElement('span')
-        s.className='chip force';s.textContent='Force '+meta.strength_phase;c.appendChild(s)}
+        s.className='chip';s.textContent=FORCE[meta.strength_phase]??meta.strength_phase
+        c.appendChild(s)}
       if(meta.is_test_week){const s=document.createElement('span')
-        s.className='chip vitesse';s.textContent='Test';c.appendChild(s)}
+        s.className='chip';s.textContent='Semaine de test';c.appendChild(s)}
       card.appendChild(c)}
     const next=races.find(r=>r.race_date>=iso(wStart))
     if(next){
@@ -1311,7 +1393,8 @@ $('btn-plan').onclick=async()=>{
   const b=$('btn-plan');b.disabled=true;b.textContent='…'
   try{
     const{data,error}=await sb.rpc('build_plan',{p_user_id:userId});if(error)throw error
-    $('plan-note').textContent=`${data.semaines} semaines, ${data.seances} séances.`
+    $('plan-note').textContent=`${data.semaines} semaines, ${data.seances} séances dont ${
+      data.imbriquees} imbriquées, ${data.tests} tests.`
     $('plan-note').style.color='var(--calm)';weekOffset=0;await loadGoals()
   }catch(e){$('plan-note').textContent=e.message;$('plan-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Régénérer le plan'}}
@@ -1320,7 +1403,7 @@ $('btn-sync').onclick=async()=>{
   const b=$('btn-sync');b.disabled=true;b.textContent='…'
   $('sync-note').textContent=''
   try{
-    const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:365}})
+    const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:60}})
     if(error)throw error
     if(data?.error)throw new Error(data.error)
     const d=data.detail||{}
