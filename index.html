@@ -314,17 +314,29 @@
     <div class="lbl">Volume de pointe</div>
     <div class="panel">
       <p class="hint">C'est le nombre d'heures de ta <b>semaine la plus chargée de
-        l'année</b> — jamais une moyenne. Toutes les autres semaines en découlent :
-        une semaine de fondation tourne autour de 65 % de ce chiffre, une semaine
-        d'assimilation autour de 47 %. Le fixer trop haut produit un plan que tu ne
-        tiendras pas ; trop bas, un plan qui ne te fait pas progresser. Monte-le par
-        paliers d'une heure, en laissant trois semaines avant le palier suivant.</p>
+        l'année</b> — jamais une moyenne. Toutes les autres en découlent : une semaine
+        de fondation tourne autour de 65 % de ce chiffre, une semaine d'assimilation
+        autour de 47 %. Trop haut, le plan ne se tient pas ; trop bas, il ne fait pas
+        progresser. Monte par paliers d'une heure, trois semaines entre chaque.</p>
       <div class="g2" style="align-items:end">
         <div class="fld" style="margin:0"><label for="peak">Heures par semaine</label>
           <input id="peak" type="number" min="3" max="30" step="0.5"></div>
         <button id="btn-peak" class="gh">Appliquer</button>
       </div>
       <p id="peak-note" class="nt"></p>
+    </div>
+    <div class="lbl">Début de saison</div>
+    <div class="panel">
+      <p class="hint">Une saison commence après une coupure, pas dans la continuité
+        de la précédente. Les semaines situées avant cette date passent en
+        <b>Transition</b> — volume réduit, aucune intensité, aucun renforcement —
+        sauf si elles préparent encore une course, auquel cas l'affûtage est conservé.</p>
+      <div class="g2" style="align-items:end">
+        <div class="fld" style="margin:0"><label for="season">Premier lundi</label>
+          <input id="season" type="date"></div>
+        <button id="btn-season" class="gh">Appliquer</button>
+      </div>
+      <p id="season-note" class="nt"></p>
     </div>
     <div class="lbl">Données</div>
     <div class="panel">
@@ -388,10 +400,10 @@
   </section>
 
   <section id="tab-gloss" class="hide">
-    <div class="lbl">Glossaire</div>
+    <div class="lbl">Lexique</div>
     <div class="panel">
-      <p class="hint">Le vocabulaire employé dans l'app : ce que chaque terme
-        désigne, pourquoi on le travaille, et comment ça se traduit en séance.</p>
+      <p class="hint">Le vocabulaire de l'app : ce que chaque terme désigne,
+        pourquoi on le travaille, et comment ça se traduit en séance.</p>
       <div class="fld" style="margin:0">
         <input id="gl-search" placeholder="Rechercher un terme…" autocomplete="off"></div>
     </div>
@@ -523,13 +535,14 @@ async function loadReview(s){
     if(data?.error)throw new Error(data.error)
     let f=''
     for(const x of (data.filieres||[]))f+=`<span class="chip">${esc(x)}</span>`
+    const kv=(k,v)=>v?`<div class="kv"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`:''
     box.innerHTML=`${f?`<div class="chips">${f}</div>`:''}
-      <div class="kv" style="padding-top:0"><div class="k">Ce que la séance a travaillé</div>
+      <div class="kv" style="padding-top:0"><div class="k">Ce que disent les chiffres</div>
         <div class="v">${esc(data.commentaire)}</div></div>
-      ${data.role_bloc?`<div class="kv"><div class="k">Son rôle dans le bloc</div>
-        <div class="v">${esc(data.role_bloc)}</div></div>`:''}
-      ${data.recuperation?`<div class="kv"><div class="k">Récupération</div>
-        <div class="v">${esc(data.recuperation)}</div></div>`:''}`
+      ${kv('Bénéfices de cette séance',data.benefices)}
+      ${kv('Son rôle dans le bloc',data.role_bloc)}
+      ${kv('Récupération',data.recuperation)}
+      ${kv('Pour les jours qui suivent',data.demain)}`
   }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
 function attachPush(s){
@@ -570,12 +583,10 @@ async function openSheet(s){
         <div><div class="v">${cd.avg_power?Math.round(cd.avg_power):'—'}</div><div class="k">W moy</div></div>
         <div><div class="v">${cd.elevation_m?Math.round(cd.elevation_m):'—'}</div><div class="k">D+ m</div></div>
       </div>
-      ${s.duration_planned_min&&cd.duration_min?`<p class="nt" style="margin:0 0 6px">Prévu ${
+      ${s.duration_planned_min&&cd.duration_min?`<p class="nt" style="margin:0">Prévu ${
         s.duration_planned_min} min · réalisé ${cd.duration_min} min</p>`:''}
       <div class="lbl">Analyse du coach</div><div id="rev-box"></div>`
-      openRaw(head);loadReview(s)
-      return
-    }
+      openRaw(head);loadReview(s);return}
 
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
@@ -703,7 +714,7 @@ async function route(){
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours')
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start')
     .eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
@@ -717,6 +728,7 @@ async function route(){
       <div><div class="v">${p.max_hr??'—'}</div><div class="k">FC max</div></div>`
     show($('vitals'))
     $('peak').value=p.peak_week_hours??12
+    if(p.season_start)$('season').value=p.season_start
     show($('tab-today'));loadToday();loadChat();loadBrief()}}
 
 $('btn-switch').onclick=()=>{
@@ -772,6 +784,20 @@ $('btn-peak').onclick=async()=>{
     $('peak-note').textContent=`Plan reconstruit : ${data.seances} séances sur ${data.semaines} semaines.`
     $('peak-note').style.color='var(--calm)';await loadToday()
   }catch(e){$('peak-note').textContent=e.message;$('peak-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Appliquer'}}
+
+$('btn-season').onclick=async()=>{
+  const d=$('season').value
+  if(!d){$('season-note').textContent='Choisis une date.'
+    $('season-note').style.color='var(--alert)';return}
+  if(!confirm(`Démarrer la nouvelle saison le ${d} ? Tout le plan sera reconstruit.`))return
+  const b=$('btn-season');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('set_season_start',{p_user_id:userId,p_date:d})
+    if(error)throw error
+    $('season-note').textContent=`Saison lancée : ${data.semaines} semaines, ${data.seances} séances.`
+    $('season-note').style.color='var(--calm)';await loadToday()
+  }catch(e){$('season-note').textContent=e.message;$('season-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer'}}
 
 async function loadBrief(){
