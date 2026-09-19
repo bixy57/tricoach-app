@@ -1320,7 +1320,7 @@ $('btn-sync').onclick=async()=>{
   const b=$('btn-sync');b.disabled=true;b.textContent='…'
   $('sync-note').textContent=''
   try{
-    const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:60}})
+    const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:365}})
     if(error)throw error
     if(data?.error)throw new Error(data.error)
     const d=data.detail||{}
