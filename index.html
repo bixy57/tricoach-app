@@ -180,8 +180,7 @@
     color:var(--dim);border:1px solid var(--line);font-weight:500}
   .days button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
   .days button.lg{background:var(--acc-soft);color:var(--acc);border-color:var(--acc)}
-  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding:12px 0}
+  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
   .sw .t{font-size:14px;font-weight:500}
   .toggle{width:48px;height:27px;border-radius:14px;background:var(--line);
     position:relative;flex:0 0 48px;cursor:pointer;border:0;padding:0}
@@ -189,6 +188,16 @@
   .toggle i{position:absolute;top:3px;left:3px;width:21px;height:21px;
     border-radius:50%;background:#fff;transition:left .15s}
   .toggle.on i{left:24px}
+  .prog{background:var(--calm-soft);border-radius:11px;padding:14px;margin:14px 0}
+  .prog .pk{font-size:9.5px;color:var(--calm);text-transform:uppercase;
+    letter-spacing:.08em;font-weight:600}
+  .prog .pv{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:700;
+    color:var(--calm);line-height:1.1;margin-top:3px;font-variant-numeric:tabular-nums}
+  .prog .pc{font-size:13px;margin-top:8px;line-height:1.45;color:var(--ink)}
+  .prog .pb{height:4px;background:rgba(26,127,90,.2);border-radius:2px;
+    overflow:hidden;margin-top:10px}
+  .prog .pb i{display:block;height:100%;background:var(--calm);border-radius:2px}
+  .prog .pr{font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.45}
   .floor{background:var(--panel-2);border-radius:10px;padding:13px;margin-top:12px}
   .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--acc);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600}
@@ -402,11 +411,45 @@
     </div>
 
     <details class="panel" open>
+      <summary>Rythme de la semaine <span id="dens-sum"></span></summary>
+      <div class="inner">
+        <p class="hint">À volume identique, moins de séances veut dire des séances plus
+          longues. Une séance de 30 minutes coûte autant en logistique qu'une d'une heure
+          trente : en dessous de la durée minimale, le créneau est supprimé et son temps
+          reversé sur les autres. Les sorties longues et au moins un passage par
+          discipline sont toujours conservés.</p>
+        <label for="dens">Densité</label>
+        <select id="dens" style="margin-bottom:12px">
+          <option value="ramasse">Ramassée — une séance par jour</option>
+          <option value="equilibre">Équilibrée — deux journées doublées</option>
+          <option value="friel">Friel — trois passages par discipline</option>
+        </select>
+        <div class="g2" style="align-items:end">
+          <div class="fld" style="margin:0"><label for="dmin">Durée minimale (min)</label>
+            <input id="dmin" type="number" min="20" max="120" step="5"></div>
+          <button id="btn-dens" class="gh">Appliquer</button>
+        </div>
+        <p id="dens-note" class="nt"></p>
+        <div class="kv" style="margin-top:8px">
+          <div class="k">Séances de musculation</div>
+          <div class="v">
+            <select id="fnb">
+              <option value="0">Selon la phase — 2, puis 1 en entretien</option>
+              <option value="1">Une seule par semaine</option>
+              <option value="2">Deux toute l'année</option>
+            </select>
+            <button id="btn-fnb" class="gh" style="width:100%;margin-top:8px">Appliquer</button>
+            <p id="fnb-note" class="nt"></p>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="panel">
       <summary>Jours disponibles <span id="days-sum"></span></summary>
       <div class="inner">
         <p class="hint">Sur quels jours peux-tu t'entraîner ? Le volume se répartit
-          uniquement sur eux. Moins de jours ne veut pas dire moins de volume, mais des
-          séances plus denses — ce qui vaut mieux qu'un plan qu'on ne suit pas.</p>
+          uniquement sur eux.</p>
         <label>Jours d'entraînement</label>
         <div class="days" id="days-dispo"></div>
         <label>Jours pouvant accueillir une sortie longue</label>
@@ -417,15 +460,12 @@
     </details>
 
     <details class="panel">
-      <summary>Musculation <span id="fm-sum"></span></summary>
+      <summary>Force maximale <span id="fm-sum"></span></summary>
       <div class="inner">
         <p class="hint">La phase de <b>force maximale</b> se place en Fondamentale 1,
           à 85-95 % de ta charge maximale, 3 à 6 répétitions. Friel conseille aux
-          triathlètes novices de la sauter : ils progressent surtout en nageant,
-          roulant et courant, et réduisent nettement le risque de blessure.
-          Désactivée, cette période reste en transition musculaire — 70-80 %,
-          8 à 12 répétitions — ce qui construit de la force sans les charges
-          les plus risquées.</p>
+          triathlètes novices de la sauter. Désactivée, cette période reste en
+          transition musculaire — 70-80 %, 8 à 12 répétitions.</p>
         <div class="sw">
           <div class="t">Phase de force maximale</div>
           <button class="toggle" id="tg-fm"><i></i></button>
@@ -447,8 +487,7 @@
       <div class="inner">
         <p class="hint">Le nombre d'heures de ta <b>semaine la plus chargée de l'année</b> —
           jamais une moyenne. Formule de Friel pour un athlète limité par le temps :
-          heures hebdomadaires disponibles × 45 donne le volume annuel. Monte par
-          paliers d'une heure, trois semaines entre chaque.</p>
+          heures hebdomadaires disponibles × 45 donne le volume annuel.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="peak">Heures par semaine</label>
             <input id="peak" type="number" min="3" max="30" step="0.5"></div>
@@ -462,7 +501,8 @@
       <summary>Début de saison <span id="season-sum"></span></summary>
       <div class="inner">
         <p class="hint">Une saison commence après une coupure. Les semaines avant cette
-          date passent en <b>Transition</b>, sauf si elles préparent encore une course.</p>
+          date passent en <b>Transition</b>, sauf si elles préparent encore une course.
+          Les compteurs de progression repartent à zéro.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="season">Premier lundi</label>
             <input id="season" type="date"></div>
@@ -723,10 +763,17 @@ async function openSheet(s){
 
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
-    const p=data.pourquoi||{},f=data.fiche,br=data.imbriquee
+    const p=data.pourquoi||{},f=data.fiche,br=data.imbriquee,pr=data.progression
     let html=head
 
     if(f)html+=`<div class="code">${esc(f.code)} · ${esc(f.nom)}</div>`
+
+    if(pr){
+      html+=`<div class="prog"><div class="pk">Séance n° ${pr.rang} cette saison</div>
+        <div class="pv">${pr.valeur} ${esc(pr.unite)}</div>
+        <div class="pc">${esc(pr.consigne)}</div>
+        <div class="pb"><i style="width:${pr.progression_pct}%"></i></div>
+        <div class="pr">${esc(pr.reference)}</div></div>`}
 
     if(br){
       html+=`<div class="zone"><div class="zk">${esc(br.type)}</div>
@@ -882,14 +929,42 @@ $('btn-days').onclick=async()=>{
   }catch(e){$('days-note').textContent=e.message;$('days-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer et reconstruire'}}
 
+$('btn-dens').onclick=async()=>{
+  const d=$('dens').value,m=parseInt($('dmin').value||'50',10)
+  if(m<20||m>120){$('dens-note').textContent='Durée entre 20 et 120 min.'
+    $('dens-note').style.color='var(--alert)';return}
+  if(!confirm('Appliquer ce rythme ? Le plan sera reconstruit.'))return
+  const b=$('btn-dens');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('set_densite',
+      {p_user_id:userId,p_densite:d,p_duree_min:m})
+    if(error)throw error
+    $('dens-note').textContent=`${data.seances} séances sur ${data.semaines} semaines. ${data.note}`
+    $('dens-note').style.color='var(--calm)'
+    $('dens-sum').textContent=d+' · '+m+' min';await loadGoals()
+  }catch(e){$('dens-note').textContent=e.message;$('dens-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Appliquer'}}
+
+$('btn-fnb').onclick=async()=>{
+  const n=parseInt($('fnb').value,10)
+  if(!confirm('Changer la fréquence de musculation ? Le plan sera reconstruit.'))return
+  const b=$('btn-fnb');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('set_force_frequence',{p_user_id:userId,p_nb:n})
+    if(error)throw error
+    $('fnb-note').textContent=data.effet
+    $('fnb-note').style.color='var(--calm)';await loadGoals()
+  }catch(e){$('fnb-note').textContent=e.message;$('fnb-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Appliquer'}}
+
 function renderFM(){
   $('tg-fm').classList.toggle('on',fmOn)
-  $('fm-sum').textContent=fmOn?'force max activée':'transition seulement'}
+  $('fm-sum').textContent=fmOn?'activée':'transition seulement'}
 
 $('tg-fm').onclick=async()=>{
   const next=!fmOn
-  if(!confirm(next?'Activer la phase de force maximale ? Le plan sera reconstruit.'
-    :'Désactiver la force maximale ? Fondamentale 1 restera en transition musculaire.'))return
+  if(!confirm(next?'Activer la force maximale ? Le plan sera reconstruit.'
+    :'Désactiver ? Fondamentale 1 restera en transition musculaire.'))return
   $('tg-fm').disabled=true
   try{
     const{data,error}=await sb.rpc('set_force_max',{p_user_id:userId,p_actif:next})
@@ -921,7 +996,7 @@ async function route(){
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs,force_max_activee')
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs,force_max_activee,densite,duree_min_seance,force_seances_semaine')
     .eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
@@ -944,6 +1019,10 @@ async function route(){
     if(p.height_cm)$('in-height').value=p.height_cm
     selDispo=p.jours_dispo??[1,2,3,4,5,6,7];selLongs=p.jours_longs??[6,7]
     fmOn=p.force_max_activee!==false
+    $('dens').value=p.densite??'equilibre'
+    $('dmin').value=p.duree_min_seance??50
+    $('fnb').value=String(p.force_seances_semaine??0)
+    $('dens-sum').textContent=(p.densite??'equilibre')+' · '+(p.duree_min_seance??50)+' min'
     renderDays();renderFM()
     show($('tab-today'));loadToday();loadChat();loadBrief();loadProjection();loadWellness()}}
 
