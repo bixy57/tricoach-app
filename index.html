@@ -39,6 +39,7 @@
   button:active{opacity:.75}
   button:disabled{opacity:.45;cursor:default}
   .gh{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
+  .ok{background:var(--calm);color:#fff}
   .dg{background:#fff;color:var(--alert);border:1px solid rgba(192,57,43,.3)}
   .sm{padding:7px 12px;font-size:13px;border-radius:9px}
   button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
@@ -47,6 +48,7 @@
   label{display:block;font-size:12px;color:var(--dim);margin:0 0 5px}
   .fld{margin-bottom:13px}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .panel+.panel{margin-top:10px}
   details.panel{padding:0}
@@ -76,8 +78,12 @@
   .brief .row+.row{border-top:1px solid rgba(184,106,8,.16)}
   .brief .row b{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;
     color:var(--acc);display:block;margin-bottom:2px;font-weight:600}
-  .brief .pv{font-size:12.5px;font-style:italic;color:var(--dim);
-    margin-top:11px;padding-top:10px;border-top:1px solid rgba(184,106,8,.16)}
+  .max{margin-top:12px;padding-top:11px;border-top:1px solid rgba(184,106,8,.16)}
+  .max .mx{font-size:14px;font-style:italic;line-height:1.45;color:var(--ink)}
+  .max .au{font-size:11px;color:var(--dim);margin-top:5px}
+  .max .au b{font-weight:600;font-style:normal;color:var(--acc)}
+  .max .ec{font-size:12.5px;color:var(--dim);margin-top:7px;line-height:1.45}
+  .max .db{font-size:10.5px;color:var(--faint);margin-top:5px;line-height:1.4}
   .dial{display:flex;align-items:center;gap:18px;padding:18px 16px}
   .dial svg{flex:0 0 104px}
   .dial .side{flex:1;min-width:0}
@@ -97,6 +103,7 @@
   .s .r em{display:block;font-size:9.5px;font-style:normal;color:var(--faint);
     font-family:Inter,sans-serif}
   .s.done .t{color:var(--calm)}
+  .s.skip .t{color:var(--faint);text-decoration:line-through}
   .s.race{background:var(--acc-soft);margin:0 -10px;padding:12px 10px;border-radius:10px}
   .s.race .t{color:var(--acc);font-weight:600}
   .tag{font-size:9px;padding:2px 6px;border-radius:5px;background:var(--panel-2);
@@ -105,6 +112,7 @@
   .tag.mod{background:var(--acc-soft);color:var(--acc)}
   .tag.A{background:var(--alert-soft);color:var(--alert)}
   .tag.br{background:rgba(95,68,184,.12);color:var(--force)}
+  .tag.man{background:var(--calm-soft);color:var(--calm)}
   .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
   .chip{font-size:10.5px;padding:3px 9px;border-radius:6px;background:var(--panel-2);
     color:var(--dim);font-weight:500}
@@ -255,6 +263,7 @@
     white-space:pre-wrap;word-wrap:break-word;line-height:1.45}
   .bub.me{background:var(--acc);color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
   .bub.ai{background:var(--panel-2);align-self:flex-start;border-bottom-left-radius:5px}
+  .act{font-size:11px;color:var(--calm);align-self:flex-start;padding:0 4px}
   .comp{display:flex;gap:8px}
   nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);
     backdrop-filter:blur(16px);border-top:1px solid var(--line);
@@ -308,6 +317,7 @@
         <input id="api-key" placeholder="Paramètres → développeur" autocapitalize="off"></div>
       <div class="fld"><label for="full-name">Prénom</label><input id="full-name"></div>
       <button id="btn-setup" style="width:100%">Continuer</button>
+      <p class="warn">La clé est chiffrée au repos et n'est jamais relue par l'application.</p>
     </div>
   </section>
 
@@ -316,7 +326,12 @@
       <div class="q" id="mantra"></div>
       <div class="row hide" id="row-hier"><b>Hier</b><span id="t-hier"></span></div>
       <div class="row hide" id="row-auj"><b>Aujourd'hui</b><span id="t-auj"></span></div>
-      <div class="pv" id="proverbe"></div>
+      <div class="max hide" id="max-box">
+        <div class="mx" id="mx-texte"></div>
+        <div class="au" id="mx-auteur"></div>
+        <div class="ec" id="mx-echo"></div>
+        <div class="db" id="mx-doute"></div>
+      </div>
     </div>
 
     <div class="lbl">Fraîcheur</div>
@@ -385,6 +400,8 @@
         <p id="sync-note" class="nt"></p>
         <button id="btn-push" class="gh" style="width:100%;margin-top:10px">Envoyer 14 jours à la montre</button>
         <p id="push-note" class="nt"></p>
+        <p class="warn">Une maintenance tourne chaque nuit : clôture des séances non faites,
+          replanification si une séance clé a sauté, recalcul de la charge.</p>
       </div>
     </details>
   </section>
@@ -501,8 +518,7 @@
       <summary>Début de saison <span id="season-sum"></span></summary>
       <div class="inner">
         <p class="hint">Une saison commence après une coupure. Les semaines avant cette
-          date passent en <b>Transition</b>, sauf si elles préparent encore une course.
-          Les compteurs de progression repartent à zéro.</p>
+          date passent en <b>Transition</b>. Les compteurs de progression repartent à zéro.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="season">Premier lundi</label>
             <input id="season" type="date"></div>
@@ -557,7 +573,7 @@
       </div>
     </details>
     <details class="panel">
-      <summary>Mental</summary>
+      <summary>Mental <span id="mental-sum"></span></summary>
       <div class="inner"><div id="mental"></div><p class="warn" id="fuel-warn"></p></div>
     </details>
   </section>
@@ -574,9 +590,11 @@
     <div class="lbl">Coach</div>
     <div class="panel">
       <div class="chat" id="chat"></div>
-      <p class="none" id="chat-empty">Pose une question sur ta forme ou tes objectifs.</p>
+      <p class="none" id="chat-empty">Il connaît tes séances en détail, ta charge,
+        ton mental. Il peut valider une séance, en ajouter une, alléger la semaine,
+        organiser une reprise.</p>
       <div class="comp">
-        <input id="chat-input" placeholder="Où j'en suis cette semaine ?" autocomplete="off">
+        <input id="chat-input" placeholder="C'est quoi ma séance de jeudi ?" autocomplete="off">
         <button id="btn-send" class="sm">Envoyer</button>
       </div>
     </div>
@@ -669,7 +687,9 @@ function arc(svg,size,r,w,pct,col,txt,sub){
 function sessionRow(s){
   const el=document.createElement('div')
   const isRace=(s.session_type||'').startsWith('COURSE —')
-  el.className='s'+(s.status==='completed'?' done':'')+(isRace?' race':'')
+  const manuel=s.completed_data?.source==='validation manuelle'
+  el.className='s'+(s.status==='completed'?' done':'')
+    +(s.status==='skipped'?' skip':'')+(isRace?' race':'')
   const dur=s.status==='completed'
     ?(s.completed_data?.duration_min||''):(s.duration_planned_min||'')
   const load=s.completed_data?.training_load
@@ -677,6 +697,7 @@ function sessionRow(s){
     <div class="mid"><div class="t">${s.status==='completed'?'✓ ':''}${
       esc(s.session_type||LABEL[s.discipline])}${
       s.brick_type?'<span class="tag br">imbriquée</span>':''}${
+      manuel?'<span class="tag man">saisie</span>':''}${
       s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
     <div class="u">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
     <div class="r">${dur?dur+'<em>min</em>':''}${load?`<em>${Math.round(load)} TSS</em>`:''}</div>`
@@ -690,6 +711,10 @@ function openRaw(html){
   const x=$('sheet-x');if(x)x.onclick=closeSheet}
 function closeSheet(){show($('sheet'),false);document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
+
+async function refreshAll(){
+  await loadToday()
+  if(!$('tab-cal').classList.contains('hide'))await loadCalendar()}
 
 async function loadReview(s){
   const box=$('rev-box');if(!box)return
@@ -722,6 +747,7 @@ function attachActions(s){
     }catch(e){$('s-note').textContent=e.message||'Échec.'
       $('s-note').style.color='var(--alert)'}
     finally{bp.disabled=false;bp.textContent='Envoyer à la montre'}}
+
   const bm=$('s-move')
   if(bm)bm.onclick=async()=>{
     const d=$('s-date').value
@@ -734,12 +760,40 @@ function attachActions(s){
       if(data?.erreur)throw new Error(data.erreur)
       $('s-note').textContent='Déplacée au '+d+(data.avertissement?' — '+data.avertissement:'')
       $('s-note').style.color=data.avertissement?'var(--acc)':'var(--calm)'
-      await loadToday();if(!$('tab-cal').classList.contains('hide'))await loadCalendar()
+      await refreshAll()
     }catch(e){$('s-note').textContent=e.message;$('s-note').style.color='var(--alert)'}
-    finally{bm.disabled=false;bm.textContent='Déplacer'}}}
+    finally{bm.disabled=false;bm.textContent='Déplacer'}}
+
+  const bv=$('s-valid')
+  if(bv)bv.onclick=async()=>{
+    const min=parseInt($('v-min').value||'0',10)||null
+    const rs=parseInt($('v-rs').value||'0',10)||null
+    bv.disabled=true;bv.textContent='…'
+    try{
+      const{data,error}=await sb.rpc('complete_session_manually',{
+        p_session_id:s.id,p_duree_min:min,p_ressenti:rs,
+        p_note:$('v-note').value.trim()||null})
+      if(error)throw error
+      if(data?.erreur)throw new Error(data.erreur)
+      closeSheet();await refreshAll()
+      notify(`Séance validée — ${data.duree_min} min, charge estimée ${data.charge_estimee}.`,'ok')
+    }catch(e){$('s-note').textContent=e.message;$('s-note').style.color='var(--alert)'
+      bv.disabled=false;bv.textContent='Valider comme réalisée'}}
+
+  const bu=$('s-undo')
+  if(bu)bu.onclick=async()=>{
+    if(!confirm('Annuler cette validation manuelle ?'))return
+    bu.disabled=true
+    try{
+      const{data,error}=await sb.rpc('uncomplete_session',{p_session_id:s.id})
+      if(error)throw error
+      if(data?.erreur)throw new Error(data.erreur)
+      closeSheet();await refreshAll();notify('Validation annulée.','ok')
+    }catch(e){notify(e.message,'err');bu.disabled=false}}}
 
 async function openSheet(s){
   const done=s.status==='completed'
+  const manuel=s.completed_data?.source==='validation manuelle'
   openRaw(`<div class="shd"><h1>${esc(s.session_type)}</h1>
     <button class="gh sm" id="sheet-x">Fermer</button></div><p class="nt">Chargement…</p>`)
   try{
@@ -747,7 +801,8 @@ async function openSheet(s){
     let head=`<div class="shd"><h1>${esc(s.session_type)}</h1>
       <button class="gh sm" id="sheet-x">Fermer</button></div>
       <p class="nt" style="margin:4px 0 0">${LABEL[s.discipline]??''} · ${
-        fmtDay(s.session_date)}${done?' · réalisée':''}</p>`
+        fmtDay(s.session_date)}${done?' · réalisée':''}${
+        s.status==='skipped'?' · manquée':''}</p>`
 
     if(done){
       const km=cd.distance_m?(cd.distance_m/1000).toFixed(1):null
@@ -757,9 +812,14 @@ async function openSheet(s){
         <div><div class="v">${cd.avg_hr?Math.round(cd.avg_hr):'—'}</div><div class="k">FC moy</div></div>
         <div><div class="v">${km??'—'}</div><div class="k">km</div></div>
         <div><div class="v">${cd.avg_power?Math.round(cd.avg_power):'—'}</div><div class="k">W moy</div></div>
-        <div><div class="v">${cd.elevation_m?Math.round(cd.elevation_m):'—'}</div><div class="k">D+ m</div></div>
-      </div><div class="lbl">Analyse</div><div id="rev-box"></div>`
-      openRaw(head);loadReview(s);return}
+        <div><div class="v">${cd.ressenti_10??(cd.elevation_m?Math.round(cd.elevation_m):'—')}</div>
+          <div class="k">${cd.ressenti_10?'ressenti':'D+ m'}</div></div>
+      </div>`
+      if(cd.charge_estimee)head+=`<p class="nt">Charge estimée depuis ta saisie, non mesurée par capteur.</p>`
+      if(cd.note)head+=`<div class="kv"><div class="k">Ta note</div><div class="v">${esc(cd.note)}</div></div>`
+      head+=`<div class="lbl">Analyse</div><div id="rev-box"></div>`
+      if(manuel)head+=`<button id="s-undo" class="dg" style="width:100%;margin-top:14px">Annuler cette validation</button>`
+      openRaw(head);loadReview(s);attachActions(s);return}
 
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
@@ -832,6 +892,23 @@ async function openSheet(s){
           <div class="v">${esc(p.filiere)}</div></div>
         <div class="kv"><div class="k">Place dans le plan</div><div class="v">${esc(p.role)}</div></div>
         <div class="kv"><div class="k">Enchaînement</div><div class="v">${esc(p.enchainement)}</div></div>`}
+
+    const passee=s.session_date<=iso(new Date())
+    if(passee){
+      html+=`<div class="lbl">Je l'ai faite</div>
+        <p class="hint">Pour une séance que la montre n'a pas enregistrée — musculation,
+          nage, GPS en panne. La charge sera estimée : moins précise qu'une mesure, mais
+          bien meilleure qu'une séance comptée comme manquée.</p>
+        <div class="g3">
+          <div class="fld" style="margin:0"><label for="v-min">Durée (min)</label>
+            <input id="v-min" type="number" min="5" max="600"
+              value="${s.duration_planned_min??''}"></div>
+          <div class="fld" style="margin:0"><label for="v-rs">Ressenti /10</label>
+            <input id="v-rs" type="number" min="1" max="10"></div>
+          <div class="fld" style="margin:0"><label for="v-note">Note</label>
+            <input id="v-note" placeholder="facultatif"></div>
+        </div>
+        <button id="s-valid" class="ok" style="width:100%">Valider comme réalisée</button>`}
 
     html+=`<div class="lbl">Actions</div>
       <button id="s-push" class="gh" style="width:100%">Envoyer à la montre</button>
@@ -1055,10 +1132,12 @@ $('btn-setup').onclick=async()=>{
   $('btn-setup').disabled=true
   try{
     const{data:{user}}=await sb.auth.getUser()
-    const payload={id:user.id,intervals_athlete_id:a,
-      full_name:$('full-name').value.trim()||null,updated_at:new Date().toISOString()}
-    const k=$('api-key').value.trim();if(k)payload.intervals_api_key=k
-    const{error}=await sb.from('profiles').upsert(payload);if(error)throw error
+    const{error}=await sb.from('profiles').upsert({id:user.id,intervals_athlete_id:a,
+      full_name:$('full-name').value.trim()||null,updated_at:new Date().toISOString()})
+    if(error)throw error
+    const k=$('api-key').value.trim()
+    if(k){const r=await sb.rpc('set_intervals_key',{p_user_id:user.id,p_cle:k})
+      if(r.data?.erreur)throw new Error(r.data.erreur)}
     const{data:plan}=await sb.from('training_plans').select('id')
       .eq('user_id',user.id).eq('status','active').maybeSingle()
     if(!plan){const s=new Date(),e=new Date();e.setMonth(e.getMonth()+12)
@@ -1108,7 +1187,7 @@ $('btn-body').onclick=async()=>{
     if(f){await sb.rpc('log_body_metric',{p_user_id:userId,p_metric:'body_fat_pct',p_value:f})
       msgs.push('masse grasse')}
     $('body-note').textContent=msgs.length?'Enregistré : '+msgs.join(', ')+'.':'Rien à enregistrer.'
-    $('body-note').style.color='var(--calm)';await loadHealth()
+    $('body-note').style.color='var(--calm)';await loadHealth();await route()
   }catch(e){$('body-note').textContent=e.message;$('body-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Enregistrer'}}
 
@@ -1120,7 +1199,13 @@ async function loadBrief(){
     $('mantra').textContent=data.mantra||''
     if(data.hier){$('t-hier').textContent=data.hier;show($('row-hier'))}
     if(data.aujourdhui){$('t-auj').textContent=data.aujourdhui;show($('row-auj'))}
-    $('proverbe').textContent=data.proverbe||''
+    const m=data.maxime
+    if(m?.texte){
+      $('mx-texte').textContent='« '+m.texte+' »'
+      $('mx-auteur').innerHTML=`<b>${esc(m.auteur)}</b> — ${esc(m.source)}`
+      $('mx-echo').textContent=data.echo||m.lien||''
+      $('mx-doute').textContent=m.attribution.startsWith('Attribution établie')?'':m.attribution
+      show($('max-box'))}
     show($('brief-box'),!!data.mantra)
   }catch(e){show($('brief-box'),false)}}
 
@@ -1330,7 +1415,7 @@ async function loadCalendar(){
     const done=inWeek.filter(s=>s.status==='completed')
     const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
     const doneTss=done.reduce((t,s)=>t+(Number(s.completed_data?.training_load)||0),0)
-    const planMin=inWeek.filter(s=>s.status!=='completed')
+    const planMin=inWeek.filter(s=>s.status!=='completed'&&s.status!=='skipped')
       .reduce((t,s)=>t+(Number(s.duration_planned_min)||0),0)
     const cible=meta?Number(meta.volume_hours):((doneMin+planMin)/60)
     const q=document.createElement('div');q.className='quad'
@@ -1444,11 +1529,26 @@ async function loadHealth(){
         nBox.appendChild(d)}
       $('fuel-warn').textContent=data.avertissement}
     if(!m.error&&m.data){
-      const md=m.data,tBox=$('mental');tBox.innerHTML=''
-      const add=(k,v)=>{const d=document.createElement('div');d.className='kv'
-        d.innerHTML=`<div class="k">${k}</div><div class="v">${esc(v)}</div>`;tBox.appendChild(d)}
-      add(md.competence_mentale.theme,md.competence_mentale.pratique)
-      add('Respiration',md.respiration.protocole+' '+md.respiration.quand)}
+      const md=m.data,c=md.competence_mentale,tBox=$('mental')
+      $('mental-sum').textContent=c.theme||''
+      let h=`<div class="zone" style="margin-top:0"><div class="zk">${
+        esc(c.famille||'Mental')}${c.niveau?' · niveau '+c.niveau:''}</div>
+        <div class="zv" style="font-size:21px">${esc(c.theme)}</div>`
+      if(c.a_quoi_ca_sert)h+=`<div class="zf">${esc(c.a_quoi_ca_sert)}</div>`
+      h+=`</div>`
+      if(c.quand)h+=`<div class="kv" style="padding-top:0"><div class="k">Quand</div>
+        <div class="v">${esc(c.quand)}</div></div>`
+      h+=`<div class="kv"><div class="k">L'exercice${
+        c.duree_min?' — '+c.duree_min+' min':''}</div>
+        <div class="v">${esc(c.pratique)}</div></div>`
+      if(c.progression)h+=`<div class="kv"><div class="k">Progression</div>
+        <div class="v">${esc(c.progression)}</div></div>`
+      h+=`<div class="kv"><div class="k">Respiration${
+        md.respiration.priorite==='haute'?" — prioritaire aujourd'hui":''}</div>
+        <div class="v">${esc(md.respiration.protocole)}<br>
+        <span style="color:var(--dim)">${esc(md.respiration.quand)}</span></div></div>`
+      tBox.innerHTML=h
+      $('fuel-warn').textContent=md.avertissement}
   }catch(e){}
 
   const mBox=$('meals');mBox.innerHTML='<p class="none">Chargement…</p>'
@@ -1487,8 +1587,10 @@ $('btn-sync').onclick=async()=>{
     if(data?.error)throw new Error(data.error)
     const d=data.detail||{}
     $('sync-note').textContent=`${data.seances_importees} séance(s) — ${
-      d.rattachees_au_plan??0} au plan, ${d.hors_plan??0} hors plan.`
-    $('sync-note').style.color='var(--calm)';await loadToday();await loadProjection()
+      d.rattachees_au_plan??0} au plan, ${d.hors_plan??0} hors plan.${
+      data.poids_importe?' Poids : '+data.poids_importe+'.':''}`
+    $('sync-note').style.color='var(--calm)'
+    await loadToday();await loadProjection();await route()
   }catch(e){$('sync-note').textContent=e.message||'Échec.'
     $('sync-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Synchroniser intervals.icu'}}
@@ -1524,7 +1626,11 @@ async function send(){
     if(error)throw error
     if(data?.error)throw new Error(data.error)
     p.textContent=data.reply
-    if(data.proposed_action_id)p.textContent+='\n\n(Proposition en attente de validation.)'
+    if(data.actions?.length){
+      const a=document.createElement('div');a.className='act'
+      a.textContent='→ '+data.actions.join(' · ')
+      $('chat').appendChild(a);$('chat').scrollTop=$('chat').scrollHeight
+      await refreshAll()}
   }catch(e){p.textContent=e.message||'Pas de réponse.';p.style.color='var(--alert)'}
   finally{$('btn-send').disabled=false;i.focus()}}
 $('btn-send').onclick=send
