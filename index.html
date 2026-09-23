@@ -84,6 +84,33 @@
   .alerte .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;
     color:var(--alert);text-transform:uppercase;letter-spacing:.06em}
   .alerte .d{font-size:13px;margin-top:4px;line-height:1.45;color:var(--ink)}
+  .risq{border-radius:0;padding:14px 15px;margin-top:12px;border-left:3px solid}
+  .risq.faible{background:var(--calm-soft);border-color:var(--calm)}
+  .risq.vigilance,.risq.modere{background:var(--acc-soft);border-color:var(--acc)}
+  .risq.eleve{background:var(--alert-soft);border-color:var(--alert)}
+  .risq .h{font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:600}
+  .risq.faible .h{color:var(--calm)}
+  .risq.vigilance .h,.risq.modere .h{color:var(--acc)}
+  .risq.eleve .h{color:var(--alert)}
+  .risq .seg{display:flex;gap:5px;margin:10px 0 9px}
+  .risq .seg i{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.09)}
+  .risq .d{font-size:13px;line-height:1.5;color:var(--ink)}
+  .risq .sg{font-size:12.5px;line-height:1.45;color:var(--ink);
+    margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.08)}
+  .risq .sg b{display:block;font-weight:600;margin-bottom:2px}
+  .jbar{display:flex;height:26px;border-radius:8px;overflow:hidden}
+  .jbar i{display:block;height:100%}
+  .jcible{position:relative;height:16px;margin-top:3px;font-size:10.5px;color:var(--faint)}
+  .jcible span{position:absolute;left:80%;transform:translateX(-50%);white-space:nowrap}
+  .jleg{display:flex;gap:14px;font-size:11.5px;color:var(--dim);margin-top:4px}
+  .jleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cards .c{background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--r);padding:12px}
+  .cards .c .k{font-size:12px;color:var(--dim)}
+  .cards .c .v{font-family:"Barlow Condensed",sans-serif;font-size:22px;
+    font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;line-height:1.1}
+  .cards .c .s{font-size:11px;margin-top:2px;line-height:1.35}
   .brief{padding:18px;border-radius:var(--r);margin-top:12px;
     background:var(--acc-soft);border-left:3px solid var(--acc)}
   .brief .q{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;
@@ -145,11 +172,6 @@
   .acwr .h{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
   .acwr .d{font-size:12.5px;line-height:1.45;margin-top:3px}
   .spark{width:100%;height:38px;display:block;margin-top:12px}
-  .courbe{width:100%;height:130px;display:block;margin:6px 0 4px}
-  .cleg{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--dim);
-    margin-bottom:4px}
-  .cleg i{display:inline-block;width:12px;height:3px;border-radius:2px;
-    margin-right:5px;vertical-align:2px}
   .jauge{display:flex;align-items:center;gap:16px}
   .jauge svg{flex:0 0 74px}
   .wk{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
@@ -166,8 +188,6 @@
     letter-spacing:.06em;margin-top:3px}
   .bar{height:4px;background:var(--panel-2);border-radius:2px;overflow:hidden;margin:0 0 11px}
   .bar i{display:block;height:100%;background:var(--calm);border-radius:2px}
-  .stack{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:3px 0 2px}
-  .stack i{display:block;height:100%}
   .prep{font-size:11.5px;color:var(--dim);margin-bottom:10px}
   .prep b{color:var(--acc);font-weight:600}
   .rc{display:flex;align-items:center;gap:14px;padding:14px 0;cursor:pointer}
@@ -184,10 +204,11 @@
   .tg{padding:13px 0}
   .tg+.tg{border-top:1px solid var(--line)}
   .tg .r1{display:flex;justify-content:space-between;align-items:baseline;
-    font-size:13px;margin-bottom:7px}
+    font-size:13px;gap:10px}
   .tg .vv{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;
-    font-variant-numeric:tabular-nums}
+    font-variant-numeric:tabular-nums;white-space:nowrap}
   .tg .r2{font-size:10.5px;color:var(--faint);margin-top:5px}
+  .pill{font-size:11.5px;padding:2px 8px;border-radius:7px;white-space:nowrap}
   .pj{padding:13px 0}
   .pj+.pj{border-top:1px solid var(--line)}
   .pj .r1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
@@ -510,61 +531,48 @@
   </section>
 
   <section id="tab-prog" class="hide">
-    <div class="lbl">Progression</div>
+    <div class="risq hide" id="rq-box"></div>
+
+    <div class="lbl">Répartition de l'intensité</div>
     <div class="panel">
-      <p class="hint" id="prog-intro">Ces courbes reposent sur ce que tu as
-        <b>réellement</b> fait, classé par les données de chaque séance, et non sur
-        ce qui était prévu.</p>
-      <div class="met" id="prog-resume"></div>
-      <p class="warn" id="prog-prudence"></p>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+        <span style="font-size:14px;font-weight:500">Séances faciles</span>
+        <span id="rp-pct" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700">—</span>
+      </div>
+      <div class="jbar"><i id="rp-fac"></i><i id="rp-dur"></i></div>
+      <div class="jcible"><span>↑ cible 80 %</span></div>
+      <div class="jleg">
+        <span><i style="background:var(--calm)"></i>Facile</span>
+        <span><i style="background:var(--alert)"></i>Dur</span>
+      </div>
+      <p class="nt" id="rp-txt"></p>
     </div>
 
-    <details class="panel" open>
-      <summary>Filières travaillées <span id="fil-sum"></span></summary>
+    <div class="lbl">Indicateurs</div>
+    <div class="cards" id="rq-cards"></div>
+
+    <div class="lbl">Allures — 4 semaines</div>
+    <div class="panel">
+      <p class="nt" id="p4-periode" style="margin:0 0 4px"></p>
+      <div id="p4-lignes"></div>
+      <p class="warn" id="p4-reserve"></p>
+    </div>
+
+    <details class="panel">
+      <summary>Charge des 4 semaines</summary>
       <div class="inner">
-        <p class="hint">Répartition réelle mois par mois. La barre rouge compte les
-          séances prévues en endurance mais réalisées au-dessus.</p>
-        <div id="filieres"></div>
+        <div class="met" id="p4-resume"></div>
+        <p class="warn" id="p4-comp"></p>
       </div>
     </details>
 
     <details class="panel">
-      <summary>Efficience <span id="eff-sum"></span></summary>
+      <summary>Méthode et limites</summary>
       <div class="inner">
-        <div class="cleg">
-          <span><i style="background:var(--cap)"></i>Course</span>
-          <span><i style="background:var(--velo)"></i>Vélo</span>
-        </div>
-        <svg class="courbe" id="eff-svg" viewBox="0 0 300 130" preserveAspectRatio="none"></svg>
-        <div id="eff-axe" class="cleg" style="justify-content:space-between"></div>
-        <p class="nt" id="eff-lecture"></p>
+        <p class="nt" id="rq-methode" style="margin:0"></p>
+        <p class="warn" id="rq-limite"></p>
+        <p class="warn" id="rq-consulter" style="border:0;padding-top:6px"></p>
       </div>
-    </details>
-
-    <details class="panel">
-      <summary>Volume mensuel <span id="vol-sum"></span></summary>
-      <div class="inner">
-        <div class="cleg">
-          <span><i style="background:var(--cap)"></i>Course</span>
-          <span><i style="background:var(--velo)"></i>Vélo</span>
-          <span><i style="background:var(--nat)"></i>Natation</span>
-        </div>
-        <div id="volume"></div>
-      </div>
-    </details>
-
-    <details class="panel">
-      <summary>Capacité par filière <span id="cap-sum"></span></summary>
-      <div class="inner">
-        <p class="hint">Moyennes mensuelles par discipline et filière réellement
-          travaillée. Les mois comptant moins de deux séances sont écartés.</p>
-        <div style="overflow-x:auto"><table id="capacite"></table></div>
-      </div>
-    </details>
-
-    <details class="panel">
-      <summary>Tests <span id="tst-sum"></span></summary>
-      <div class="inner"><div id="tests-hist"></div></div>
     </details>
   </section>
 
@@ -770,14 +778,6 @@
     </details>
   </section>
 
-  <section id="tab-gloss" class="hide">
-    <div class="lbl">Lexique</div>
-    <div class="panel">
-      <input id="gl-search" placeholder="Rechercher un terme…" autocomplete="off">
-    </div>
-    <div id="gloss"></div>
-  </section>
-
   <section id="tab-coach" class="hide">
     <div class="lbl">Coach</div>
     <div class="panel">
@@ -829,6 +829,8 @@ const ABILITY={endurance_aerobie:'Endurance',technique:'Technique',
 const QUAL={E:'Endurance',EM:'Seuil',EA:'VMA / PMA',F:'Force',V:'Vitesse'}
 const ECART={conforme:'Conforme à l\'intention',trop_intense:'Réalisée trop intense',
   trop_facile:'Réalisée trop facile',differente:'Filière différente'}
+const NIVEAU={faible:'Aucun signal',vigilance:'Vigilance',
+  modere:'Charge à surveiller',eleve:'Risque élevé'}
 const MAT={home_trainer:'Home-trainer',capteur_puissance:'Capteur de puissance',
   acces_piscine:'Accès piscine',salle_muscu:'Salle de musculation',
   velo_route:'Vélo de route',eau_libre:'Accès eau libre'}
@@ -836,7 +838,7 @@ const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','k
   body_fat_pct:['Masse grasse','%'],threshold_pace_s_per_km:['Allure seuil','s/km'],
   css_s_per_100m:['Vitesse nat.','s/100m']}
 const JOURS=['L','M','M','J','V','S','D']
-let mode='login',userId=null,weekOffset=0,glossCache=null
+let mode='login',userId=null,weekOffset=0
 let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true,matObj={}
 
 const iso=d=>d.toISOString().slice(0,10)
@@ -849,8 +851,6 @@ function fmtDay(s){const d=new Date(s+'T00:00:00'),t=new Date();t.setHours(0,0,0
   const n=Math.round((d-t)/86400000)
   if(n===0)return "aujourd'hui";if(n===1)return 'demain';if(n===-1)return 'hier'
   return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}
-function fmtMois(m){const[y,mm]=m.split('-')
-  return new Date(y,mm-1,1).toLocaleDateString('fr-FR',{month:'short'})}
 function fmtGoal(t){if(!t)return '—'
   const[h,m]=String(t).split(':');return Number(h)>0?`${Number(h)}h${m}`:`${Number(m)} min`}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>
@@ -890,45 +890,6 @@ function arc(svg,size,r,w,pct,col,txt,sub){
     s.setAttribute('fill','#8A9BA8');s.setAttribute('font-size','9.5')
     s.setAttribute('font-family','Inter, sans-serif');s.textContent=sub;svg.appendChild(s)}}
 
-// Courbe multi-séries, avec points visibles
-function ligne(svg,series,W=300,H=130){
-  svg.innerHTML=''
-  const all=series.flatMap(s=>s.pts.map(p=>p.y)).filter(v=>v!=null&&!isNaN(v))
-  if(all.length<2){
-    const t=document.createElementNS(NS,'text')
-    t.setAttribute('x',W/2);t.setAttribute('y',H/2);t.setAttribute('text-anchor','middle')
-    t.setAttribute('fill','#8A9BA8');t.setAttribute('font-size','11')
-    t.setAttribute('font-family','Inter, sans-serif')
-    t.textContent='Pas assez de points pour tracer une tendance'
-    svg.appendChild(t);return}
-  const min=Math.min(...all),max=Math.max(...all)
-  const span=(max-min)||1,pad=span*0.15
-  const lo=min-pad,hi=max+pad
-  const labels=[...new Set(series.flatMap(s=>s.pts.map(p=>p.x)))].sort()
-  const X=i=>labels.length<2?W/2:12+(i/(labels.length-1))*(W-24)
-  const Y=v=>H-14-((v-lo)/(hi-lo))*(H-28)
-  for(let g=0;g<=2;g++){
-    const y=14+g*((H-28)/2)
-    const l=document.createElementNS(NS,'line')
-    l.setAttribute('x1',0);l.setAttribute('x2',W)
-    l.setAttribute('y1',y);l.setAttribute('y2',y)
-    l.setAttribute('stroke','#EEF2F6');l.setAttribute('stroke-width','1')
-    svg.appendChild(l)}
-  for(const s of series){
-    const pts=s.pts.filter(p=>p.y!=null&&!isNaN(p.y))
-      .map(p=>({x:X(labels.indexOf(p.x)),y:Y(p.y)}))
-    if(pts.length>1){
-      const path=document.createElementNS(NS,'polyline')
-      path.setAttribute('points',pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '))
-      path.setAttribute('fill','none');path.setAttribute('stroke',s.col)
-      path.setAttribute('stroke-width','2');path.setAttribute('stroke-linejoin','round')
-      path.setAttribute('stroke-linecap','round');svg.appendChild(path)}
-    for(const p of pts){
-      const c=document.createElementNS(NS,'circle')
-      c.setAttribute('cx',p.x.toFixed(1));c.setAttribute('cy',p.y.toFixed(1))
-      c.setAttribute('r','3');c.setAttribute('fill',s.col);svg.appendChild(c)}}
-  return labels}
-
 function sessionRow(s){
   const el=document.createElement('div')
   const isRace=(s.session_type||'').startsWith('COURSE —')
@@ -965,8 +926,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
 async function refreshAll(){
   await loadToday()
   if(!$('tab-cal').classList.contains('hide'))await loadCalendar()
-  if(!$('tab-goals').classList.contains('hide'))await loadGoals()
-  if(!$('tab-prog').classList.contains('hide'))await loadProgression()}
+  if(!$('tab-prog').classList.contains('hide'))await loadProgression()
+  if(!$('tab-goals').classList.contains('hide'))await loadGoals()}
 
 async function loadReview(s){
   const box=$('rev-box');if(!box)return
@@ -1307,7 +1268,7 @@ function renderMateriel(){
   for(const[k,lib]of Object.entries(MAT)){
     const d=document.createElement('div');d.className='sw'
     d.innerHTML=`<div class="t">${lib}</div>
-      <button class="toggle${matObj[k]?' on':''}" data-m="${k}"><i></i></button>`
+      <button class="toggle${matObj[k]?' on':''}"><i></i></button>`
     d.querySelector('button').onclick=e=>{
       matObj[k]=!matObj[k];e.currentTarget.classList.toggle('on',matObj[k])}
     box.appendChild(d)}}
@@ -1426,7 +1387,7 @@ document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'))
     b.classList.add('on')
-    for(const t of ['today','cal','prog','goals','health','gloss','coach'])
+    for(const t of ['today','cal','prog','goals','health','coach'])
       show($('tab-'+t),t===b.dataset.tab)
     if(b.dataset.tab==='cal')loadCalendar()
     if(b.dataset.tab==='prog')loadProgression()
@@ -1436,7 +1397,7 @@ document.querySelectorAll('nav button').forEach(b=>{
 
 async function route(){
   const{data:{session}}=await sb.auth.getSession()
-  const hideAll=()=>['today','cal','prog','goals','health','gloss','coach']
+  const hideAll=()=>['today','cal','prog','goals','health','coach']
     .forEach(t=>show($('tab-'+t),false))
   if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
     show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false)
@@ -1566,93 +1527,90 @@ $('btn-body').onclick=async()=>{
 
 async function loadProgression(){
   try{
-    const{data,error}=await sb.rpc('courbes_progression',{p_user_id:userId,p_mois:12})
+    const{data:rq,error:e1}=await sb.rpc('risque_surentrainement',{p_user_id:userId})
+    if(e1)throw e1
+    const col=rq.niveau==='eleve'?'var(--alert)'
+      :rq.niveau==='faible'?'var(--calm)':'var(--acc)'
+    let segs=''
+    for(let i=0;i<rq.signaux_possibles;i++)
+      segs+=`<i${i<rq.signaux_actifs?` style="background:${col}"`:''}></i>`
+    let sg=''
+    for(const s of (rq.detail||[]))
+      sg+=`<div class="sg"><b>${esc(s.nom)} — ${esc(s.valeur)}</b>${esc(s.sens)}</div>`
+    const box=$('rq-box');box.className='risq '+rq.niveau
+    box.innerHTML=`<div class="h">${NIVEAU[rq.niveau]} — ${rq.signaux_actifs} signal${
+      rq.signaux_actifs>1?'s':''} sur ${rq.signaux_possibles}</div>
+      <div class="seg">${segs}</div>
+      <div class="d">${esc(rq.conduite)}</div>${sg}`
+    show(box)
+    $('rq-methode').textContent=rq.methode
+    $('rq-limite').textContent=rq.limite
+    $('rq-consulter').textContent='Quand consulter — '+rq.quand_consulter
+
+    const ind=rq.indicateurs||{}
+    const carte=(k,v,s,ok)=>`<div class="c"><div class="k">${k}</div>
+      <div class="v">${v??'—'}</div>
+      <div class="s" style="color:${ok?'var(--calm)':'var(--acc)'}">${ok?'✓ ':''}${s}</div></div>`
+    $('rq-cards').innerHTML=
+      carte('Charge',ind.acwr,ind.acwr<=1.3?'zone sûre':'en hausse',ind.acwr<=1.3)
+      +carte('Variabilité',ind.vfc_7j,
+        ind.vfc_reference?'référence '+ind.vfc_reference:'—',
+        ind.vfc_reference?ind.vfc_7j>=ind.vfc_reference*0.93:true)
+      +carte('Monotonie',ind.monotonie,
+        ind.monotonie<2?'bien contrastée':'trop uniforme',ind.monotonie<2)
+      +carte('Contrainte',ind.contrainte,'seuil 4000',ind.contrainte<=4000)
+
+    const pf=ind.pct_seances_faciles
+    if(pf!=null){
+      $('rp-pct').textContent=pf+' %'
+      $('rp-pct').style.color=pf>=70?'var(--calm)':'var(--alert)'
+      $('rp-fac').style.cssText=`width:${pf}%;background:var(--calm)`
+      $('rp-dur').style.cssText=`width:${100-pf}%;background:var(--alert)`
+      $('rp-txt').textContent=pf>=70
+        ?"Répartition saine. Le volume facile construit le fond, l'intensité ajoute la vitesse."
+        :"Une répartition saine tient environ 80 % de facile. Trop d'intensité produit de la fatigue chronique sans gain supplémentaire."
+    }else{$('rp-pct').textContent='—'
+      $('rp-txt').textContent='Pas encore assez de séances classées.'}
+
+    const{data,error}=await sb.rpc('tableau_4_semaines',{p_user_id:userId})
     if(error)throw error
-    $('prog-prudence').textContent=data.prudence
+    const r=data.resume||{}
+    $('p4-periode').textContent=data.periode
+    $('p4-comp').textContent=data.comparaison+'. '+data.seuil
+    $('p4-reserve').textContent=data.lecture_sens+' '+data.reserve
+    $('p4-resume').innerHTML=`
+      <div><div class="v">${r.heures??'—'}</div><div class="k">heures</div></div>
+      <div><div class="v">${r.seances??0}</div><div class="k">séances</div></div>
+      <div><div class="v">${r.tss??0}</div><div class="k">TSS</div></div>
+      <div><div class="v">${r.dures??0}</div><div class="k">dures</div></div>
+      <div><div class="v" style="color:${r.trop_intenses?'var(--alert)':'var(--ink)'}">${
+        r.trop_intenses??0}</div><div class="k">trop intenses</div></div>
+      <div><div class="v">${r.seances?Math.round((r.seances-(r.dures||0))/r.seances*100):'—'}</div>
+        <div class="k">% facile</div></div>`
 
-    const rep=data.repartition_filieres||[]
-    const tot=rep.reduce((a,m)=>({
-      E:a.E+(m.endurance||0),EM:a.EM+(m.seuil||0),EA:a.EA+(m.vma||0),
-      X:a.X+(m.trop_intenses||0)}),{E:0,EM:0,EA:0,X:0})
-    const n=tot.E+tot.EM+tot.EA
-    $('prog-resume').innerHTML=`
-      <div><div class="v">${n}</div><div class="k">Séances classées</div></div>
-      <div><div class="v">${n?Math.round(tot.E/n*100):'—'}</div><div class="k">% endurance</div></div>
-      <div><div class="v" style="color:${tot.X?'var(--alert)':'var(--ink)'}">${tot.X}</div>
-        <div class="k">Trop intenses</div></div>`
-    $('fil-sum').textContent=rep.length+' mois'
-
-    const fb=$('filieres');fb.innerHTML=''
-    if(!rep.length)fb.innerHTML='<p class="none">Pas encore de séances classées.</p>'
-    for(const m of rep){
-      const t=(m.endurance||0)+(m.seuil||0)+(m.vma||0)||1
+    const box2=$('p4-lignes');box2.innerHTML=''
+    const lignes=data.lignes||[]
+    if(!lignes.length)box2.innerHTML='<p class="none">Aucune séance classée sur 4 semaines.</p>'
+    for(const l of lignes){
+      const prog=l.sens==='progres',rec=l.sens==='recul'
       const d=document.createElement('div');d.className='tg'
-      d.innerHTML=`<div class="r1"><span>${fmtMois(m.mois)}</span>
-          <span class="vv">${t} séance${t>1?'s':''}</span></div>
-        <div class="stack">
-          <i style="background:var(--calm);width:${(m.endurance||0)/t*100}%"></i>
-          <i style="background:var(--acc);width:${(m.seuil||0)/t*100}%"></i>
-          <i style="background:var(--force);width:${(m.vma||0)/t*100}%"></i></div>
-        <div class="r2">Endurance ${m.endurance||0} · Seuil ${m.seuil||0} · VMA ${m.vma||0}${
-          m.trop_intenses?` · <b style="color:var(--alert)">${m.trop_intenses} trop intense${
-            m.trop_intenses>1?'s':''}</b>`:''}</div>`
-      fb.appendChild(d)}
-
-    const eff=data.efficience||[]
-    const mois=[...new Set(eff.map(e=>e.mois))].sort()
-    const serie=d=>({col:d==='course'?'#C8492A':'#B86A08',
-      pts:mois.map(m=>({x:m,y:eff.find(e=>e.mois===m&&e.discipline===d)?.efficience??null}))})
-    ligne($('eff-svg'),[serie('course'),serie('velo')])
-    $('eff-axe').innerHTML=mois.length
-      ?`<span>${fmtMois(mois[0])}</span><span>${fmtMois(mois[mois.length-1])}</span>`:''
-    $('eff-sum').textContent=mois.length?mois.length+' mois':'en attente'
-    $('eff-lecture').textContent=data.lecture_efficience
-
-    const vol=data.volume||[]
-    $('vol-sum').textContent=vol.length?
-      Math.round(vol.reduce((a,v)=>a+Number(v.heures||0),0))+' h au total':'—'
-    const vb=$('volume');vb.innerHTML=''
-    const maxH=Math.max(...vol.map(v=>Number(v.heures)||0),1)
-    for(const v of vol){
-      const d=document.createElement('div');d.className='tg'
-      d.innerHTML=`<div class="r1"><span>${fmtMois(v.mois)}</span>
-          <span class="vv">${v.heures} h${v.tss?` · ${v.tss} TSS`:''}</span></div>
-        <div class="stack" style="width:${Number(v.heures)/maxH*100}%;min-width:14%">
-          <i style="background:var(--cap);width:${Number(v.h_course)/Number(v.heures)*100}%"></i>
-          <i style="background:var(--velo);width:${Number(v.h_velo)/Number(v.heures)*100}%"></i>
-          <i style="background:var(--nat);width:${Number(v.h_natation)/Number(v.heures)*100}%"></i></div>
-        <div class="r2">Course ${v.h_course} h · Vélo ${v.h_velo} h · Natation ${v.h_natation} h</div>`
-      vb.appendChild(d)}
-
-    const cap=data.capacite||[]
-    $('cap-sum').textContent=cap.length+' lignes'
-    const t=$('capacite');t.innerHTML=''
-    const hd=document.createElement('tr')
-    hd.innerHTML='<th>Mois</th><th>Disc.</th><th>Filière</th><th style="text-align:right">Valeur</th>'
-    t.appendChild(hd)
-    for(const c of cap){
-      const tr=document.createElement('tr')
-      const val=c.watts_moy?`${c.watts_moy} W`
-        :c.s_par_km?`${Math.floor(c.s_par_km/60)}:${String(Math.round(c.s_par_km%60)).padStart(2,'0')}/km`
-        :c.fc_moy?`${c.fc_moy} bpm`:'—'
-      tr.innerHTML=`<td>${fmtMois(c.mois)}</td><td>${LABEL[c.discipline]}</td>
-        <td class="tp">${QUAL[c.qualite]??c.qualite}</td>
-        <td class="th">${val}<br><span style="font-size:9px;color:var(--faint)">${c.seances} séances</span></td>`
-      t.appendChild(tr)}
-
-    const tests=data.tests||[]
-    $('tst-sum').textContent=tests.length+' tests'
-    const tb=$('tests-hist');tb.innerHTML=''
-    if(!tests.length)tb.innerHTML='<p class="none">Aucun test enregistré.</p>'
-    for(const x of tests){
-      const m=METRIC[x.metrique]??[x.metrique,'']
-      const d=document.createElement('div');d.className='kv'
-      d.innerHTML=`<div class="k">${new Date(x.date).toLocaleDateString('fr-FR',
-        {day:'numeric',month:'long',year:'numeric'})}</div>
-        <div class="v">${m[0]} : <b>${x.valeur} ${m[1]}</b></div>`
-      tb.appendChild(d)}
+      d.innerHTML=`<div class="r1">
+          <span>${LABEL[l.discipline]} · <span style="color:var(--acc)">${
+            QUAL[l.filiere]??l.filiere}</span></span>
+          <span class="vv">${esc(l.valeur??'—')}</span></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+          <span class="pill" style="background:${
+            prog?'var(--calm-soft)':rec?'var(--alert-soft)':'var(--panel-2)'};color:${
+            prog?'var(--calm)':rec?'var(--alert)':'var(--dim)'}">${
+            l.comparable&&l.ecart_pct!=null
+              ?`${prog?'▲':rec?'▼':'●'} ${Math.abs(l.ecart_pct)} %`:'1re fois'}</span>
+          <span style="font-size:11.5px;color:var(--faint)">${
+            l.valeur_avant?`avant ${esc(l.valeur_avant)} · `:''}${
+            l.seances_4s} séance${l.seances_4s>1?'s':''}${
+            l.seances_4s<3?', trop peu':''}</span></div>`
+      box2.appendChild(d)}
   }catch(e){
-    $('filieres').innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+    $('p4-lignes').innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
 
 async function loadBrief(){
   try{
@@ -1775,7 +1733,7 @@ async function loadToday(){
         pd.intensite_max}/10. ${pd.niveau==='arret'
         ?'Consulte un professionnel de santé avant de reprendre.'
         :pd.niveau==='reduction'?'Aucune intensité tant que la douleur est là.'
-        :'Note-la chaque jour : c\'est la persistance qui compte.'}</div>`
+        :"Note-la chaque jour : c'est la persistance qui compte."}</div>`
     show($('pain-alert'))}else show($('pain-alert'),false)
   $('pain-sum').textContent=pd?.niveau==='aucune'?'aucune':`${pd?.zones_actives??0} zone(s)`
 
@@ -2030,7 +1988,7 @@ async function loadGoals(){
     const el=document.createElement('div');el.className='tg'
     el.innerHTML=`<div class="r1"><span>${m[0]}${t.race_name?` — ${esc(t.race_name)}`:''}</span>
       <span class="vv">${isNaN(cur)?'—':cur} → ${tar} ${m[1]}</span></div>
-      <div class="bar" style="margin:0"><i style="width:${pct.toFixed(0)}%"></i></div>
+      <div class="bar" style="margin:6px 0 0"><i style="width:${pct.toFixed(0)}%"></i></div>
       <div class="r2">${t.days_left>0?`${t.days_left} jours`:'échéance passée'}</div>`
     tb.appendChild(el)}
 
