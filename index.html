@@ -133,6 +133,8 @@
   .tag.A{background:var(--alert-soft);color:var(--alert)}
   .tag.br{background:rgba(95,68,184,.12);color:var(--force)}
   .tag.man{background:var(--calm-soft);color:var(--calm)}
+  .tag.hot{background:var(--alert-soft);color:var(--alert)}
+  .tag.cold{background:rgba(11,127,191,.12);color:var(--nat)}
   .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
   .chip{font-size:10.5px;padding:3px 9px;border-radius:6px;background:var(--panel-2);
     color:var(--dim);font-weight:500}
@@ -143,6 +145,11 @@
   .acwr .h{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
   .acwr .d{font-size:12.5px;line-height:1.45;margin-top:3px}
   .spark{width:100%;height:38px;display:block;margin-top:12px}
+  .courbe{width:100%;height:130px;display:block;margin:6px 0 4px}
+  .cleg{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--dim);
+    margin-bottom:4px}
+  .cleg i{display:inline-block;width:12px;height:3px;border-radius:2px;
+    margin-right:5px;vertical-align:2px}
   .jauge{display:flex;align-items:center;gap:16px}
   .jauge svg{flex:0 0 74px}
   .wk{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
@@ -159,6 +166,8 @@
     letter-spacing:.06em;margin-top:3px}
   .bar{height:4px;background:var(--panel-2);border-radius:2px;overflow:hidden;margin:0 0 11px}
   .bar i{display:block;height:100%;background:var(--calm);border-radius:2px}
+  .stack{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:3px 0 2px}
+  .stack i{display:block;height:100%}
   .prep{font-size:11.5px;color:var(--dim);margin-bottom:10px}
   .prep b{color:var(--acc);font-weight:600}
   .rc{display:flex;align-items:center;gap:14px;padding:14px 0;cursor:pointer}
@@ -229,6 +238,18 @@
     overflow:hidden;margin-top:10px}
   .prog .pb i{display:block;height:100%;background:var(--calm);border-radius:2px}
   .prog .pr{font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.45}
+  .ecart{border-radius:10px;padding:13px;margin:12px 0}
+  .ecart.trop_intense{background:var(--alert-soft);border-left:3px solid var(--alert)}
+  .ecart.trop_facile{background:var(--acc-soft);border-left:3px solid var(--acc)}
+  .ecart.conforme{background:var(--calm-soft);border-left:3px solid var(--calm)}
+  .ecart.differente{background:var(--panel-2);border-left:3px solid var(--faint)}
+  .ecart .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.06em}
+  .ecart.trop_intense .h{color:var(--alert)}
+  .ecart.trop_facile .h{color:var(--acc)}
+  .ecart.conforme .h{color:var(--calm)}
+  .ecart .d{font-size:13px;margin-top:5px;line-height:1.5;color:var(--ink)}
+  .ecart .src{font-size:11px;color:var(--dim);margin-top:7px;line-height:1.4}
   .floor{background:var(--panel-2);border-radius:10px;padding:13px;margin-top:12px}
   .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--acc);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600}
@@ -466,6 +487,8 @@
         <p id="sync-note" class="nt"></p>
         <button id="btn-push" class="gh" style="width:100%;margin-top:10px">Envoyer 14 jours à la montre</button>
         <p id="push-note" class="nt"></p>
+        <button id="btn-classer" class="gh" style="width:100%;margin-top:10px">Reclasser mes séances</button>
+        <p id="classer-note" class="nt"></p>
         <p class="warn">Une maintenance tourne chaque nuit : clôture des séances non
           faites, replanification si une séance clé a sauté, recalcul de la charge.</p>
       </div>
@@ -484,6 +507,65 @@
       <div id="cal-prochaine"></div>
     </div>
     <div id="cal-weeks"></div>
+  </section>
+
+  <section id="tab-prog" class="hide">
+    <div class="lbl">Progression</div>
+    <div class="panel">
+      <p class="hint" id="prog-intro">Ces courbes reposent sur ce que tu as
+        <b>réellement</b> fait, classé par les données de chaque séance, et non sur
+        ce qui était prévu.</p>
+      <div class="met" id="prog-resume"></div>
+      <p class="warn" id="prog-prudence"></p>
+    </div>
+
+    <details class="panel" open>
+      <summary>Filières travaillées <span id="fil-sum"></span></summary>
+      <div class="inner">
+        <p class="hint">Répartition réelle mois par mois. La barre rouge compte les
+          séances prévues en endurance mais réalisées au-dessus.</p>
+        <div id="filieres"></div>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Efficience <span id="eff-sum"></span></summary>
+      <div class="inner">
+        <div class="cleg">
+          <span><i style="background:var(--cap)"></i>Course</span>
+          <span><i style="background:var(--velo)"></i>Vélo</span>
+        </div>
+        <svg class="courbe" id="eff-svg" viewBox="0 0 300 130" preserveAspectRatio="none"></svg>
+        <div id="eff-axe" class="cleg" style="justify-content:space-between"></div>
+        <p class="nt" id="eff-lecture"></p>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Volume mensuel <span id="vol-sum"></span></summary>
+      <div class="inner">
+        <div class="cleg">
+          <span><i style="background:var(--cap)"></i>Course</span>
+          <span><i style="background:var(--velo)"></i>Vélo</span>
+          <span><i style="background:var(--nat)"></i>Natation</span>
+        </div>
+        <div id="volume"></div>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Capacité par filière <span id="cap-sum"></span></summary>
+      <div class="inner">
+        <p class="hint">Moyennes mensuelles par discipline et filière réellement
+          travaillée. Les mois comptant moins de deux séances sont écartés.</p>
+        <div style="overflow-x:auto"><table id="capacite"></table></div>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Tests <span id="tst-sum"></span></summary>
+      <div class="inner"><div id="tests-hist"></div></div>
+    </details>
   </section>
 
   <section id="tab-goals" class="hide">
@@ -675,7 +757,7 @@
       </div>
     </details>
     <details class="panel">
-      <summary>Idées de repas</summary>
+      <summary>Idées de repas <button id="btn-meals" class="gh sm">Actualiser</button></summary>
       <div class="inner">
         <p class="nt" id="meal-cadre" style="margin:0 0 4px"></p>
         <div id="meals"></div>
@@ -716,9 +798,9 @@
 <nav id="nav" class="hide"><div class="in">
   <button data-tab="today" class="on"><span class="ic">◉</span>Jour</button>
   <button data-tab="cal"><span class="ic">▤</span>Plan</button>
+  <button data-tab="prog"><span class="ic">◪</span>Progrès</button>
   <button data-tab="goals"><span class="ic">▲</span>Saison</button>
   <button data-tab="health"><span class="ic">◇</span>Santé</button>
-  <button data-tab="gloss"><span class="ic">≡</span>Lexique</button>
   <button data-tab="coach"><span class="ic">✦</span>Coach</button>
 </div></nav>
 
@@ -745,6 +827,8 @@ const ABILITY={endurance_aerobie:'Endurance',technique:'Technique',
   endurance_anaerobie:'Endurance anaérobie',vitesse_sprint:'Vitesse au sprint',
   simulation_course:'Simulation de course',intensite_course:'Intensité de course'}
 const QUAL={E:'Endurance',EM:'Seuil',EA:'VMA / PMA',F:'Force',V:'Vitesse'}
+const ECART={conforme:'Conforme à l\'intention',trop_intense:'Réalisée trop intense',
+  trop_facile:'Réalisée trop facile',differente:'Filière différente'}
 const MAT={home_trainer:'Home-trainer',capteur_puissance:'Capteur de puissance',
   acces_piscine:'Accès piscine',salle_muscu:'Salle de musculation',
   velo_route:'Vélo de route',eau_libre:'Accès eau libre'}
@@ -765,6 +849,8 @@ function fmtDay(s){const d=new Date(s+'T00:00:00'),t=new Date();t.setHours(0,0,0
   const n=Math.round((d-t)/86400000)
   if(n===0)return "aujourd'hui";if(n===1)return 'demain';if(n===-1)return 'hier'
   return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}
+function fmtMois(m){const[y,mm]=m.split('-')
+  return new Date(y,mm-1,1).toLocaleDateString('fr-FR',{month:'short'})}
 function fmtGoal(t){if(!t)return '—'
   const[h,m]=String(t).split(':');return Number(h)>0?`${Number(h)}h${m}`:`${Number(m)} min`}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>
@@ -804,6 +890,45 @@ function arc(svg,size,r,w,pct,col,txt,sub){
     s.setAttribute('fill','#8A9BA8');s.setAttribute('font-size','9.5')
     s.setAttribute('font-family','Inter, sans-serif');s.textContent=sub;svg.appendChild(s)}}
 
+// Courbe multi-séries, avec points visibles
+function ligne(svg,series,W=300,H=130){
+  svg.innerHTML=''
+  const all=series.flatMap(s=>s.pts.map(p=>p.y)).filter(v=>v!=null&&!isNaN(v))
+  if(all.length<2){
+    const t=document.createElementNS(NS,'text')
+    t.setAttribute('x',W/2);t.setAttribute('y',H/2);t.setAttribute('text-anchor','middle')
+    t.setAttribute('fill','#8A9BA8');t.setAttribute('font-size','11')
+    t.setAttribute('font-family','Inter, sans-serif')
+    t.textContent='Pas assez de points pour tracer une tendance'
+    svg.appendChild(t);return}
+  const min=Math.min(...all),max=Math.max(...all)
+  const span=(max-min)||1,pad=span*0.15
+  const lo=min-pad,hi=max+pad
+  const labels=[...new Set(series.flatMap(s=>s.pts.map(p=>p.x)))].sort()
+  const X=i=>labels.length<2?W/2:12+(i/(labels.length-1))*(W-24)
+  const Y=v=>H-14-((v-lo)/(hi-lo))*(H-28)
+  for(let g=0;g<=2;g++){
+    const y=14+g*((H-28)/2)
+    const l=document.createElementNS(NS,'line')
+    l.setAttribute('x1',0);l.setAttribute('x2',W)
+    l.setAttribute('y1',y);l.setAttribute('y2',y)
+    l.setAttribute('stroke','#EEF2F6');l.setAttribute('stroke-width','1')
+    svg.appendChild(l)}
+  for(const s of series){
+    const pts=s.pts.filter(p=>p.y!=null&&!isNaN(p.y))
+      .map(p=>({x:X(labels.indexOf(p.x)),y:Y(p.y)}))
+    if(pts.length>1){
+      const path=document.createElementNS(NS,'polyline')
+      path.setAttribute('points',pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '))
+      path.setAttribute('fill','none');path.setAttribute('stroke',s.col)
+      path.setAttribute('stroke-width','2');path.setAttribute('stroke-linejoin','round')
+      path.setAttribute('stroke-linecap','round');svg.appendChild(path)}
+    for(const p of pts){
+      const c=document.createElementNS(NS,'circle')
+      c.setAttribute('cx',p.x.toFixed(1));c.setAttribute('cy',p.y.toFixed(1))
+      c.setAttribute('r','3');c.setAttribute('fill',s.col);svg.appendChild(c)}}
+  return labels}
+
 function sessionRow(s){
   const el=document.createElement('div')
   const isRace=(s.session_type||'').startsWith('COURSE —')
@@ -814,11 +939,14 @@ function sessionRow(s){
     ?(s.completed_data?.duration_min||''):(s.duration_planned_min||'')
   const load=s.completed_data?.training_load
   const nom=isRace?s.session_type.replace('COURSE — ','🏁 '):s.session_type
+  const ec=s.ecart_intention
   el.innerHTML=`<div class="k k-${s.discipline}"></div>
     <div class="mid"><div class="t">${s.status==='completed'?'✓ ':''}${
       esc(nom||LABEL[s.discipline])}${
       s.brick_type?'<span class="tag br">imbriquée</span>':''}${
       manuel?'<span class="tag man">saisie</span>':''}${
+      ec==='trop_intense'?'<span class="tag hot">trop intense</span>':''}${
+      ec==='trop_facile'?'<span class="tag cold">trop facile</span>':''}${
       s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
     <div class="u">${isRace?'Jour de course':LABEL[s.discipline]??''} · ${
       fmtDay(s.session_date)}</div></div>
@@ -837,7 +965,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
 async function refreshAll(){
   await loadToday()
   if(!$('tab-cal').classList.contains('hide'))await loadCalendar()
-  if(!$('tab-goals').classList.contains('hide'))await loadGoals()}
+  if(!$('tab-goals').classList.contains('hide'))await loadGoals()
+  if(!$('tab-prog').classList.contains('hide'))await loadProgression()}
 
 async function loadReview(s){
   const box=$('rev-box');if(!box)return
@@ -855,6 +984,24 @@ async function loadReview(s){
       ${kv('Bénéfices',data.benefices)}${kv('Rôle dans le bloc',data.role_bloc)}
       ${kv('Récupération',data.recuperation)}${kv('Jours suivants',data.demain)}`
   }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+
+async function loadClassement(s){
+  const box=$('cls-box');if(!box)return
+  try{
+    const{data,error}=await sb.rpc('classer_seance',{p_session_id:s.id})
+    if(error)throw error
+    if(!data?.qualite_reelle){
+      box.innerHTML=`<p class="none">${esc(data?.message||'Non classable.')}</p>`;return}
+    box.innerHTML=`<div class="ecart ${data.ecart}">
+      <div class="h">${ECART[data.ecart]}</div>
+      <div class="d">Prévu : ${QUAL[data.qualite_prevue]??data.qualite_prevue} ·
+        Réalisé : <b>${QUAL[data.qualite_reelle]??data.qualite_reelle}</b></div>
+      <div class="d">${esc(data.lecture)}</div>
+      <div class="src">Classé par ${esc(data.source)}${
+        data.pct_ftp?` — ${data.pct_ftp} % de FTP`:''}${
+        data.pct_fc_max?`, ${data.pct_fc_max} % de FC max`:''}.${
+        data.reserve?' '+esc(data.reserve):''}</div></div>`
+  }catch(e){box.innerHTML=''}}
 
 function attachActions(s){
   const bp=$('s-push')
@@ -952,7 +1099,7 @@ async function openSheet(s){
         <div><div class="v">${cd.avg_power?Math.round(cd.avg_power):'—'}</div><div class="k">W moy</div></div>
         <div><div class="v">${cd.ressenti_10??(cd.elevation_m?Math.round(cd.elevation_m):'—')}</div>
           <div class="k">${cd.ressenti_10?'ressenti':'D+ m'}</div></div>
-      </div>`
+      </div><div id="cls-box"></div>`
       const iv=cd.intervalles
       if(iv){
         head+=`<div class="zone"><div class="zk">Structure réalisée</div>
@@ -968,7 +1115,7 @@ async function openSheet(s){
       if(cd.note)head+=`<div class="kv"><div class="k">Ta note</div><div class="v">${esc(cd.note)}</div></div>`
       head+=`<div class="lbl">Analyse</div><div id="rev-box"></div>`
       if(manuel)head+=`<button id="s-undo" class="dg" style="width:100%;margin-top:14px">Annuler cette validation</button>`
-      openRaw(head);loadReview(s);attachActions(s);return}
+      openRaw(head);loadClassement(s);loadReview(s);attachActions(s);return}
 
     const{data,error}=await sb.rpc('session_plan',{p_session_id:s.id})
     if(error)throw error
@@ -1265,21 +1412,31 @@ $('tg-fm').onclick=async()=>{
   }catch(e){$('fm-note').textContent=e.message;$('fm-note').style.color='var(--alert)'}
   finally{$('tg-fm').disabled=false}}
 
+$('btn-classer').onclick=async()=>{
+  const b=$('btn-classer');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('classer_historique',{p_user_id:userId})
+    if(error)throw error
+    $('classer-note').textContent=`${data.classees} séance(s) classées par leurs données, dont ${data.ecarts} avec un écart à l'intention.`
+    $('classer-note').style.color='var(--calm)';await refreshAll()
+  }catch(e){$('classer-note').textContent=e.message;$('classer-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Reclasser mes séances'}}
+
 document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'))
     b.classList.add('on')
-    for(const t of ['today','cal','goals','health','gloss','coach'])
+    for(const t of ['today','cal','prog','goals','health','gloss','coach'])
       show($('tab-'+t),t===b.dataset.tab)
     if(b.dataset.tab==='cal')loadCalendar()
+    if(b.dataset.tab==='prog')loadProgression()
     if(b.dataset.tab==='goals')loadGoals()
     if(b.dataset.tab==='health')loadHealth()
-    if(b.dataset.tab==='gloss')loadGloss()
     window.scrollTo({top:0})}})
 
 async function route(){
   const{data:{session}}=await sb.auth.getSession()
-  const hideAll=()=>['today','cal','goals','health','gloss','coach']
+  const hideAll=()=>['today','cal','prog','goals','health','gloss','coach']
     .forEach(t=>show($('tab-'+t),false))
   if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
     show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false)
@@ -1407,6 +1564,96 @@ $('btn-body').onclick=async()=>{
   }catch(e){$('body-note').textContent=e.message;$('body-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Enregistrer'}}
 
+async function loadProgression(){
+  try{
+    const{data,error}=await sb.rpc('courbes_progression',{p_user_id:userId,p_mois:12})
+    if(error)throw error
+    $('prog-prudence').textContent=data.prudence
+
+    const rep=data.repartition_filieres||[]
+    const tot=rep.reduce((a,m)=>({
+      E:a.E+(m.endurance||0),EM:a.EM+(m.seuil||0),EA:a.EA+(m.vma||0),
+      X:a.X+(m.trop_intenses||0)}),{E:0,EM:0,EA:0,X:0})
+    const n=tot.E+tot.EM+tot.EA
+    $('prog-resume').innerHTML=`
+      <div><div class="v">${n}</div><div class="k">Séances classées</div></div>
+      <div><div class="v">${n?Math.round(tot.E/n*100):'—'}</div><div class="k">% endurance</div></div>
+      <div><div class="v" style="color:${tot.X?'var(--alert)':'var(--ink)'}">${tot.X}</div>
+        <div class="k">Trop intenses</div></div>`
+    $('fil-sum').textContent=rep.length+' mois'
+
+    const fb=$('filieres');fb.innerHTML=''
+    if(!rep.length)fb.innerHTML='<p class="none">Pas encore de séances classées.</p>'
+    for(const m of rep){
+      const t=(m.endurance||0)+(m.seuil||0)+(m.vma||0)||1
+      const d=document.createElement('div');d.className='tg'
+      d.innerHTML=`<div class="r1"><span>${fmtMois(m.mois)}</span>
+          <span class="vv">${t} séance${t>1?'s':''}</span></div>
+        <div class="stack">
+          <i style="background:var(--calm);width:${(m.endurance||0)/t*100}%"></i>
+          <i style="background:var(--acc);width:${(m.seuil||0)/t*100}%"></i>
+          <i style="background:var(--force);width:${(m.vma||0)/t*100}%"></i></div>
+        <div class="r2">Endurance ${m.endurance||0} · Seuil ${m.seuil||0} · VMA ${m.vma||0}${
+          m.trop_intenses?` · <b style="color:var(--alert)">${m.trop_intenses} trop intense${
+            m.trop_intenses>1?'s':''}</b>`:''}</div>`
+      fb.appendChild(d)}
+
+    const eff=data.efficience||[]
+    const mois=[...new Set(eff.map(e=>e.mois))].sort()
+    const serie=d=>({col:d==='course'?'#C8492A':'#B86A08',
+      pts:mois.map(m=>({x:m,y:eff.find(e=>e.mois===m&&e.discipline===d)?.efficience??null}))})
+    ligne($('eff-svg'),[serie('course'),serie('velo')])
+    $('eff-axe').innerHTML=mois.length
+      ?`<span>${fmtMois(mois[0])}</span><span>${fmtMois(mois[mois.length-1])}</span>`:''
+    $('eff-sum').textContent=mois.length?mois.length+' mois':'en attente'
+    $('eff-lecture').textContent=data.lecture_efficience
+
+    const vol=data.volume||[]
+    $('vol-sum').textContent=vol.length?
+      Math.round(vol.reduce((a,v)=>a+Number(v.heures||0),0))+' h au total':'—'
+    const vb=$('volume');vb.innerHTML=''
+    const maxH=Math.max(...vol.map(v=>Number(v.heures)||0),1)
+    for(const v of vol){
+      const d=document.createElement('div');d.className='tg'
+      d.innerHTML=`<div class="r1"><span>${fmtMois(v.mois)}</span>
+          <span class="vv">${v.heures} h${v.tss?` · ${v.tss} TSS`:''}</span></div>
+        <div class="stack" style="width:${Number(v.heures)/maxH*100}%;min-width:14%">
+          <i style="background:var(--cap);width:${Number(v.h_course)/Number(v.heures)*100}%"></i>
+          <i style="background:var(--velo);width:${Number(v.h_velo)/Number(v.heures)*100}%"></i>
+          <i style="background:var(--nat);width:${Number(v.h_natation)/Number(v.heures)*100}%"></i></div>
+        <div class="r2">Course ${v.h_course} h · Vélo ${v.h_velo} h · Natation ${v.h_natation} h</div>`
+      vb.appendChild(d)}
+
+    const cap=data.capacite||[]
+    $('cap-sum').textContent=cap.length+' lignes'
+    const t=$('capacite');t.innerHTML=''
+    const hd=document.createElement('tr')
+    hd.innerHTML='<th>Mois</th><th>Disc.</th><th>Filière</th><th style="text-align:right">Valeur</th>'
+    t.appendChild(hd)
+    for(const c of cap){
+      const tr=document.createElement('tr')
+      const val=c.watts_moy?`${c.watts_moy} W`
+        :c.s_par_km?`${Math.floor(c.s_par_km/60)}:${String(Math.round(c.s_par_km%60)).padStart(2,'0')}/km`
+        :c.fc_moy?`${c.fc_moy} bpm`:'—'
+      tr.innerHTML=`<td>${fmtMois(c.mois)}</td><td>${LABEL[c.discipline]}</td>
+        <td class="tp">${QUAL[c.qualite]??c.qualite}</td>
+        <td class="th">${val}<br><span style="font-size:9px;color:var(--faint)">${c.seances} séances</span></td>`
+      t.appendChild(tr)}
+
+    const tests=data.tests||[]
+    $('tst-sum').textContent=tests.length+' tests'
+    const tb=$('tests-hist');tb.innerHTML=''
+    if(!tests.length)tb.innerHTML='<p class="none">Aucun test enregistré.</p>'
+    for(const x of tests){
+      const m=METRIC[x.metrique]??[x.metrique,'']
+      const d=document.createElement('div');d.className='kv'
+      d.innerHTML=`<div class="k">${new Date(x.date).toLocaleDateString('fr-FR',
+        {day:'numeric',month:'long',year:'numeric'})}</div>
+        <div class="v">${m[0]} : <b>${x.valeur} ${m[1]}</b></div>`
+      tb.appendChild(d)}
+  }catch(e){
+    $('filieres').innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+
 async function loadBrief(){
   try{
     const{data,error}=await sb.functions.invoke('daily-brief',{body:{}})
@@ -1490,37 +1737,6 @@ async function loadProjection(){
       box.appendChild(el)}
     $('proj-note').textContent=data.reserve
   }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
-
-async function loadGloss(){
-  const box=$('gloss')
-  if(!glossCache){
-    box.innerHTML='<div class="panel"><p class="none">Chargement…</p></div>'
-    const{data}=await sb.from('glossary').select('*').order('sort_order')
-    glossCache=data??[]}
-  renderGloss($('gl-search').value.trim().toLowerCase())}
-
-function renderGloss(q){
-  const box=$('gloss');box.innerHTML=''
-  const rows=(glossCache||[]).filter(g=>!q||
-    g.term.toLowerCase().includes(q)||g.short.toLowerCase().includes(q)||
-    g.detail.toLowerCase().includes(q))
-  if(!rows.length){box.innerHTML='<div class="panel"><p class="none">Aucun terme.</p></div>';return}
-  const cats={}
-  for(const g of rows){(cats[g.category]=cats[g.category]||[]).push(g)}
-  for(const[cat,items]of Object.entries(cats)){
-    const d=document.createElement('details');d.className='panel'
-    if(q)d.open=true
-    let inner=''
-    for(const g of items){
-      inner+=`<div class="gl"><div class="t">${esc(g.term)}<em>${esc(g.short)}</em></div>
-        <div class="d">${esc(g.detail)}</div>
-        ${g.how?`<div class="h"><b>En pratique</b>${esc(g.how)}</div>`:''}</div>`}
-    d.innerHTML=`<summary>${esc(cat)}<span>${items.length}</span></summary>
-      <div class="inner">${inner}</div>`
-    box.appendChild(d)}}
-
-$('gl-search').addEventListener('input',e=>{
-  if(glossCache)renderGloss(e.target.value.trim().toLowerCase())})
 
 async function loadToday(){
   const today=iso(new Date()),monday=iso(mondayOf(new Date()))
@@ -1623,9 +1839,8 @@ async function loadToday(){
     show($('floor'))}else show($('floor'),false)
 
   const w=atp.data
-  let txt=w?`${w.period} · ${w.volume_hours} h${
+  $('today-week').textContent=w?`${w.period} · ${w.volume_hours} h${
     w.strength_phase?` · ${FORCE[w.strength_phase]??w.strength_phase}`:''}`:''
-  $('today-week').textContent=txt
   const c=$('today-chips');c.innerHTML='';if(w?.abilities)c.appendChild(chipsFor(w.abilities))}
 
 function drawSpark(v){
@@ -1655,15 +1870,13 @@ async function loadCalendar(){
   const atpBy=new Map((atpRes.data??[]).map(w=>[w.week_start,w]))
   const races=racesRes.data??[]
 
-  // Rappel de la prochaine course hors de la fenêtre affichée
   const pb=$('cal-prochaine');pb.innerHTML=''
   const hors=races.find(r=>r.race_date>iso(end))
   const dansFenetre=races.some(r=>r.race_date>=iso(start)&&r.race_date<=iso(end))
   if(hors&&!dansFenetre){
-    const j=joursJusqua(hors.race_date)
     const b=document.createElement('div');b.className='bandeau'
     b.style.marginTop='10px';b.style.marginBottom='0'
-    b.innerHTML=`Prochaine course dans ${j} jours — ${esc(hors.name)}
+    b.innerHTML=`Prochaine course dans ${joursJusqua(hors.race_date)} jours — ${esc(hors.name)}
       <em>${new Date(hors.race_date+'T00:00:00').toLocaleDateString('fr-FR',
         {weekday:'long',day:'numeric',month:'long'})} · ${
         FORMAT[hors.distance]??hors.distance}</em>`
@@ -1683,7 +1896,6 @@ async function loadCalendar(){
       <span class="p">${meta?esc(meta.period):''}</span>`
     card.appendChild(head)
 
-    // Bandeau de course sur la semaine concernée
     const courseSem=races.filter(r=>r.race_date>=iso(wStart)&&r.race_date<=iso(wEnd))
     for(const cr of courseSem){
       const b=document.createElement('div');b.className='bandeau'
@@ -1841,6 +2053,27 @@ async function loadGoals(){
       <td class="th">${w.volume_hours}</td>`
     t.appendChild(tr)}}
 
+async function loadMeals(force){
+  const mBox=$('meals');mBox.innerHTML='<p class="none">Chargement…</p>'
+  try{
+    const{data,error}=await sb.functions.invoke('meal-ideas',
+      {body:force?{force:true}:{}})
+    if(error)throw error
+    if(data?.error)throw new Error(data.error)
+    $('meal-cadre').textContent=data.cadre||''
+    mBox.innerHTML=''
+    for(const r of (data.repas||[])){
+      const d=document.createElement('div');d.className='meal'
+      d.innerHTML=`<div class="mm">${esc(r.moment)}</div>
+        <div class="mt">${esc(r.titre)}</div>
+        <div class="md">${esc(r.description)}</div>
+        ${r.pourquoi?`<div class="mp">${esc(r.pourquoi)}</div>`:''}`
+      mBox.appendChild(d)}
+    $('meal-note').textContent=(data.astuce?data.astuce+' ':'')+(data.note||'')
+  }catch(e){mBox.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+
+$('btn-meals').onclick=e=>{e.preventDefault();e.stopPropagation();loadMeals(true)}
+
 async function loadHealth(){
   const hBox=$('health')
   hBox.innerHTML='<p class="none">Chargement…</p>'
@@ -1915,22 +2148,7 @@ async function loadHealth(){
       $('fuel-warn').textContent=md.avertissement}
   }catch(e){}
 
-  const mBox=$('meals');mBox.innerHTML='<p class="none">Chargement…</p>'
-  try{
-    const{data,error}=await sb.functions.invoke('meal-ideas',{body:{}})
-    if(error)throw error
-    if(data?.error)throw new Error(data.error)
-    $('meal-cadre').textContent=data.cadre||''
-    mBox.innerHTML=''
-    for(const r of (data.repas||[])){
-      const d=document.createElement('div');d.className='meal'
-      d.innerHTML=`<div class="mm">${esc(r.moment)}</div>
-        <div class="mt">${esc(r.titre)}</div>
-        <div class="md">${esc(r.description)}</div>
-        ${r.pourquoi?`<div class="mp">${esc(r.pourquoi)}</div>`:''}`
-      mBox.appendChild(d)}
-    $('meal-note').textContent=(data.astuce?data.astuce+' ':'')+(data.note||'')
-  }catch(e){mBox.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+  loadMeals(false)}
 
 $('btn-plan').onclick=async()=>{
   const b=$('btn-plan');b.disabled=true;b.textContent='…'
@@ -1956,6 +2174,7 @@ $('btn-sync').onclick=async()=>{
     if(iv.echecs?.length)t+=` Échecs : ${iv.echecs.join(' · ')}`
     $('sync-note').textContent=t
     $('sync-note').style.color=iv.echecs?.length?'var(--acc)':'var(--calm)'
+    await sb.rpc('classer_historique',{p_user_id:userId})
     await refreshAll();await loadProjection();await loadSuggestions();await route()
   }catch(e){$('sync-note').textContent=e.message||'Échec.'
     $('sync-note').style.color='var(--alert)'}
