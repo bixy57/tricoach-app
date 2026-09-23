@@ -70,6 +70,15 @@
     font-variant-numeric:tabular-nums;line-height:1}
   .vit .k{font-size:9px;color:var(--faint);text-transform:uppercase;
     letter-spacing:.07em;margin-top:2px}
+  .next-race{display:flex;align-items:center;gap:14px;background:var(--acc);
+    color:#fff;border-radius:12px;padding:13px 16px;margin-top:10px}
+  .next-race .n{font-family:"Barlow Condensed",sans-serif;font-size:30px;
+    font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .next-race .n em{font-size:11px;font-style:normal;display:block;
+    font-family:Inter,sans-serif;opacity:.85;font-weight:500}
+  .next-race .d{flex:1;min-width:0}
+  .next-race .t{font-size:15px;font-weight:600}
+  .next-race .s{font-size:11.5px;opacity:.9;margin-top:2px}
   .alerte{background:var(--alert-soft);border-left:3px solid var(--alert);
     border-radius:10px;padding:13px 15px;margin-top:10px}
   .alerte .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;
@@ -109,8 +118,14 @@
     font-family:Inter,sans-serif}
   .s.done .t{color:var(--calm)}
   .s.skip .t{color:var(--faint);text-decoration:line-through}
-  .s.race{background:var(--acc-soft);margin:0 -10px;padding:12px 10px;border-radius:10px}
-  .s.race .t{color:var(--acc);font-weight:600}
+  .s.race{background:var(--acc-soft);margin:0 -10px;padding:14px 10px;
+    border-radius:10px;border-left:3px solid var(--acc)}
+  .s.race .t{color:var(--acc);font-weight:700;font-size:15px}
+  .s.race .u{color:var(--acc)}
+  .bandeau{background:var(--acc);color:#fff;border-radius:9px;padding:10px 12px;
+    margin-bottom:10px;font-weight:600;font-size:13.5px;line-height:1.35}
+  .bandeau em{font-style:normal;display:block;font-size:11px;opacity:.88;
+    font-weight:500;margin-top:2px}
   .tag{font-size:9px;padding:2px 6px;border-radius:5px;background:var(--panel-2);
     color:var(--dim);margin-left:5px;text-transform:uppercase;letter-spacing:.06em;
     font-weight:600;vertical-align:1px}
@@ -183,6 +198,8 @@
     font-variant-numeric:tabular-nums;text-align:right}
   .tp{color:var(--acc);font-weight:500}
   tr.now td{background:var(--acc-soft)}
+  tr.course td{background:var(--acc);color:#fff}
+  tr.course .tp{color:#fff;font-weight:700}
   .kv{padding:12px 0}
   .kv+.kv{border-top:1px solid var(--line)}
   .kv .k{font-size:9.5px;color:var(--faint);text-transform:uppercase;
@@ -306,6 +323,7 @@
   </header>
   <div id="msgbar" class="flash hide"></div>
   <div class="vit hide" id="vitals"></div>
+  <div class="next-race hide" id="next-race"></div>
   <div class="alerte hide" id="pain-alert"></div>
 
   <section id="view-auth" class="hide">
@@ -459,9 +477,11 @@
     <div class="panel">
       <div style="display:flex;gap:8px">
         <button id="cal-prev" class="gh sm" style="flex:1">← Précédent</button>
+        <button id="cal-today" class="gh sm" style="flex:0 0 auto">Aujourd'hui</button>
         <button id="cal-next" class="gh sm" style="flex:1">Suivant →</button>
       </div>
       <p class="ctr nt" id="cal-range"></p>
+      <div id="cal-prochaine"></div>
     </div>
     <div id="cal-weeks"></div>
   </section>
@@ -750,6 +770,8 @@ function fmtGoal(t){if(!t)return '—'
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 const NS='http://www.w3.org/2000/svg'
+const joursJusqua=d=>Math.round(
+  (new Date(d+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000)
 
 function chipsFor(ab){const f=document.createDocumentFragment()
   for(const[k,v]of Object.entries(ab||{})){const n=ABILITY[k];if(!n)continue
@@ -791,13 +813,15 @@ function sessionRow(s){
   const dur=s.status==='completed'
     ?(s.completed_data?.duration_min||''):(s.duration_planned_min||'')
   const load=s.completed_data?.training_load
+  const nom=isRace?s.session_type.replace('COURSE — ','🏁 '):s.session_type
   el.innerHTML=`<div class="k k-${s.discipline}"></div>
     <div class="mid"><div class="t">${s.status==='completed'?'✓ ':''}${
-      esc(s.session_type||LABEL[s.discipline])}${
+      esc(nom||LABEL[s.discipline])}${
       s.brick_type?'<span class="tag br">imbriquée</span>':''}${
       manuel?'<span class="tag man">saisie</span>':''}${
       s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
-    <div class="u">${LABEL[s.discipline]??''} · ${fmtDay(s.session_date)}</div></div>
+    <div class="u">${isRace?'Jour de course':LABEL[s.discipline]??''} · ${
+      fmtDay(s.session_date)}</div></div>
     <div class="r">${dur?dur+'<em>min</em>':''}${load?`<em>${Math.round(load)} TSS</em>`:''}</div>`
   if(s.discipline!=='repos')el.onclick=()=>openSheet(s)
   return el}
@@ -893,15 +917,30 @@ function attachActions(s){
 async function openSheet(s){
   const done=s.status==='completed'
   const manuel=s.completed_data?.source==='validation manuelle'
+  const isRace=(s.session_type||'').startsWith('COURSE —')
   openRaw(`<div class="shd"><h1>${esc(s.session_type)}</h1>
     <button class="gh sm" id="sheet-x">Fermer</button></div><p class="nt">Chargement…</p>`)
   try{
     const cd=s.completed_data||{}
     let head=`<div class="shd"><h1>${esc(s.session_type)}</h1>
       <button class="gh sm" id="sheet-x">Fermer</button></div>
-      <p class="nt" style="margin:4px 0 0">${LABEL[s.discipline]??''} · ${
+      <p class="nt" style="margin:4px 0 0">${isRace?'Jour de course':LABEL[s.discipline]??''} · ${
         fmtDay(s.session_date)}${done?' · réalisée':''}${
         s.status==='skipped'?' · manquée':''}</p>`
+
+    if(isRace&&!done){
+      const{data:r}=await sb.from('races').select('*').eq('race_date',s.session_date)
+        .maybeSingle()
+      if(r){
+        const mkm=r.distance_km>0&&r.denivele_m?Math.round(r.denivele_m/r.distance_km*10)/10:null
+        head+=`<div class="zone" style="border-color:var(--acc)">
+          <div class="zk">Dans ${joursJusqua(r.race_date)} jours · priorité ${r.priority}</div>
+          <div class="zv">${fmtGoal(r.target_time)}</div>
+          <div class="zf">${FORMAT[r.distance]??r.distance}${
+            r.distance_km?` · ${r.distance_km} km`:''}${
+            r.denivele_m?` · ${r.denivele_m} m D+ (${mkm} m/km)`:''}</div></div>`}
+      openRaw(head+`<p class="nt">Ouvre l'onglet Saison pour modifier cette course.</p>`)
+      return}
 
     if(done){
       const km=cd.distance_m?(cd.distance_m/1000).toFixed(1):null
@@ -1081,7 +1120,8 @@ function raceForm(r){
       const q=r?sb.from('races').update(payload).eq('id',r.id):sb.from('races').insert(payload)
       const{error}=await q;if(error)throw error
       const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
-      closeSheet();await loadGoals();notify('Plan reconstruit selon ce format.','ok')
+      closeSheet();await loadGoals();await loadToday()
+      notify('Plan reconstruit selon ce format.','ok')
     }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
       $('r-save').disabled=false;$('r-save').textContent='Enregistrer et régénérer'}}
 
@@ -1091,7 +1131,8 @@ function raceForm(r){
     try{
       const{error}=await sb.from('races').delete().eq('id',r.id);if(error)throw error
       const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
-      closeSheet();await loadGoals();notify('Course supprimée, plan reconstruit.','ok')
+      closeSheet();await loadGoals();await loadToday()
+      notify('Course supprimée, plan reconstruit.','ok')
     }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
       $('r-del').disabled=false}}}}
 
@@ -1242,7 +1283,7 @@ async function route(){
     .forEach(t=>show($('tab-'+t),false))
   if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
     show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false)
-    show($('pain-alert'),false);return}
+    show($('pain-alert'),false);show($('next-race'),false);return}
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
@@ -1490,11 +1531,25 @@ async function loadToday(){
       .order('load_date',{ascending:false}).limit(28),
     sb.from('sessions').select('*').eq('session_date',today),
     sb.from('atp_weeks').select('*').eq('week_start',monday).maybeSingle(),
-    sb.from('races').select('name,race_date').gte('race_date',today)
+    sb.from('races').select('*').gte('race_date',today)
       .order('race_date',{ascending:true}).limit(1).maybeSingle(),
     sb.from('adherence').select('prevues,faites,taux_pct').maybeSingle(),
     sb.rpc('mental_guidance',{p_user_id:userId}),
     sb.rpc('pain_status',{p_user_id:userId})])
+
+  const nr=race.data
+  if(nr){
+    const j=joursJusqua(nr.race_date)
+    const mkm=nr.distance_km>0&&nr.denivele_m
+      ?Math.round(nr.denivele_m/nr.distance_km*10)/10:null
+    $('next-race').innerHTML=`<div class="n">${j}<em>${j<=1?'jour':'jours'}</em></div>
+      <div class="d"><div class="t">${esc(nr.name)}</div>
+      <div class="s">${new Date(nr.race_date+'T00:00:00').toLocaleDateString('fr-FR',
+        {weekday:'long',day:'numeric',month:'long'})} · ${
+        FORMAT[nr.distance]??nr.distance} · priorité ${nr.priority}${
+        nr.target_time?` · objectif ${fmtGoal(nr.target_time)}`:''}${
+        mkm?` · ${nr.denivele_m} m D+`:''}</div></div>`
+    show($('next-race'))}else show($('next-race'),false)
 
   const pd=pain.data
   if(pd&&pd.niveau!=='aucune'){
@@ -1570,9 +1625,6 @@ async function loadToday(){
   const w=atp.data
   let txt=w?`${w.period} · ${w.volume_hours} h${
     w.strength_phase?` · ${FORCE[w.strength_phase]??w.strength_phase}`:''}`:''
-  if(race.data){
-    const d=Math.round((new Date(race.data.race_date+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000)
-    txt+=`${txt?' · ':''}${race.data.name} dans ${d} j`}
   $('today-week').textContent=txt
   const c=$('today-chips');c.innerHTML='';if(w?.abilities)c.appendChild(chipsFor(w.abilities))}
 
@@ -1589,6 +1641,7 @@ function drawSpark(v){
 
 $('cal-prev').onclick=()=>{weekOffset-=3;loadCalendar()}
 $('cal-next').onclick=()=>{weekOffset+=3;loadCalendar()}
+$('cal-today').onclick=()=>{weekOffset=0;loadCalendar()}
 
 async function loadCalendar(){
   const start=addDays(mondayOf(new Date()),weekOffset*7),end=addDays(start,20)
@@ -1598,9 +1651,23 @@ async function loadCalendar(){
     sb.from('sessions').select('*').gte('session_date',iso(start)).lte('session_date',iso(end))
       .order('session_date',{ascending:true}),
     sb.from('atp_weeks').select('*').gte('week_start',iso(start)).lte('week_start',iso(end)),
-    sb.from('races').select('name,race_date,priority').order('race_date',{ascending:true})])
+    sb.from('races').select('*').order('race_date',{ascending:true})])
   const atpBy=new Map((atpRes.data??[]).map(w=>[w.week_start,w]))
   const races=racesRes.data??[]
+
+  // Rappel de la prochaine course hors de la fenêtre affichée
+  const pb=$('cal-prochaine');pb.innerHTML=''
+  const hors=races.find(r=>r.race_date>iso(end))
+  const dansFenetre=races.some(r=>r.race_date>=iso(start)&&r.race_date<=iso(end))
+  if(hors&&!dansFenetre){
+    const j=joursJusqua(hors.race_date)
+    const b=document.createElement('div');b.className='bandeau'
+    b.style.marginTop='10px';b.style.marginBottom='0'
+    b.innerHTML=`Prochaine course dans ${j} jours — ${esc(hors.name)}
+      <em>${new Date(hors.race_date+'T00:00:00').toLocaleDateString('fr-FR',
+        {weekday:'long',day:'numeric',month:'long'})} · ${
+        FORMAT[hors.distance]??hors.distance}</em>`
+    pb.appendChild(b)}
 
   const box=$('cal-weeks');box.innerHTML=''
   for(let w=0;w<3;w++){
@@ -1615,6 +1682,20 @@ async function loadCalendar(){
       meta?` · ${meta.volume_hours} h`:''}</span>
       <span class="p">${meta?esc(meta.period):''}</span>`
     card.appendChild(head)
+
+    // Bandeau de course sur la semaine concernée
+    const courseSem=races.filter(r=>r.race_date>=iso(wStart)&&r.race_date<=iso(wEnd))
+    for(const cr of courseSem){
+      const b=document.createElement('div');b.className='bandeau'
+      const mkm=cr.distance_km>0&&cr.denivele_m
+        ?Math.round(cr.denivele_m/cr.distance_km*10)/10:null
+      b.innerHTML=`${new Date(cr.race_date+'T00:00:00').toLocaleDateString('fr-FR',
+        {weekday:'long',day:'numeric',month:'long'})} — ${esc(cr.name)}
+        <em>${FORMAT[cr.distance]??cr.distance} · priorité ${cr.priority}${
+        cr.target_time?` · objectif ${fmtGoal(cr.target_time)}`:''}${
+        mkm?` · ${cr.denivele_m} m D+`:''}</em>`
+      card.appendChild(b)}
+
     if(meta?.abilities){
       const c=document.createElement('div');c.className='chips'
       c.appendChild(chipsFor(meta.abilities))
@@ -1624,11 +1705,11 @@ async function loadCalendar(){
       if(meta.is_test_week){const s=document.createElement('span')
         s.className='chip';s.textContent='Semaine de test';c.appendChild(s)}
       card.appendChild(c)}
-    const next=races.find(r=>r.race_date>=iso(wStart))
-    if(next){
-      const d=Math.round((new Date(next.race_date+'T00:00:00')-wEnd)/86400000)
+    const next=races.find(r=>r.race_date>iso(wEnd))
+    if(next&&!courseSem.length){
+      const d=joursJusqua(next.race_date)-joursJusqua(iso(wEnd))
       const t=document.createElement('div');t.className='prep'
-      t.innerHTML=`Prépare <b>${esc(next.name)}</b>${d>0?` — ${d} j après`:' — cette semaine'}`
+      t.innerHTML=`Prépare <b>${esc(next.name)}</b> — ${d} j après cette semaine`
       card.appendChild(t)}
     const done=inWeek.filter(s=>s.status==='completed')
     const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
@@ -1662,10 +1743,9 @@ async function loadGoals(){
   const box=$('races');box.innerHTML=''
   const list=racesRes.data??[]
   show($('races-empty'),list.length===0)
-  const today=new Date();today.setHours(0,0,0,0)
   for(const r of list){
     const d=new Date(r.race_date+'T00:00:00')
-    const days=Math.round((d-today)/86400000)
+    const days=joursJusqua(r.race_date)
     const mkm=r.distance_km>0&&r.denivele_m?Math.round(r.denivele_m/r.distance_km*10)/10:null
     const el=document.createElement('div');el.className='rc'
     el.innerHTML=`<div class="cd"><div class="n">${days>=0?days:'—'}</div>
@@ -1744,17 +1824,20 @@ async function loadGoals(){
 
   const t=$('atp');t.innerHTML=''
   const monday=iso(mondayOf(new Date()))
+  const semCourse=new Set((racesRes.data??[]).map(r=>
+    iso(mondayOf(new Date(r.race_date+'T00:00:00')))))
   const head=document.createElement('tr')
   head.innerHTML='<th>Sem.</th><th>Période</th><th>Force</th><th style="text-align:right">H</th>'
   t.appendChild(head)
   for(const w of atpRes.data??[]){
     const tr=document.createElement('tr')
-    if(w.week_start===monday)tr.className='now'
+    if(semCourse.has(w.week_start))tr.className='course'
+    else if(w.week_start===monday)tr.className='now'
     const d=new Date(w.week_start+'T00:00:00')
     tr.innerHTML=`<td>${d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}${
-      w.is_test_week?' <span class="tag">test</span>':''}</td>
+      semCourse.has(w.week_start)?' 🏁':w.is_test_week?' <span class="tag">test</span>':''}</td>
       <td class="tp">${esc(w.period)}</td>
-      <td style="color:var(--faint);font-size:11px">${w.strength_phase??'—'}</td>
+      <td style="font-size:11px;opacity:.8">${w.strength_phase??'—'}</td>
       <td class="th">${w.volume_hours}</td>`
     t.appendChild(tr)}}
 
