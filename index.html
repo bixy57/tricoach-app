@@ -70,6 +70,11 @@
     font-variant-numeric:tabular-nums;line-height:1}
   .vit .k{font-size:9px;color:var(--faint);text-transform:uppercase;
     letter-spacing:.07em;margin-top:2px}
+  .alerte{background:var(--alert-soft);border-left:3px solid var(--alert);
+    border-radius:10px;padding:13px 15px;margin-top:10px}
+  .alerte .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;
+    color:var(--alert);text-transform:uppercase;letter-spacing:.06em}
+  .alerte .d{font-size:13px;margin-top:4px;line-height:1.45;color:var(--ink)}
   .brief{padding:18px;border-radius:var(--r);margin-top:12px;
     background:var(--acc-soft);border-left:3px solid var(--acc)}
   .brief .q{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;
@@ -188,7 +193,8 @@
     color:var(--dim);border:1px solid var(--line);font-weight:500}
   .days button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
   .days button.lg{background:var(--acc-soft);color:var(--acc);border-color:var(--acc)}
-  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+  .sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0}
+  .sw+.sw{border-top:1px solid var(--line)}
   .sw .t{font-size:14px;font-weight:500}
   .toggle{width:48px;height:27px;border-radius:14px;background:var(--line);
     position:relative;flex:0 0 48px;cursor:pointer;border:0;padding:0}
@@ -209,6 +215,13 @@
   .floor{background:var(--panel-2);border-radius:10px;padding:13px;margin-top:12px}
   .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--acc);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600}
+  .pain{padding:12px 0}
+  .pain+.pain{border-top:1px solid var(--line)}
+  .pain .r1{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .pain .z{font-size:14px;font-weight:500}
+  .pain .i{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:700;
+    font-variant-numeric:tabular-nums}
+  .pain .d{font-size:11.5px;color:var(--faint);margin-top:2px}
   .warn{font-size:11px;color:var(--faint);margin-top:12px;padding-top:11px;
     border-top:1px solid var(--line);line-height:1.45}
   .hint{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:12px}
@@ -293,6 +306,7 @@
   </header>
   <div id="msgbar" class="flash hide"></div>
   <div class="vit hide" id="vitals"></div>
+  <div class="alerte hide" id="pain-alert"></div>
 
   <section id="view-auth" class="hide">
     <div class="lbl" id="auth-title">Connexion</div>
@@ -352,6 +366,31 @@
       <div class="floor hide" id="floor"></div>
     </div>
 
+    <details class="panel">
+      <summary>Douleur <span id="pain-sum"></span></summary>
+      <div class="inner">
+        <p class="hint">Déclare toute gêne ou douleur. C'est le signal le plus
+          important du système : il passe avant la charge et la fraîcheur.
+          <b>1 à 3</b> gêne qui disparaît à l'échauffement · <b>4 à 6</b> douleur
+          qui modifie le geste · <b>7 à 10</b> douleur qui empêche de poursuivre.</p>
+        <div id="pain-list"></div>
+        <div class="g2" style="margin-top:12px">
+          <div class="fld" style="margin:0"><label for="p-zone">Zone</label>
+            <input id="p-zone" placeholder="genou droit, mollet…"></div>
+          <div class="fld" style="margin:0"><label for="p-int">Intensité /10</label>
+            <input id="p-int" type="number" min="0" max="10"></div>
+        </div>
+        <div class="g2" style="margin-top:10px;align-items:end">
+          <div class="fld" style="margin:0"><label for="p-jours">Depuis (jours)</label>
+            <input id="p-jours" type="number" min="0" max="365"></div>
+          <button id="btn-pain" class="gh">Enregistrer</button>
+        </div>
+        <p id="pain-note" class="nt"></p>
+        <p class="warn">Cette application n'établit aucun diagnostic et ne remplace
+          aucun avis médical. Elle adapte la charge à ce que tu déclares, rien de plus.</p>
+      </div>
+    </details>
+
     <details class="panel" id="wellness-box">
       <summary>Entretien <span id="well-sum"></span></summary>
       <div class="inner" id="wellness"></div>
@@ -369,6 +408,15 @@
       <svg class="spark" id="spark" viewBox="0 0 300 38" preserveAspectRatio="none" aria-hidden="true"></svg>
       <p class="nt" id="load-detail" style="margin-top:4px"></p>
     </div>
+
+    <details class="panel">
+      <summary>Ce qui manque <span id="sugg-sum"></span></summary>
+      <div class="inner">
+        <p class="nt" id="sugg-head" style="margin:0 0 6px"></p>
+        <div id="suggestions"></div>
+        <p class="warn" id="sugg-note"></p>
+      </div>
+    </details>
 
     <details class="panel">
       <summary>Assiduité <span id="adh-sum"></span></summary>
@@ -400,8 +448,8 @@
         <p id="sync-note" class="nt"></p>
         <button id="btn-push" class="gh" style="width:100%;margin-top:10px">Envoyer 14 jours à la montre</button>
         <p id="push-note" class="nt"></p>
-        <p class="warn">Une maintenance tourne chaque nuit : clôture des séances non faites,
-          replanification si une séance clé a sauté, recalcul de la charge.</p>
+        <p class="warn">Une maintenance tourne chaque nuit : clôture des séances non
+          faites, replanification si une séance clé a sauté, recalcul de la charge.</p>
       </div>
     </details>
   </section>
@@ -423,18 +471,48 @@
     <div class="panel">
       <div id="races"></div>
       <p class="none hide" id="races-empty">Aucun objectif enregistré.</p>
-      <p class="warn">Clique sur une course pour la modifier. A : structure tout le plan ·
-        B : allègement 2 jours avant · C : course d'entraînement.</p>
+      <p class="warn">A : structure tout le plan · B : allègement 2 jours avant ·
+        C : course d'entraînement. Renseigne distance et dénivelé pour que le plan
+        prépare le relief.</p>
     </div>
 
     <details class="panel" open>
+      <summary>Profil d'effort <span id="prof-sum"></span></summary>
+      <div class="inner" id="profil-effort"></div>
+    </details>
+
+    <details class="panel">
+      <summary>Relief <span id="relief-sum"></span></summary>
+      <div class="inner" id="relief"></div>
+    </details>
+
+    <details class="panel">
+      <summary>Indisponibilités</summary>
+      <div class="inner">
+        <p class="hint">Vacances, déplacement, piscine fermée. Les séances passent
+          en repos et ne comptent <b>pas</b> comme manquées.</p>
+        <div id="indispo-list"></div>
+        <div class="g2" style="margin-top:12px">
+          <div class="fld" style="margin:0"><label for="i-deb">Du</label>
+            <input id="i-deb" type="date"></div>
+          <div class="fld" style="margin:0"><label for="i-fin">Au</label>
+            <input id="i-fin" type="date"></div>
+        </div>
+        <div class="g2" style="margin-top:10px;align-items:end">
+          <div class="fld" style="margin:0"><label for="i-motif">Motif</label>
+            <input id="i-motif" placeholder="vacances, déplacement…"></div>
+          <button id="btn-indispo" class="gh">Déclarer</button>
+        </div>
+        <p id="indispo-note" class="nt"></p>
+      </div>
+    </details>
+
+    <details class="panel">
       <summary>Rythme de la semaine <span id="dens-sum"></span></summary>
       <div class="inner">
-        <p class="hint">À volume identique, moins de séances veut dire des séances plus
-          longues. Une séance de 30 minutes coûte autant en logistique qu'une d'une heure
-          trente : en dessous de la durée minimale, le créneau est supprimé et son temps
-          reversé sur les autres. Les sorties longues et au moins un passage par
-          discipline sont toujours conservés.</p>
+        <p class="hint">À volume identique, moins de séances veut dire des séances
+          plus longues. En dessous de la durée minimale, le créneau est supprimé et
+          son temps reversé sur les autres.</p>
         <label for="dens">Densité</label>
         <select id="dens" style="margin-bottom:12px">
           <option value="ramasse">Ramassée — une séance par jour</option>
@@ -465,8 +543,6 @@
     <details class="panel">
       <summary>Jours disponibles <span id="days-sum"></span></summary>
       <div class="inner">
-        <p class="hint">Sur quels jours peux-tu t'entraîner ? Le volume se répartit
-          uniquement sur eux.</p>
         <label>Jours d'entraînement</label>
         <div class="days" id="days-dispo"></div>
         <label>Jours pouvant accueillir une sortie longue</label>
@@ -477,12 +553,22 @@
     </details>
 
     <details class="panel">
+      <summary>Matériel</summary>
+      <div class="inner">
+        <p class="hint">Les séances supposent ce matériel. Ce que tu n'as pas sera
+          signalé au lieu d'être prescrit.</p>
+        <div id="materiel"></div>
+        <button id="btn-mat" class="gh" style="width:100%;margin-top:10px">Enregistrer</button>
+        <p id="mat-note" class="nt"></p>
+      </div>
+    </details>
+
+    <details class="panel">
       <summary>Force maximale <span id="fm-sum"></span></summary>
       <div class="inner">
-        <p class="hint">La phase de <b>force maximale</b> se place en Fondamentale 1,
-          à 85-95 % de ta charge maximale, 3 à 6 répétitions. Friel conseille aux
-          triathlètes novices de la sauter. Désactivée, cette période reste en
-          transition musculaire — 70-80 %, 8 à 12 répétitions.</p>
+        <p class="hint">Phase à 85-95 % de ta charge maximale en Fondamentale 1.
+          Friel conseille aux novices de la sauter. Désactivée, cette période reste
+          en transition musculaire, 70-80 %.</p>
         <div class="sw">
           <div class="t">Phase de force maximale</div>
           <button class="toggle" id="tg-fm"><i></i></button>
@@ -492,19 +578,11 @@
     </details>
 
     <details class="panel">
-      <summary>Jalons</summary>
-      <div class="inner">
-        <div id="targets"></div>
-        <p class="none hide" id="targets-empty">Aucun jalon défini.</p>
-      </div>
-    </details>
-
-    <details class="panel">
       <summary>Volume de pointe <span id="peak-sum"></span></summary>
       <div class="inner">
-        <p class="hint">Le nombre d'heures de ta <b>semaine la plus chargée de l'année</b> —
-          jamais une moyenne. Formule de Friel pour un athlète limité par le temps :
-          heures hebdomadaires disponibles × 45 donne le volume annuel.</p>
+        <p class="hint">Heures de ta <b>semaine la plus chargée de l'année</b>.
+          Formule de Friel pour un athlète limité par le temps : heures
+          hebdomadaires disponibles × 45 donne le volume annuel.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="peak">Heures par semaine</label>
             <input id="peak" type="number" min="3" max="30" step="0.5"></div>
@@ -517,14 +595,22 @@
     <details class="panel">
       <summary>Début de saison <span id="season-sum"></span></summary>
       <div class="inner">
-        <p class="hint">Une saison commence après une coupure. Les semaines avant cette
-          date passent en <b>Transition</b>. Les compteurs de progression repartent à zéro.</p>
+        <p class="hint">Les semaines avant cette date passent en <b>Transition</b>.
+          Les compteurs de progression repartent à zéro.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="season">Premier lundi</label>
             <input id="season" type="date"></div>
           <button id="btn-season" class="gh">Appliquer</button>
         </div>
         <p id="season-note" class="nt"></p>
+      </div>
+    </details>
+
+    <details class="panel">
+      <summary>Jalons</summary>
+      <div class="inner">
+        <div id="targets"></div>
+        <p class="none hide" id="targets-empty">Aucun jalon défini.</p>
       </div>
     </details>
 
@@ -556,6 +642,10 @@
         </div>
         <p id="body-note" class="nt"></p>
       </div>
+    </details>
+    <details class="panel">
+      <summary>Saison <span id="saison-sum"></span></summary>
+      <div class="inner" id="saison"></div>
     </details>
     <details class="panel">
       <summary>Nutrition du jour</summary>
@@ -591,10 +681,10 @@
     <div class="panel">
       <div class="chat" id="chat"></div>
       <p class="none" id="chat-empty">Il connaît tes séances en détail, ta charge,
-        ton mental. Il peut valider une séance, en ajouter une, alléger la semaine,
-        organiser une reprise.</p>
+        tes douleurs, ton mental. Il peut valider une séance, en ajouter une,
+        alléger la semaine, organiser une reprise, évaluer ce que tu lui proposes.</p>
       <div class="comp">
-        <input id="chat-input" placeholder="C'est quoi ma séance de jeudi ?" autocomplete="off">
+        <input id="chat-input" placeholder="J'ai envie de courir dur demain, ça passe ?" autocomplete="off">
         <button id="btn-send" class="sm">Envoyer</button>
       </div>
     </div>
@@ -622,20 +712,28 @@ const $=id=>document.getElementById(id)
 const show=(el,on=true)=>el.classList.toggle('hide',!on)
 const LABEL={natation:'Natation',velo:'Vélo',course:'Course à pied',
   renfo:'Renforcement',mobilite:'Mobilité',repos:'Repos'}
-const FORMAT={'10K':'10 km',SEMI:'Semi-marathon',MARATHON:'Marathon',S:'Triathlon S',
-  M:'Triathlon M',L_70_3:'Triathlon L',FULL:'Triathlon Full',IRONMAN:'Ironman'}
+const FORMAT={'10K':'10 km',SEMI:'Semi-marathon',MARATHON:'Marathon',
+  TRAIL_S:'Trail court',TRAIL_L:'Trail long',
+  CYCLO_S:'Cyclo courte (60-100 km)',CYCLO_M:'Cyclo moyenne (100-150 km)',
+  CYCLO_L:'Cyclo longue (150 km+)',
+  S:'Triathlon S',M:'Triathlon M',L_70_3:'Triathlon L',FULL:'Triathlon Full',
+  IRONMAN:'Ironman',DUATHLON:'Duathlon',EAU_LIBRE:'Eau libre',AUTRE:'Autre format'}
 const FORCE={AA:'Adaptation anatomique',TM:'Transition musculaire',
   FM:'Force maximale',EF:'Entretien force'}
 const ABILITY={endurance_aerobie:'Endurance',technique:'Technique',
   force_musculaire:'Force',vitesse:'Vitesse',endurance_musculaire:'Endurance musculaire',
   endurance_anaerobie:'Endurance anaérobie',vitesse_sprint:'Vitesse au sprint',
   simulation_course:'Simulation de course',intensite_course:'Intensité de course'}
+const QUAL={E:'Endurance',EM:'Seuil',EA:'VMA / PMA',F:'Force',V:'Vitesse'}
+const MAT={home_trainer:'Home-trainer',capteur_puissance:'Capteur de puissance',
+  acces_piscine:'Accès piscine',salle_muscu:'Salle de musculation',
+  velo_route:'Vélo de route',eau_libre:'Accès eau libre'}
 const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','kg'],
   body_fat_pct:['Masse grasse','%'],threshold_pace_s_per_km:['Allure seuil','s/km'],
   css_s_per_100m:['Vitesse nat.','s/100m']}
 const JOURS=['L','M','M','J','V','S','D']
 let mode='login',userId=null,weekOffset=0,glossCache=null
-let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true
+let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true,matObj={}
 
 const iso=d=>d.toISOString().slice(0,10)
 const mondayOf=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));
@@ -714,7 +812,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()})
 
 async function refreshAll(){
   await loadToday()
-  if(!$('tab-cal').classList.contains('hide'))await loadCalendar()}
+  if(!$('tab-cal').classList.contains('hide'))await loadCalendar()
+  if(!$('tab-goals').classList.contains('hide'))await loadGoals()}
 
 async function loadReview(s){
   const box=$('rev-box');if(!box)return
@@ -815,6 +914,17 @@ async function openSheet(s){
         <div><div class="v">${cd.ressenti_10??(cd.elevation_m?Math.round(cd.elevation_m):'—')}</div>
           <div class="k">${cd.ressenti_10?'ressenti':'D+ m'}</div></div>
       </div>`
+      const iv=cd.intervalles
+      if(iv){
+        head+=`<div class="zone"><div class="zk">Structure réalisée</div>
+          <div class="zv" style="font-size:20px">${iv.nb_repetitions_travail??iv.nb_tours} répétitions</div>
+          <div class="zf">${esc(iv.regularite??'')}${
+            iv.derive?' · '+esc(iv.derive):''}</div></div>`
+        for(const r of (iv.repetitions||[]).slice(0,12)){
+          head+=`<div class="stp">Rép ${r.n} — ${r.duree_s} s${
+            r.metres?' · '+r.metres+' m':''}${
+            r.allure_min_km?' · '+r.allure_min_km+'/km':''}${
+            r.watts?' · '+r.watts+' W':''}${r.fc?' · '+r.fc+' bpm':''}</div>`}}
       if(cd.charge_estimee)head+=`<p class="nt">Charge estimée depuis ta saisie, non mesurée par capteur.</p>`
       if(cd.note)head+=`<div class="kv"><div class="k">Ta note</div><div class="v">${esc(cd.note)}</div></div>`
       head+=`<div class="lbl">Analyse</div><div id="rev-box"></div>`
@@ -896,9 +1006,9 @@ async function openSheet(s){
     const passee=s.session_date<=iso(new Date())
     if(passee){
       html+=`<div class="lbl">Je l'ai faite</div>
-        <p class="hint">Pour une séance que la montre n'a pas enregistrée — musculation,
-          nage, GPS en panne. La charge sera estimée : moins précise qu'une mesure, mais
-          bien meilleure qu'une séance comptée comme manquée.</p>
+        <p class="hint">Pour une séance que la montre n'a pas enregistrée. La charge
+          sera estimée : moins précise qu'une mesure, bien meilleure qu'une séance
+          comptée comme manquée.</p>
         <div class="g3">
           <div class="fld" style="margin:0"><label for="v-min">Durée (min)</label>
             <input id="v-min" type="number" min="5" max="600"
@@ -945,6 +1055,13 @@ function raceForm(r){
         <input id="r-h" type="number" min="0" max="24" value="${hh}"></div>
       <div class="fld"><label for="r-m">Minutes</label>
         <input id="r-m" type="number" min="0" max="59" value="${mm}"></div></div>
+    <div class="g2">
+      <div class="fld"><label for="r-km">Distance totale (km)</label>
+        <input id="r-km" type="number" step="0.1" value="${r?.distance_km??''}"></div>
+      <div class="fld"><label for="r-dp">Dénivelé + (m)</label>
+        <input id="r-dp" type="number" step="10" value="${r?.denivele_m??''}"></div></div>
+    <p class="hint">Le dénivelé détermine la part de force et le travail en côte.
+      Sans lui, le plan prépare une course plate.</p>
     <button id="r-save" style="width:100%">Enregistrer et régénérer</button>
     ${r?`<button id="r-del" class="dg" style="width:100%;margin-top:10px">Supprimer</button>`:''}
     <p id="r-note" class="nt"></p>`)
@@ -956,13 +1073,15 @@ function raceForm(r){
     const h=parseInt($('r-h').value||'0',10),m=parseInt($('r-m').value||'0',10)
     const tt=(h||m)?`${h||0}:${String(m||0).padStart(2,'0')}:00`:null
     const payload={user_id:userId,name,race_date:date,
-      distance:$('r-dist').value,priority:$('r-pri').value,target_time:tt}
+      distance:$('r-dist').value,priority:$('r-pri').value,target_time:tt,
+      distance_km:parseFloat($('r-km').value)||null,
+      denivele_m:parseInt($('r-dp').value,10)||null}
     $('r-save').disabled=true;$('r-save').textContent='…'
     try{
       const q=r?sb.from('races').update(payload).eq('id',r.id):sb.from('races').insert(payload)
       const{error}=await q;if(error)throw error
       const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
-      closeSheet();await loadGoals();notify('Plan reconstruit.','ok')
+      closeSheet();await loadGoals();notify('Plan reconstruit selon ce format.','ok')
     }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
       $('r-save').disabled=false;$('r-save').textContent='Enregistrer et régénérer'}}
 
@@ -995,6 +1114,59 @@ function renderDays(){
     bl.appendChild(b)}
   $('days-sum').textContent=selDispo.length+' jours'}
 
+function renderMateriel(){
+  const box=$('materiel');box.innerHTML=''
+  for(const[k,lib]of Object.entries(MAT)){
+    const d=document.createElement('div');d.className='sw'
+    d.innerHTML=`<div class="t">${lib}</div>
+      <button class="toggle${matObj[k]?' on':''}" data-m="${k}"><i></i></button>`
+    d.querySelector('button').onclick=e=>{
+      matObj[k]=!matObj[k];e.currentTarget.classList.toggle('on',matObj[k])}
+    box.appendChild(d)}}
+
+$('btn-mat').onclick=async()=>{
+  const b=$('btn-mat');b.disabled=true;b.textContent='…'
+  try{
+    const{error}=await sb.from('profiles').update({materiel:matObj}).eq('id',userId)
+    if(error)throw error
+    $('mat-note').textContent='Matériel enregistré.'
+    $('mat-note').style.color='var(--calm)'
+  }catch(e){$('mat-note').textContent=e.message;$('mat-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Enregistrer'}}
+
+$('btn-pain').onclick=async()=>{
+  const z=$('p-zone').value.trim(),i=parseInt($('p-int').value,10)
+  if(!z||isNaN(i)){$('pain-note').textContent='Zone et intensité requises.'
+    $('pain-note').style.color='var(--alert)';return}
+  const b=$('btn-pain');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('log_pain',{p_user_id:userId,p_zone:z,
+      p_intensite:i,p_depuis_jours:parseInt($('p-jours').value,10)||null})
+    if(error)throw error
+    if(data?.erreur)throw new Error(data.erreur)
+    $('pain-note').innerHTML=esc(data.action)+(data.sante?`<br><b style="color:var(--alert)">${esc(data.sante)}</b>`:'')
+    $('pain-note').style.color=i>=4?'var(--alert)':'var(--calm)'
+    $('p-zone').value='';$('p-int').value='';$('p-jours').value=''
+    await refreshAll()
+  }catch(e){$('pain-note').textContent=e.message;$('pain-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Enregistrer'}}
+
+$('btn-indispo').onclick=async()=>{
+  const d=$('i-deb').value,f=$('i-fin').value,m=$('i-motif').value.trim()
+  if(!d||!f||!m){$('indispo-note').textContent='Dates et motif requis.'
+    $('indispo-note').style.color='var(--alert)';return}
+  const b=$('btn-indispo');b.disabled=true;b.textContent='…'
+  try{
+    const{data,error}=await sb.rpc('set_unavailability',
+      {p_user_id:userId,p_debut:d,p_fin:f,p_motif:m})
+    if(error)throw error
+    if(data?.erreur)throw new Error(data.erreur)
+    $('indispo-note').textContent=`${data.seances_neutralisees} séance(s) sur ${data.jours} jours. ${data.apres}`
+    $('indispo-note').style.color='var(--calm)'
+    $('i-motif').value='';await loadGoals()
+  }catch(e){$('indispo-note').textContent=e.message;$('indispo-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Déclarer'}}
+
 $('btn-days').onclick=async()=>{
   const b=$('btn-days');b.disabled=true;b.textContent='…'
   try{
@@ -1016,7 +1188,7 @@ $('btn-dens').onclick=async()=>{
     const{data,error}=await sb.rpc('set_densite',
       {p_user_id:userId,p_densite:d,p_duree_min:m})
     if(error)throw error
-    $('dens-note').textContent=`${data.seances} séances sur ${data.semaines} semaines. ${data.note}`
+    $('dens-note').textContent=`${data.seances} séances. ${data.note}`
     $('dens-note').style.color='var(--calm)'
     $('dens-sum').textContent=d+' · '+m+' min';await loadGoals()
   }catch(e){$('dens-note').textContent=e.message;$('dens-note').style.color='var(--alert)'}
@@ -1069,11 +1241,12 @@ async function route(){
   const hideAll=()=>['today','cal','goals','health','gloss','coach']
     .forEach(t=>show($('tab-'+t),false))
   if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
-    show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false);return}
+    show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false)
+    show($('pain-alert'),false);return}
   userId=session.user.id
   show($('btn-logout'))
   const{data:p}=await sb.from('profiles')
-    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs,force_max_activee,densite,duree_min_seance,force_seances_semaine')
+    .select('intervals_athlete_id,ftp_watts,vma_kmh,weight_kg,max_hr,peak_week_hours,season_start,height_cm,body_fat_pct,jours_dispo,jours_longs,force_max_activee,densite,duree_min_seance,force_seances_semaine,materiel')
     .eq('id',userId).maybeSingle()
   if(!p?.intervals_athlete_id){
     show($('view-auth'),false);show($('view-setup'));hideAll();show($('nav'),false)
@@ -1096,12 +1269,14 @@ async function route(){
     if(p.height_cm)$('in-height').value=p.height_cm
     selDispo=p.jours_dispo??[1,2,3,4,5,6,7];selLongs=p.jours_longs??[6,7]
     fmOn=p.force_max_activee!==false
+    matObj=p.materiel??{}
     $('dens').value=p.densite??'equilibre'
     $('dmin').value=p.duree_min_seance??50
     $('fnb').value=String(p.force_seances_semaine??0)
     $('dens-sum').textContent=(p.densite??'equilibre')+' · '+(p.duree_min_seance??50)+' min'
-    renderDays();renderFM()
-    show($('tab-today'));loadToday();loadChat();loadBrief();loadProjection();loadWellness()}}
+    renderDays();renderFM();renderMateriel()
+    show($('tab-today'));loadToday();loadChat();loadBrief();loadProjection()
+    loadWellness();loadSuggestions()}}
 
 $('btn-switch').onclick=()=>{
   mode=mode==='login'?'signup':'login'
@@ -1209,6 +1384,28 @@ async function loadBrief(){
     show($('brief-box'),!!data.mantra)
   }catch(e){show($('brief-box'),false)}}
 
+async function loadSuggestions(){
+  const box=$('suggestions');box.innerHTML='<p class="none">Analyse…</p>'
+  try{
+    const{data,error}=await sb.rpc('progress_suggestions',{p_user_id:userId})
+    if(error)throw error
+    $('sugg-head').textContent=`Période ${data.periode}${
+      data.prochaine_course?` · ${data.prochaine_course} dans ${data.jours_avant_course} j`:''}`
+    const hautes=(data.par_discipline||[]).filter(d=>d.priorite==='haute').length
+    $('sugg-sum').textContent=hautes?hautes+' à combler':'rien à signaler'
+    box.innerHTML=''
+    for(const d of (data.par_discipline||[])){
+      const rep=Object.entries(d.repartition_28j||{})
+        .map(([k,v])=>`<span class="chip">${QUAL[k]??k} ×${v}</span>`).join('')
+      const el=document.createElement('div');el.className='kv'
+      el.innerHTML=`<div class="k">${LABEL[d.discipline]} — priorité ${d.priorite}</div>
+        <div class="v"><b>${esc(d.suggestion)}</b></div>
+        ${rep?`<div class="chips" style="margin:7px 0 0">${rep}</div>`:''}
+        <div class="nt" style="margin-top:5px">${esc(d.constat)}<br>${esc(d.pourquoi)}</div>`
+      box.appendChild(el)}
+    $('sugg-note').textContent=data.methode+' '+data.reserve
+  }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
+
 async function loadWellness(){
   const box=$('wellness');box.innerHTML='<p class="none">Chargement…</p>'
   try{
@@ -1286,7 +1483,7 @@ $('gl-search').addEventListener('input',e=>{
 
 async function loadToday(){
   const today=iso(new Date()),monday=iso(mondayOf(new Date()))
-  const[ready,load,sess,atp,race,adh,ment]=await Promise.all([
+  const[ready,load,sess,atp,race,adh,ment,pain]=await Promise.all([
     sb.from('readiness').select('readiness_date,readiness_score,recommendation_flag,hrv,hrv_baseline')
       .order('readiness_date',{ascending:false}).limit(1),
     sb.from('user_load_status').select('load_date,total_daily_load,acute_load,chronic_load,acwr')
@@ -1296,7 +1493,28 @@ async function loadToday(){
     sb.from('races').select('name,race_date').gte('race_date',today)
       .order('race_date',{ascending:true}).limit(1).maybeSingle(),
     sb.from('adherence').select('prevues,faites,taux_pct').maybeSingle(),
-    sb.rpc('mental_guidance',{p_user_id:userId})])
+    sb.rpc('mental_guidance',{p_user_id:userId}),
+    sb.rpc('pain_status',{p_user_id:userId})])
+
+  const pd=pain.data
+  if(pd&&pd.niveau!=='aucune'){
+    const L={arret:'Repos — douleur élevée',reduction:'Charge réduite',vigilance:'Vigilance'}
+    $('pain-alert').innerHTML=`<div class="h">${L[pd.niveau]}</div>
+      <div class="d">${pd.zones_actives} zone(s) signalée(s), intensité maximale ${
+        pd.intensite_max}/10. ${pd.niveau==='arret'
+        ?'Consulte un professionnel de santé avant de reprendre.'
+        :pd.niveau==='reduction'?'Aucune intensité tant que la douleur est là.'
+        :'Note-la chaque jour : c\'est la persistance qui compte.'}</div>`
+    show($('pain-alert'))}else show($('pain-alert'),false)
+  $('pain-sum').textContent=pd?.niveau==='aucune'?'aucune':`${pd?.zones_actives??0} zone(s)`
+
+  const pl=$('pain-list');pl.innerHTML=''
+  for(const z of (pd?.detail||[])){
+    const el=document.createElement('div');el.className='pain'
+    el.innerHTML=`<div class="r1"><div><div class="z">${esc(z.zone)}</div>
+      <div class="d">${z.jours_sur_14} jour(s) sur 14 · dernier ${fmtDay(z.dernier_signalement)}</div></div>
+      <div class="i" style="color:${z.intensite>=7?'var(--alert)':z.intensite>=4?'var(--acc)':'var(--dim)'}">${z.intensite}</div></div>`
+    pl.appendChild(el)}
 
   const r=ready.data?.[0]
   if(r?.readiness_score!=null){
@@ -1434,10 +1652,12 @@ async function loadCalendar(){
     box.appendChild(card)}}
 
 async function loadGoals(){
-  const[racesRes,atpRes,tgtRes]=await Promise.all([
+  const[racesRes,atpRes,tgtRes,indispoRes]=await Promise.all([
     sb.from('races').select('*').order('race_date',{ascending:true}),
     sb.from('atp_weeks').select('*').order('week_start',{ascending:true}).limit(60),
-    sb.from('target_progress').select('*').order('target_date',{ascending:true})])
+    sb.from('target_progress').select('*').order('target_date',{ascending:true}),
+    sb.from('unavailability').select('*').gte('fin',iso(new Date()))
+      .order('debut',{ascending:true})])
 
   const box=$('races');box.innerHTML=''
   const list=racesRes.data??[]
@@ -1446,16 +1666,66 @@ async function loadGoals(){
   for(const r of list){
     const d=new Date(r.race_date+'T00:00:00')
     const days=Math.round((d-today)/86400000)
+    const mkm=r.distance_km>0&&r.denivele_m?Math.round(r.denivele_m/r.distance_km*10)/10:null
     const el=document.createElement('div');el.className='rc'
     el.innerHTML=`<div class="cd"><div class="n">${days>=0?days:'—'}</div>
       <div class="u">${days>=0?'jours':'passée'}</div></div>
       <div class="mid"><div class="t">${esc(r.name)}${
         r.priority?`<span class="tag ${r.priority}">${r.priority}</span>`:''}</div>
       <div class="u2">${FORMAT[r.distance]??r.distance} · ${
-        d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div></div>
+        d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}${
+        mkm?` · ${r.denivele_m} m D+ (${mkm} m/km)`:''}</div></div>
       <div class="g">${fmtGoal(r.target_time)}</div>`
     el.onclick=()=>raceForm(r)
     box.appendChild(el)}
+
+  const ib=$('indispo-list');ib.innerHTML=''
+  for(const i of (indispoRes.data??[])){
+    const el=document.createElement('div');el.className='kv'
+    el.innerHTML=`<div class="k">${new Date(i.debut).toLocaleDateString('fr-FR',
+      {day:'numeric',month:'short'})} → ${new Date(i.fin).toLocaleDateString('fr-FR',
+      {day:'numeric',month:'short'})}</div><div class="v">${esc(i.motif)}</div>`
+    ib.appendChild(el)}
+  if(!(indispoRes.data??[]).length)ib.innerHTML='<p class="none">Aucune période déclarée.</p>'
+
+  try{
+    const{data:pe}=await sb.rpc('profil_effort',{p_user_id:userId})
+    const pbox=$('profil-effort')
+    if(pe&&!pe.erreur){
+      $('prof-sum').textContent=pe.specificite_appliquee
+      const dd=pe.repartition_disciplines,qq=pe.repartition_qualites
+      pbox.innerHTML=`<div class="zone" style="margin-top:0">
+          <div class="zk">${esc(pe.course)} · ${FORMAT[pe.format]??pe.format}</div>
+          <div class="zv" style="font-size:20px">${pe.semaines_avant} semaines</div>
+          <div class="zf">${esc(pe.lecture)}</div></div>
+        <div class="kv" style="padding-top:0"><div class="k">Répartition des disciplines</div>
+          <div class="v">Course ${Math.round(dd.course*100)} % · Vélo ${
+            Math.round(dd.velo*100)} % · Natation ${Math.round(dd.natation*100)} %
+          <div class="nt">Spécificité appliquée : ${pe.specificite_appliquee}. Loin de
+            l'échéance l'entraînement reste équilibré.</div></div></div>
+        <div class="kv"><div class="k">Répartition des qualités</div>
+          <div class="v">Endurance ${Math.round(qq.E*100)} % · Seuil ${
+            Math.round(qq.EM*100)} % · VMA ${Math.round(qq.EA*100)} % · Force ${
+            Math.round(qq.F*100)} %</div></div>
+        <p class="warn">${esc(pe.methode)} ${esc(pe.reserve)}</p>`
+    }else pbox.innerHTML='<p class="none">Aucune course à venir.</p>'
+  }catch(e){}
+
+  try{
+    const{data:rc}=await sb.rpc('relief_check',{p_user_id:userId})
+    const rbox=$('relief')
+    $('relief-sum').textContent=rc.profil_entrainement??'—'
+    let h=`<p class="nt" style="margin:0 0 8px">Ton entraînement : ${
+      rc.relief_entrainement_m_par_km??'—'} m par km sur ${rc.km_analyses_90j} km analysés,
+      profil ${rc.profil_entrainement}.</p>`
+    for(const c of (rc.courses||[])){
+      h+=`<div class="kv"><div class="k">${esc(c.course)} — ${esc(c.profil)}${
+        c.metres_par_km?` · ${c.metres_par_km} m/km`:''}</div>
+        <div class="v" style="color:${c.ecart==='écart important'?'var(--alert)':
+          c.ecart==='écart modéré'?'var(--acc)':'var(--ink)'}">${esc(c.conseil)}</div></div>`}
+    h+=`<p class="warn">${esc(rc.pourquoi)}</p>`
+    rbox.innerHTML=h
+  }catch(e){}
 
   const tb=$('targets');tb.innerHTML=''
   const tgts=tgtRes.data??[]
@@ -1511,6 +1781,17 @@ async function loadHealth(){
         <div><div class="v">${c.imc??'—'}</div><div class="k">IMC</div></div>
       </div>${c.lecture?`<p class="nt">${esc(c.lecture)}</p>`:''}`
   }catch(e){hBox.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}
+
+  try{
+    const{data:cs}=await sb.rpc('contraintes_saison')
+    $('saison-sum').textContent=cs.saison
+    $('saison').innerHTML=`
+      <div class="kv" style="padding-top:0"><div class="k">Lumière</div>
+        <div class="v">${esc(cs.jour_utile_soir)}</div></div>
+      <div class="kv"><div class="k">Vélo</div><div class="v">${esc(cs.velo)}</div></div>
+      <div class="kv"><div class="k">Course</div><div class="v">${esc(cs.course)}</div></div>
+      <div class="kv"><div class="k">Natation</div><div class="v">${esc(cs.natation)}</div></div>`
+  }catch(e){}
 
   try{
     const[g,m]=await Promise.all([
@@ -1585,12 +1866,14 @@ $('btn-sync').onclick=async()=>{
     const{data,error}=await sb.functions.invoke('sync-intervals',{body:{days:60}})
     if(error)throw error
     if(data?.error)throw new Error(data.error)
-    const d=data.detail||{}
-    $('sync-note').textContent=`${data.seances_importees} séance(s) — ${
-      d.rattachees_au_plan??0} au plan, ${d.hors_plan??0} hors plan.${
-      data.poids_importe?' Poids : '+data.poids_importe+'.':''}`
-    $('sync-note').style.color='var(--calm)'
-    await loadToday();await loadProjection();await route()
+    const d=data.detail||{},iv=data.intervalles||{}
+    let t=`${data.seances_importees} séance(s) — ${d.rattachees_au_plan??0} au plan, ${
+      d.hors_plan??0} hors plan. Tours : ${iv.reussies??0}/${iv.tentees??0}.`
+    if(data.poids_importe)t+=` Poids : ${data.poids_importe}.`
+    if(iv.echecs?.length)t+=` Échecs : ${iv.echecs.join(' · ')}`
+    $('sync-note').textContent=t
+    $('sync-note').style.color=iv.echecs?.length?'var(--acc)':'var(--calm)'
+    await refreshAll();await loadProjection();await loadSuggestions();await route()
   }catch(e){$('sync-note').textContent=e.message||'Échec.'
     $('sync-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Synchroniser intervals.icu'}}
