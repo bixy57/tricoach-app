@@ -111,6 +111,40 @@
   .cards .c .v{font-family:"Barlow Condensed",sans-serif;font-size:22px;
     font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;line-height:1.1}
   .cards .c .s{font-size:11px;margin-top:2px;line-height:1.35}
+  .prin{padding:15px 0}
+  .prin+.prin{border-top:1px solid var(--line)}
+  .prin .t{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;
+    display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .prin .t em{font-style:normal;font-family:Inter,sans-serif;font-size:9.5px;
+    color:var(--faint);background:var(--panel-2);padding:2px 7px;border-radius:5px;
+    font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+  .prin .rg{font-size:14px;margin-top:7px;line-height:1.5;font-weight:500}
+  .prin .pq{font-size:13px;margin-top:7px;line-height:1.5;color:var(--dim)}
+  .prin .ap{font-size:12.5px;margin-top:8px;padding:8px 11px;border-radius:8px;
+    background:var(--acc-soft);color:var(--ink);line-height:1.45}
+  .per{padding:15px 0}
+  .per+.per{border-top:1px solid var(--line)}
+  .per .t{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:600;
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .per .t em{font-style:normal;font-family:Inter,sans-serif;font-size:11px;
+    color:var(--faint);font-weight:400;white-space:nowrap}
+  .per.now{background:var(--acc-soft);margin:0 -12px;padding:15px 12px;border-radius:10px}
+  .per.now .t{color:var(--acc)}
+  .per .l{font-size:13.5px;margin-top:6px;line-height:1.5}
+  .per .l b{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--acc);display:block;margin:9px 0 2px;font-weight:600}
+  .per .er{font-size:12.5px;margin-top:9px;padding:9px 11px;border-radius:8px;
+    background:var(--alert-soft);color:var(--ink);line-height:1.45}
+  .per .er b{color:var(--alert);display:block;font-size:9.5px;text-transform:uppercase;
+    letter-spacing:.08em;margin-bottom:2px;font-weight:600}
+  .jr{display:flex;gap:12px;padding:13px 0}
+  .jr+.jr{border-top:1px solid var(--line)}
+  .jr .k{width:3px;border-radius:2px;flex:0 0 3px}
+  .jr .m{flex:1;min-width:0}
+  .jr .d{font-size:9.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  .jr .s{font-size:14px;font-weight:500;margin-top:1px}
+  .jr .s em{font-style:normal;font-size:11px;color:var(--dim);font-weight:400}
+  .jr .r{font-size:12px;color:var(--dim);margin-top:5px;line-height:1.45}
   .brief{padding:18px;border-radius:var(--r);margin-top:12px;
     background:var(--acc-soft);border-left:3px solid var(--acc)}
   .brief .q{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;
@@ -162,6 +196,7 @@
   .tag.man{background:var(--calm-soft);color:var(--calm)}
   .tag.hot{background:var(--alert-soft);color:var(--alert)}
   .tag.cold{background:rgba(11,127,191,.12);color:var(--nat)}
+  .tag.hp{background:rgba(95,68,184,.12);color:var(--force)}
   .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
   .chip{font-size:10.5px;padding:3px 9px;border-radius:6px;background:var(--panel-2);
     color:var(--dim);font-weight:500}
@@ -263,14 +298,19 @@
   .ecart.trop_intense{background:var(--alert-soft);border-left:3px solid var(--alert)}
   .ecart.trop_facile{background:var(--acc-soft);border-left:3px solid var(--acc)}
   .ecart.conforme{background:var(--calm-soft);border-left:3px solid var(--calm)}
-  .ecart.differente{background:var(--panel-2);border-left:3px solid var(--faint)}
+  .ecart.differente,.ecart.hors_plan,.ecart.structuree{
+    background:var(--panel-2);border-left:3px solid var(--force)}
   .ecart .h{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;
     text-transform:uppercase;letter-spacing:.06em}
   .ecart.trop_intense .h{color:var(--alert)}
   .ecart.trop_facile .h{color:var(--acc)}
   .ecart.conforme .h{color:var(--calm)}
+  .ecart.hors_plan .h,.ecart.structuree .h{color:var(--force)}
   .ecart .d{font-size:13px;margin-top:5px;line-height:1.5;color:var(--ink)}
   .ecart .src{font-size:11px;color:var(--dim);margin-top:7px;line-height:1.4}
+  .fiab{background:var(--panel-2);border-radius:9px;padding:11px 13px;margin:12px 0;
+    font-size:12px;color:var(--dim);line-height:1.45}
+  .fiab b{color:var(--ink);display:block;font-size:12.5px;margin-bottom:3px}
   .floor{background:var(--panel-2);border-radius:10px;padding:13px;margin-top:12px}
   .floor .h{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--acc);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600}
@@ -312,17 +352,6 @@
     font-variant-numeric:tabular-nums;line-height:1}
   .met .k{font-size:8.5px;color:var(--faint);text-transform:uppercase;
     letter-spacing:.06em;margin-top:3px}
-  .gl{padding:14px 0}
-  .gl+.gl{border-top:1px solid var(--line)}
-  .gl .t{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;
-    display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-  .gl .t em{font-style:normal;font-family:Inter,sans-serif;font-size:11.5px;
-    color:var(--acc);font-weight:500}
-  .gl .d{font-size:13.5px;margin-top:6px;line-height:1.5}
-  .gl .h{font-size:12.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);
-    color:var(--dim);line-height:1.45}
-  .gl .h b{color:var(--acc);font-weight:600;font-size:9.5px;text-transform:uppercase;
-    letter-spacing:.08em;display:block;margin-bottom:2px}
   .meal{padding:13px 0}
   .meal+.meal{border-top:1px solid var(--line)}
   .meal .mm{font-size:9.5px;color:var(--faint);text-transform:uppercase;
@@ -340,11 +369,12 @@
   nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);
     backdrop-filter:blur(16px);border-top:1px solid var(--line);
     padding-bottom:env(safe-area-inset-bottom);z-index:30}
-  nav .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+  nav .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
   nav button{background:none;border:0;border-radius:0;color:var(--faint);
-    padding:11px 1px 10px;font-size:9px;font-weight:600;text-transform:uppercase}
+    padding:11px 0 10px;font-size:8px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.02em}
   nav button.on{color:var(--acc)}
-  nav .ic{display:block;font-size:15px;line-height:1.3;margin-bottom:2px;font-weight:400}
+  nav .ic{display:block;font-size:14px;line-height:1.3;margin-bottom:2px;font-weight:400}
   .none{color:var(--faint);font-size:13px;padding:9px 0}
   .flash{padding:11px 14px;border-radius:10px;font-size:13px;margin-top:10px;
     background:var(--panel);border-left:3px solid var(--line)}
@@ -532,7 +562,6 @@
 
   <section id="tab-prog" class="hide">
     <div class="risq hide" id="rq-box"></div>
-
     <div class="lbl">Répartition de l'intensité</div>
     <div class="panel">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
@@ -547,17 +576,14 @@
       </div>
       <p class="nt" id="rp-txt"></p>
     </div>
-
     <div class="lbl">Indicateurs</div>
     <div class="cards" id="rq-cards"></div>
-
     <div class="lbl">Allures — 4 semaines</div>
     <div class="panel">
       <p class="nt" id="p4-periode" style="margin:0 0 4px"></p>
       <div id="p4-lignes"></div>
       <p class="warn" id="p4-reserve"></p>
     </div>
-
     <details class="panel">
       <summary>Charge des 4 semaines</summary>
       <div class="inner">
@@ -565,7 +591,6 @@
         <p class="warn" id="p4-comp"></p>
       </div>
     </details>
-
     <details class="panel">
       <summary>Méthode et limites</summary>
       <div class="inner">
@@ -574,6 +599,41 @@
         <p class="warn" id="rq-consulter" style="border:0;padding-top:6px"></p>
       </div>
     </details>
+  </section>
+
+  <section id="tab-methode" class="hide">
+    <div class="lbl">Ma semaine expliquée</div>
+    <div class="panel">
+      <p class="nt" id="me-tete" style="margin:0 0 10px"></p>
+      <div id="me-jours"></div>
+      <p class="warn" id="me-exercice"></p>
+    </div>
+
+    <details class="panel" open>
+      <summary>Période en cours <span id="me-per-sum"></span></summary>
+      <div class="inner" id="me-periode"></div>
+    </details>
+
+    <div class="lbl">Les principes</div>
+    <div class="panel"><div id="me-principes"></div></div>
+
+    <details class="panel">
+      <summary>Les neuf périodes <span id="me-nb-per"></span></summary>
+      <div class="inner" id="me-periodes"></div>
+    </details>
+
+    <details class="panel">
+      <summary>Lexique <span id="gl-sum"></span></summary>
+      <div class="inner">
+        <input id="gl-search" placeholder="Rechercher un terme…" autocomplete="off"
+          style="margin-bottom:12px">
+        <div id="gloss"></div>
+      </div>
+    </details>
+
+    <div class="panel" style="margin-top:10px">
+      <p class="warn" id="me-source" style="border:0;padding:0;margin:0"></p>
+    </div>
   </section>
 
   <section id="tab-goals" class="hide">
@@ -585,6 +645,8 @@
         C : course d'entraînement. Renseigne distance et dénivelé pour que le plan
         prépare le relief.</p>
     </div>
+
+    <div class="risq hide" id="cal-conflit"></div>
 
     <details class="panel" open>
       <summary>Profil d'effort <span id="prof-sum"></span></summary>
@@ -782,11 +844,12 @@
     <div class="lbl">Coach</div>
     <div class="panel">
       <div class="chat" id="chat"></div>
-      <p class="none" id="chat-empty">Il connaît tes séances en détail, ta charge,
-        tes douleurs, ton mental. Il peut valider une séance, en ajouter une,
-        alléger la semaine, organiser une reprise, évaluer ce que tu lui proposes.</p>
+      <p class="none" id="chat-empty">Il voit ce que tu as réellement fait — allures,
+        fréquence cardiaque, structure des tours — pas seulement ce qui était prévu.
+        Il peut valider une séance, en ajouter une, alléger la semaine, évaluer ce
+        que tu lui proposes, enregistrer une douleur.</p>
       <div class="comp">
-        <input id="chat-input" placeholder="J'ai envie de courir dur demain, ça passe ?" autocomplete="off">
+        <input id="chat-input" placeholder="Analyse ma séance de ce matin" autocomplete="off">
         <button id="btn-send" class="sm">Envoyer</button>
       </div>
     </div>
@@ -799,6 +862,7 @@
   <button data-tab="today" class="on"><span class="ic">◉</span>Jour</button>
   <button data-tab="cal"><span class="ic">▤</span>Plan</button>
   <button data-tab="prog"><span class="ic">◪</span>Progrès</button>
+  <button data-tab="methode"><span class="ic">✳</span>Méthode</button>
   <button data-tab="goals"><span class="ic">▲</span>Saison</button>
   <button data-tab="health"><span class="ic">◇</span>Santé</button>
   <button data-tab="coach"><span class="ic">✦</span>Coach</button>
@@ -828,7 +892,8 @@ const ABILITY={endurance_aerobie:'Endurance',technique:'Technique',
   simulation_course:'Simulation de course',intensite_course:'Intensité de course'}
 const QUAL={E:'Endurance',EM:'Seuil',EA:'VMA / PMA',F:'Force',V:'Vitesse'}
 const ECART={conforme:'Conforme à l\'intention',trop_intense:'Réalisée trop intense',
-  trop_facile:'Réalisée trop facile',differente:'Filière différente'}
+  trop_facile:'Réalisée trop facile',differente:'Filière différente',
+  hors_plan:'Séance hors plan',structuree:'Séance structurée hors programme'}
 const NIVEAU={faible:'Aucun signal',vigilance:'Vigilance',
   modere:'Charge à surveiller',eleve:'Risque élevé'}
 const MAT={home_trainer:'Home-trainer',capteur_puissance:'Capteur de puissance',
@@ -838,7 +903,7 @@ const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','k
   body_fat_pct:['Masse grasse','%'],threshold_pace_s_per_km:['Allure seuil','s/km'],
   css_s_per_100m:['Vitesse nat.','s/100m']}
 const JOURS=['L','M','M','J','V','S','D']
-let mode='login',userId=null,weekOffset=0
+let mode='login',userId=null,weekOffset=0,glossCache=null
 let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true,matObj={}
 
 const iso=d=>d.toISOString().slice(0,10)
@@ -908,6 +973,7 @@ function sessionRow(s){
       manuel?'<span class="tag man">saisie</span>':''}${
       ec==='trop_intense'?'<span class="tag hot">trop intense</span>':''}${
       ec==='trop_facile'?'<span class="tag cold">trop facile</span>':''}${
+      (ec==='hors_plan'||ec==='structuree')?'<span class="tag hp">hors plan</span>':''}${
       s.status==='modified'?'<span class="tag mod">ajustée</span>':''}</div>
     <div class="u">${isRace?'Jour de course':LABEL[s.discipline]??''} · ${
       fmtDay(s.session_date)}</div></div>
@@ -927,6 +993,7 @@ async function refreshAll(){
   await loadToday()
   if(!$('tab-cal').classList.contains('hide'))await loadCalendar()
   if(!$('tab-prog').classList.contains('hide'))await loadProgression()
+  if(!$('tab-methode').classList.contains('hide'))await loadMethode()
   if(!$('tab-goals').classList.contains('hide'))await loadGoals()}
 
 async function loadReview(s){
@@ -954,7 +1021,7 @@ async function loadClassement(s){
     if(!data?.qualite_reelle){
       box.innerHTML=`<p class="none">${esc(data?.message||'Non classable.')}</p>`;return}
     box.innerHTML=`<div class="ecart ${data.ecart}">
-      <div class="h">${ECART[data.ecart]}</div>
+      <div class="h">${ECART[data.ecart]??data.ecart}</div>
       <div class="d">Prévu : ${QUAL[data.qualite_prevue]??data.qualite_prevue} ·
         Réalisé : <b>${QUAL[data.qualite_reelle]??data.qualite_reelle}</b></div>
       <div class="d">${esc(data.lecture)}</div>
@@ -1051,28 +1118,34 @@ async function openSheet(s){
       return}
 
     if(done){
-      const km=cd.distance_m?(cd.distance_m/1000).toFixed(1):null
+      let fiab=null
+      try{const{data}=await sb.rpc('fiabilite_donnees',
+        {p_completed:cd,p_discipline:s.discipline});fiab=data}catch(e){}
+      const fiable=fiab?.allure_fiable!==false
+      const km=(fiable&&cd.distance_m)?(cd.distance_m/1000).toFixed(1):null
       head+=`<div class="met">
         <div><div class="v">${cd.duration_min??'—'}</div><div class="k">min</div></div>
         <div><div class="v">${cd.training_load?Math.round(cd.training_load):'—'}</div><div class="k">TSS</div></div>
         <div><div class="v">${cd.avg_hr?Math.round(cd.avg_hr):'—'}</div><div class="k">FC moy</div></div>
         <div><div class="v">${km??'—'}</div><div class="k">km</div></div>
-        <div><div class="v">${cd.avg_power?Math.round(cd.avg_power):'—'}</div><div class="k">W moy</div></div>
-        <div><div class="v">${cd.ressenti_10??(cd.elevation_m?Math.round(cd.elevation_m):'—')}</div>
-          <div class="k">${cd.ressenti_10?'ressenti':'D+ m'}</div></div>
-      </div><div id="cls-box"></div>`
+        <div><div class="v">${cd.max_hr?Math.round(cd.max_hr):'—'}</div><div class="k">FC max</div></div>
+        <div><div class="v">${cd.ressenti_10??'—'}</div><div class="k">ressenti</div></div>
+      </div>`
+      if(fiab?.note)head+=`<div class="fiab"><b>Source : ${esc(fiab.source)}</b>${esc(fiab.note)}</div>`
+      head+=`<div id="cls-box"></div>`
       const iv=cd.intervalles
       if(iv){
         head+=`<div class="zone"><div class="zk">Structure réalisée</div>
-          <div class="zv" style="font-size:20px">${iv.nb_repetitions_travail??iv.nb_tours} répétitions</div>
+          <div class="zv" style="font-size:20px">${iv.nb_repetitions_travail??iv.nb_tours} blocs</div>
           <div class="zf">${esc(iv.regularite??'')}${
             iv.derive?' · '+esc(iv.derive):''}</div></div>`
-        for(const r of (iv.repetitions||[]).slice(0,12)){
-          head+=`<div class="stp">Rép ${r.n} — ${r.duree_s} s${
-            r.metres?' · '+r.metres+' m':''}${
-            r.allure_min_km?' · '+r.allure_min_km+'/km':''}${
+        for(const r of (iv.repetitions||[]).slice(0,14)){
+          head+=`<div class="stp">Bloc ${r.n} — ${Math.round(r.duree_s/60)} min ${
+            r.duree_s%60} s${
+            (fiable&&r.metres)?' · '+r.metres+' m':''}${
+            (fiable&&r.allure_min_km)?' · '+r.allure_min_km+'/km':''}${
             r.watts?' · '+r.watts+' W':''}${r.fc?' · '+r.fc+' bpm':''}</div>`}}
-      if(cd.charge_estimee)head+=`<p class="nt">Charge estimée depuis ta saisie, non mesurée par capteur.</p>`
+      if(cd.charge_estimee)head+=`<p class="nt">Charge estimée depuis ta saisie.</p>`
       if(cd.note)head+=`<div class="kv"><div class="k">Ta note</div><div class="v">${esc(cd.note)}</div></div>`
       head+=`<div class="lbl">Analyse</div><div id="rev-box"></div>`
       if(manuel)head+=`<button id="s-undo" class="dg" style="width:100%;margin-top:14px">Annuler cette validation</button>`
@@ -1108,8 +1181,7 @@ async function openSheet(s){
         ${data.reference?`<div class="nt">${esc(data.reference)}</div>`:''}</div>`
       if(f){html+=`<div class="lbl">Structure</div><div class="stp">${esc(f.structure)}
         <div class="sub">Intensité : ${esc(f.intensite)}</div>
-        ${f.vigilance?`<div class="dgr">${esc(f.vigilance)}</div>`:''}
-        ${f.frequence_max?`<div class="sub">Fréquence : ${esc(f.frequence_max)}</div>`:''}</div>`
+        ${f.vigilance?`<div class="dgr">${esc(f.vigilance)}</div>`:''}</div>`
       }else if(data.corps){
         html+=`<div class="lbl">Échauffement</div><div class="stp">${esc(data.echauffement)}</div>
           <div class="lbl">Corps de séance</div>`
@@ -1123,24 +1195,14 @@ async function openSheet(s){
         const d=r.data
         html+=`<div class="zone"><div class="zk">${esc(d.nom_phase)} · ${esc(d.periode)}</div>
           <div class="zv">${esc(d.charge)}</div>
-          <div class="zf">${esc(d.objectif)}</div>
-          <div class="nt">${d.seances_par_semaine} séance(s) par semaine · ${esc(d.volume_total)}</div></div>
-          ${d.note_phase?`<p class="nt">${esc(d.note_phase)}</p>`:''}
-          <div class="lbl">Échauffement</div>`
-        for(const x of d.regles.echauffement)html+=`<div class="stp">${esc(x)}</div>`
-        html+=`<div class="lbl">Exercices</div>`
+          <div class="zf">${esc(d.objectif)}</div></div>
+          <div class="lbl">Exercices</div>`
         for(const e of d.exercices){
           html+=`<div class="stp"><b>${e.ordre}. ${esc(e.exercice)}</b> — ${esc(e.series)} séries
-            × ${esc(e.repetitions)} rép à ${esc(e.charge)}, repos ${esc(e.recuperation_min)} min
+            × ${esc(e.repetitions)} rép à ${esc(e.charge)}
             <div class="sub">${esc(e.execution)}</div>
             ${e.vigilance?`<div class="dgr">${esc(e.vigilance)}</div>`:''}</div>`}
-        html+=`<div class="lbl">Retour au calme</div>
-          <div class="stp">${esc(d.regles.retour_au_calme)}</div>
-          <div class="lbl">Règles</div>
-          <div class="stp">${esc(d.regles.echec)}</div>
-          <div class="stp">${esc(d.regles.ordre[2])}</div>
-          <div class="stp">${esc(d.regles.apres_seance)}</div>
-          <p class="warn">${esc(d.securite)}<br>${esc(d.avertissement)}</p>`}
+        html+=`<p class="warn">${esc(d.securite)}<br>${esc(d.avertissement)}</p>`}
     }
 
     if(p.filiere){
@@ -1153,9 +1215,7 @@ async function openSheet(s){
     const passee=s.session_date<=iso(new Date())
     if(passee){
       html+=`<div class="lbl">Je l'ai faite</div>
-        <p class="hint">Pour une séance que la montre n'a pas enregistrée. La charge
-          sera estimée : moins précise qu'une mesure, bien meilleure qu'une séance
-          comptée comme manquée.</p>
+        <p class="hint">Pour une séance que la montre n'a pas enregistrée.</p>
         <div class="g3">
           <div class="fld" style="margin:0"><label for="v-min">Durée (min)</label>
             <input id="v-min" type="number" min="5" max="600"
@@ -1207,8 +1267,7 @@ function raceForm(r){
         <input id="r-km" type="number" step="0.1" value="${r?.distance_km??''}"></div>
       <div class="fld"><label for="r-dp">Dénivelé + (m)</label>
         <input id="r-dp" type="number" step="10" value="${r?.denivele_m??''}"></div></div>
-    <p class="hint">Le dénivelé détermine la part de force et le travail en côte.
-      Sans lui, le plan prépare une course plate.</p>
+    <p class="hint">Le dénivelé détermine la part de force et le travail en côte.</p>
     <button id="r-save" style="width:100%">Enregistrer et régénérer</button>
     ${r?`<button id="r-del" class="dg" style="width:100%;margin-top:10px">Supprimer</button>`:''}
     <p id="r-note" class="nt"></p>`)
@@ -1227,9 +1286,12 @@ function raceForm(r){
     try{
       const q=r?sb.from('races').update(payload).eq('id',r.id):sb.from('races').insert(payload)
       const{error}=await q;if(error)throw error
+      const{data:coh}=await sb.rpc('coherence_calendrier',{p_user_id:userId})
       const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
       closeSheet();await loadGoals();await loadToday()
-      notify('Plan reconstruit selon ce format.','ok')
+      notify(coh?.verdict==='incompatible'
+        ?'Plan reconstruit — mais un enchaînement de courses est impossible, voir l\'onglet Saison.'
+        :'Plan reconstruit selon ce format.', coh?.verdict==='incompatible'?'err':'ok')
     }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
       $('r-save').disabled=false;$('r-save').textContent='Enregistrer et régénérer'}}
 
@@ -1361,8 +1423,7 @@ function renderFM(){
 
 $('tg-fm').onclick=async()=>{
   const next=!fmOn
-  if(!confirm(next?'Activer la force maximale ? Le plan sera reconstruit.'
-    :'Désactiver ? Fondamentale 1 restera en transition musculaire.'))return
+  if(!confirm(next?'Activer la force maximale ?':'Désactiver ?'))return
   $('tg-fm').disabled=true
   try{
     const{data,error}=await sb.rpc('set_force_max',{p_user_id:userId,p_actif:next})
@@ -1378,7 +1439,7 @@ $('btn-classer').onclick=async()=>{
   try{
     const{data,error}=await sb.rpc('classer_historique',{p_user_id:userId})
     if(error)throw error
-    $('classer-note').textContent=`${data.classees} séance(s) classées par leurs données, dont ${data.ecarts} avec un écart à l'intention.`
+    $('classer-note').textContent=`${data.classees} séance(s) classées, dont ${data.ecarts} avec un écart.`
     $('classer-note').style.color='var(--calm)';await refreshAll()
   }catch(e){$('classer-note').textContent=e.message;$('classer-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Reclasser mes séances'}}
@@ -1387,17 +1448,18 @@ document.querySelectorAll('nav button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'))
     b.classList.add('on')
-    for(const t of ['today','cal','prog','goals','health','coach'])
+    for(const t of ['today','cal','prog','methode','goals','health','coach'])
       show($('tab-'+t),t===b.dataset.tab)
     if(b.dataset.tab==='cal')loadCalendar()
     if(b.dataset.tab==='prog')loadProgression()
+    if(b.dataset.tab==='methode')loadMethode()
     if(b.dataset.tab==='goals')loadGoals()
     if(b.dataset.tab==='health')loadHealth()
     window.scrollTo({top:0})}})
 
 async function route(){
   const{data:{session}}=await sb.auth.getSession()
-  const hideAll=()=>['today','cal','prog','goals','health','coach']
+  const hideAll=()=>['today','cal','prog','methode','goals','health','coach']
     .forEach(t=>show($('tab-'+t),false))
   if(!session){show($('view-auth'));show($('view-setup'),false);hideAll()
     show($('nav'),false);show($('btn-logout'),false);show($('vitals'),false)
@@ -1484,13 +1546,12 @@ $('btn-peak').onclick=async()=>{
   const h=parseFloat($('peak').value)
   if(!h||h<3||h>30){$('peak-note').textContent='Valeur entre 3 et 30 h.'
     $('peak-note').style.color='var(--alert)';return}
-  if(!confirm(`Volume de pointe à ${h} h ? Le plan sera reconstruit.`))return
+  if(!confirm(`Volume de pointe à ${h} h ?`))return
   const b=$('btn-peak');b.disabled=true;b.textContent='…'
   try{
     const{data,error}=await sb.rpc('apply_peak_hours',{p_user_id:userId,p_hours:h})
     if(error)throw error
-    $('peak-note').textContent=`Reconstruit : ${data.seances} séances. Volume annuel ≈ ${
-      Math.round(h*45)} h.`
+    $('peak-note').textContent=`Reconstruit : ${data.seances} séances.`
     $('peak-note').style.color='var(--calm)';$('peak-sum').textContent=h+' h';await loadGoals()
   }catch(e){$('peak-note').textContent=e.message;$('peak-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Appliquer'}}
@@ -1524,6 +1585,93 @@ $('btn-body').onclick=async()=>{
     $('body-note').style.color='var(--calm)';await loadHealth();await route()
   }catch(e){$('body-note').textContent=e.message;$('body-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Enregistrer'}}
+
+async function loadMethode(){
+  const bj=$('me-jours');bj.innerHTML='<p class="none">Chargement…</p>'
+  try{
+    const{data,error}=await sb.rpc('methode_ma_semaine',{p_user_id:userId})
+    if(error)throw error
+    $('me-tete').textContent=`${data.periode??'—'} · ${data.volume_cible_h??'—'} h cible`
+      +(data.objectif?` · ${data.objectif} dans ${data.semaines_avant_objectif} semaines`:'')
+      +` · ${data.seances_dures} séance(s) dure(s)`
+    $('me-exercice').textContent=data.exercice
+    $('me-source').textContent=data.source
+
+    bj.innerHTML=''
+    for(const j of (data.jours||[])){
+      const d=document.createElement('div');d.className='jr'
+      d.innerHTML=`<div class="k k-${j.discipline}"></div>
+        <div class="m"><div class="d">${new Date(j.date+'T00:00:00')
+            .toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'})}</div>
+          <div class="s">${esc(j.seance)}${j.duree_min
+            ?` <em>${j.duree_min} min</em>`:''}${j.dure
+            ?' <span class="tag hot">dure</span>':''}</div>
+          <div class="r">${esc(j.regle)}</div></div>`
+      bj.appendChild(d)}
+
+    const lp=data.lecture_periode
+    if(lp){
+      $('me-per-sum').textContent=lp.nom
+      $('me-periode').innerHTML=`
+        <div class="per" style="padding-top:0"><div class="t">${esc(lp.nom)}</div>
+        <div class="l"><b>Ce qu'elle développe</b>${esc(lp.developpe)}
+          <b>Pourquoi ici</b>${esc(lp.pourquoi_ici)}
+          <b>Séances types</b>${esc(lp.seances_types)}</div>
+        ${lp.erreur_frequente?`<div class="er"><b>Erreur fréquente</b>${
+          esc(lp.erreur_frequente)}</div>`:''}</div>`}
+
+    const bp=$('me-principes');bp.innerHTML=''
+    for(const p of (data.principes||[])){
+      const d=document.createElement('div');d.className='prin'
+      d.innerHTML=`<div class="t">${esc(p.titre)}<em>${esc(p.certitude)}</em></div>
+        <div class="rg">${esc(p.regle)}</div>
+        <div class="pq">${esc(p.pourquoi)}</div>
+        ${p.application?`<div class="ap">${esc(p.application)}</div>`:''}`
+      bp.appendChild(d)}
+  }catch(e){bj.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}
+
+  try{
+    const{data:per}=await sb.from('methode_periodes').select('*').order('ordre')
+    const{data:sem}=await sb.from('atp_weeks').select('period')
+      .eq('week_start',iso(mondayOf(new Date()))).maybeSingle()
+    $('me-nb-per').textContent=(per??[]).length+' périodes'
+    const bx=$('me-periodes');bx.innerHTML=''
+    for(const p of (per??[])){
+      const d=document.createElement('div')
+      d.className='per'+(sem?.period===p.nom?' now':'')
+      d.innerHTML=`<div class="t">${esc(p.nom)}<em>${esc(p.duree_type)}</em></div>
+        <div class="l"><b>Développe</b>${esc(p.developpe)}
+          <b>Pourquoi ici</b>${esc(p.pourquoi_ici)}
+          <b>Séances types</b>${esc(p.seances_types)}</div>
+        ${p.erreur_frequente?`<div class="er"><b>Erreur fréquente</b>${
+          esc(p.erreur_frequente)}</div>`:''}`
+      bx.appendChild(d)}
+  }catch(e){}
+
+  if(!glossCache){
+    const{data}=await sb.from('glossary').select('*').order('sort_order')
+    glossCache=data??[]}
+  $('gl-sum').textContent=(glossCache||[]).length+' termes'
+  renderGloss('')}
+
+function renderGloss(q){
+  const box=$('gloss');if(!box)return
+  box.innerHTML=''
+  const rows=(glossCache||[]).filter(g=>!q||
+    g.term.toLowerCase().includes(q)||g.short.toLowerCase().includes(q)||
+    g.detail.toLowerCase().includes(q))
+  if(!rows.length){box.innerHTML='<p class="none">Aucun terme.</p>';return}
+  for(const g of rows.slice(0, q?40:12)){
+    const d=document.createElement('div');d.className='prin'
+    d.innerHTML=`<div class="t">${esc(g.term)}<em>${esc(g.short)}</em></div>
+      <div class="pq">${esc(g.detail)}</div>
+      ${g.how?`<div class="ap">${esc(g.how)}</div>`:''}`
+    box.appendChild(d)}
+  if(!q&&rows.length>12)box.innerHTML+=
+    `<p class="nt">${rows.length-12} autres termes — utilise la recherche.</p>`}
+
+$('gl-search').addEventListener('input',e=>{
+  if(glossCache)renderGloss(e.target.value.trim().toLowerCase())})
 
 async function loadProgression(){
   try{
@@ -1666,7 +1814,6 @@ async function loadWellness(){
         html+=`<div class="stp"><b>${esc(m.nom)}</b> — ${m.duree_min} min · ${esc(m.cible)}
           <div class="sub">${esc(m.consigne)}</div>${
           m.vigilance?`<div class="dgr">${esc(m.vigilance)}</div>`:''}</div>`}}
-    if(data.pourquoi)html+=`<p class="nt">${esc(data.pourquoi)}</p>`
     html+=`<p class="warn">${esc(data.avertissement)}</p>`
     box.innerHTML=html
   }catch(e){box.innerHTML=`<p class="none" style="color:var(--alert)">${esc(e.message)}</p>`}}
@@ -1678,7 +1825,7 @@ async function loadProjection(){
     if(error)throw error
     if(data?.erreur){box.innerHTML=`<p class="none">${esc(data.erreur)}</p>`;return}
     $('proj-head').textContent=`Volume réel ${data.volume_reel_h_semaine} h/sem · cible ${
-      data.volume_cible_h_semaine} h${data.watts_par_kg?` · ${data.watts_par_kg} W/kg`:''}`
+      data.volume_cible_h_semaine} h`
     $('proj-sum').textContent=data.volume_reel_h_semaine+' h/sem'
     box.innerHTML=''
     const list=data.projections||[]
@@ -1770,7 +1917,7 @@ async function loadToday(){
       :a<0.8?"Tu en fais moins que ton habitude : la forme de fond s'érode doucement."
       :"Tu progresses sans excès. C'est la zone où le corps encaisse et s'adapte."
     $('load-detail').textContent=`Aiguë ${Math.round(last.acute_load??0)} · chronique ${
-      Math.round(last.chronic_load??0)} · 28 derniers jours`
+      Math.round(last.chronic_load??0)}`
     drawSpark(rows.map(x=>Number(x.total_daily_load)||0))}
 
   const ad=adh.data,fiable=ment.data?.assiduite_fiable
@@ -1836,8 +1983,7 @@ async function loadCalendar(){
     b.style.marginTop='10px';b.style.marginBottom='0'
     b.innerHTML=`Prochaine course dans ${joursJusqua(hors.race_date)} jours — ${esc(hors.name)}
       <em>${new Date(hors.race_date+'T00:00:00').toLocaleDateString('fr-FR',
-        {weekday:'long',day:'numeric',month:'long'})} · ${
-        FORMAT[hors.distance]??hors.distance}</em>`
+        {weekday:'long',day:'numeric',month:'long'})}</em>`
     pb.appendChild(b)}
 
   const box=$('cal-weeks');box.innerHTML=''
@@ -1857,13 +2003,10 @@ async function loadCalendar(){
     const courseSem=races.filter(r=>r.race_date>=iso(wStart)&&r.race_date<=iso(wEnd))
     for(const cr of courseSem){
       const b=document.createElement('div');b.className='bandeau'
-      const mkm=cr.distance_km>0&&cr.denivele_m
-        ?Math.round(cr.denivele_m/cr.distance_km*10)/10:null
       b.innerHTML=`${new Date(cr.race_date+'T00:00:00').toLocaleDateString('fr-FR',
         {weekday:'long',day:'numeric',month:'long'})} — ${esc(cr.name)}
         <em>${FORMAT[cr.distance]??cr.distance} · priorité ${cr.priority}${
-        cr.target_time?` · objectif ${fmtGoal(cr.target_time)}`:''}${
-        mkm?` · ${cr.denivele_m} m D+`:''}</em>`
+        cr.target_time?` · objectif ${fmtGoal(cr.target_time)}`:''}</em>`
       card.appendChild(b)}
 
     if(meta?.abilities){
@@ -1875,12 +2018,6 @@ async function loadCalendar(){
       if(meta.is_test_week){const s=document.createElement('span')
         s.className='chip';s.textContent='Semaine de test';c.appendChild(s)}
       card.appendChild(c)}
-    const next=races.find(r=>r.race_date>iso(wEnd))
-    if(next&&!courseSem.length){
-      const d=joursJusqua(next.race_date)-joursJusqua(iso(wEnd))
-      const t=document.createElement('div');t.className='prep'
-      t.innerHTML=`Prépare <b>${esc(next.name)}</b> — ${d} j après cette semaine`
-      card.appendChild(t)}
     const done=inWeek.filter(s=>s.status==='completed')
     const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
     const doneTss=done.reduce((t,s)=>t+(Number(s.completed_data?.training_load)||0),0)
@@ -1924,10 +2061,25 @@ async function loadGoals(){
         r.priority?`<span class="tag ${r.priority}">${r.priority}</span>`:''}</div>
       <div class="u2">${FORMAT[r.distance]??r.distance} · ${
         d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}${
-        mkm?` · ${r.denivele_m} m D+ (${mkm} m/km)`:''}</div></div>
+        mkm?` · ${r.denivele_m} m D+`:''}</div></div>
       <div class="g">${fmtGoal(r.target_time)}</div>`
     el.onclick=()=>raceForm(r)
     box.appendChild(el)}
+
+  try{
+    const{data:coh}=await sb.rpc('coherence_calendrier',{p_user_id:userId})
+    const cb=$('cal-conflit')
+    if(coh&&coh.verdict!=='coherent'){
+      cb.className='risq '+(coh.verdict==='incompatible'?'eleve':'modere')
+      let h=`<div class="h">${esc(coh.resume)}</div>`
+      for(const c of (coh.conflits||[])){
+        h+=`<div class="sg"><b>${esc(c.premiere)} → ${esc(c.seconde)} · ${
+          c.ecart_jours} jours</b>${esc(c.lecture)}</div>`
+        for(const o of (c.options||[]))h+=`<div class="sg" style="border:0;padding-top:4px;margin-top:0;font-size:12px">• ${esc(o)}</div>`}
+      h+=`<div class="sg" style="font-size:11px;color:var(--dim)">${esc(coh.reserve)}</div>`
+      cb.innerHTML=h;show(cb)
+    }else show(cb,false)
+  }catch(e){}
 
   const ib=$('indispo-list');ib.innerHTML=''
   for(const i of (indispoRes.data??[])){
@@ -1948,12 +2100,10 @@ async function loadGoals(){
           <div class="zk">${esc(pe.course)} · ${FORMAT[pe.format]??pe.format}</div>
           <div class="zv" style="font-size:20px">${pe.semaines_avant} semaines</div>
           <div class="zf">${esc(pe.lecture)}</div></div>
-        <div class="kv" style="padding-top:0"><div class="k">Répartition des disciplines</div>
+        <div class="kv" style="padding-top:0"><div class="k">Disciplines</div>
           <div class="v">Course ${Math.round(dd.course*100)} % · Vélo ${
-            Math.round(dd.velo*100)} % · Natation ${Math.round(dd.natation*100)} %
-          <div class="nt">Spécificité appliquée : ${pe.specificite_appliquee}. Loin de
-            l'échéance l'entraînement reste équilibré.</div></div></div>
-        <div class="kv"><div class="k">Répartition des qualités</div>
+            Math.round(dd.velo*100)} % · Natation ${Math.round(dd.natation*100)} %</div></div>
+        <div class="kv"><div class="k">Qualités</div>
           <div class="v">Endurance ${Math.round(qq.E*100)} % · Seuil ${
             Math.round(qq.EM*100)} % · VMA ${Math.round(qq.EA*100)} % · Force ${
             Math.round(qq.F*100)} %</div></div>
@@ -1966,8 +2116,7 @@ async function loadGoals(){
     const rbox=$('relief')
     $('relief-sum').textContent=rc.profil_entrainement??'—'
     let h=`<p class="nt" style="margin:0 0 8px">Ton entraînement : ${
-      rc.relief_entrainement_m_par_km??'—'} m par km sur ${rc.km_analyses_90j} km analysés,
-      profil ${rc.profil_entrainement}.</p>`
+      rc.relief_entrainement_m_par_km??'—'} m par km, profil ${rc.profil_entrainement}.</p>`
     for(const c of (rc.courses||[])){
       h+=`<div class="kv"><div class="k">${esc(c.course)} — ${esc(c.profil)}${
         c.metres_par_km?` · ${c.metres_par_km} m/km`:''}</div>
@@ -2033,8 +2182,7 @@ async function loadMeals(force){
 $('btn-meals').onclick=e=>{e.preventDefault();e.stopPropagation();loadMeals(true)}
 
 async function loadHealth(){
-  const hBox=$('health')
-  hBox.innerHTML='<p class="none">Chargement…</p>'
+  const hBox=$('health');hBox.innerHTML='<p class="none">Chargement…</p>'
   try{
     const{data:h,error}=await sb.rpc('health_overview',{p_user_id:userId})
     if(error)throw error
@@ -2087,21 +2235,13 @@ async function loadHealth(){
       const md=m.data,c=md.competence_mentale,tBox=$('mental')
       $('mental-sum').textContent=c.theme||''
       let h=`<div class="zone" style="margin-top:0"><div class="zk">${
-        esc(c.famille||'Mental')}${c.niveau?' · niveau '+c.niveau:''}</div>
+        esc(c.famille||'Mental')}</div>
         <div class="zv" style="font-size:21px">${esc(c.theme)}</div>`
       if(c.a_quoi_ca_sert)h+=`<div class="zf">${esc(c.a_quoi_ca_sert)}</div>`
-      h+=`</div>`
-      if(c.quand)h+=`<div class="kv" style="padding-top:0"><div class="k">Quand</div>
-        <div class="v">${esc(c.quand)}</div></div>`
-      h+=`<div class="kv"><div class="k">L'exercice${
-        c.duree_min?' — '+c.duree_min+' min':''}</div>
-        <div class="v">${esc(c.pratique)}</div></div>`
-      if(c.progression)h+=`<div class="kv"><div class="k">Progression</div>
-        <div class="v">${esc(c.progression)}</div></div>`
-      h+=`<div class="kv"><div class="k">Respiration${
-        md.respiration.priorite==='haute'?" — prioritaire aujourd'hui":''}</div>
-        <div class="v">${esc(md.respiration.protocole)}<br>
-        <span style="color:var(--dim)">${esc(md.respiration.quand)}</span></div></div>`
+      h+=`</div><div class="kv" style="padding-top:0"><div class="k">L'exercice</div>
+        <div class="v">${esc(c.pratique)}</div></div>
+        <div class="kv"><div class="k">Respiration</div>
+        <div class="v">${esc(md.respiration.protocole)}</div></div>`
       tBox.innerHTML=h
       $('fuel-warn').textContent=md.avertissement}
   }catch(e){}
@@ -2112,8 +2252,7 @@ $('btn-plan').onclick=async()=>{
   const b=$('btn-plan');b.disabled=true;b.textContent='…'
   try{
     const{data,error}=await sb.rpc('build_plan',{p_user_id:userId});if(error)throw error
-    $('plan-note').textContent=`${data.semaines} semaines, ${data.seances} séances dont ${
-      data.imbriquees} imbriquées, ${data.tests} tests.`
+    $('plan-note').textContent=`${data.semaines} semaines, ${data.seances} séances.`
     $('plan-note').style.color='var(--calm)';weekOffset=0;await loadGoals()
   }catch(e){$('plan-note').textContent=e.message;$('plan-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Régénérer le plan'}}
@@ -2129,9 +2268,8 @@ $('btn-sync').onclick=async()=>{
     let t=`${data.seances_importees} séance(s) — ${d.rattachees_au_plan??0} au plan, ${
       d.hors_plan??0} hors plan. Tours : ${iv.reussies??0}/${iv.tentees??0}.`
     if(data.poids_importe)t+=` Poids : ${data.poids_importe}.`
-    if(iv.echecs?.length)t+=` Échecs : ${iv.echecs.join(' · ')}`
     $('sync-note').textContent=t
-    $('sync-note').style.color=iv.echecs?.length?'var(--acc)':'var(--calm)'
+    $('sync-note').style.color='var(--calm)'
     await sb.rpc('classer_historique',{p_user_id:userId})
     await refreshAll();await loadProjection();await loadSuggestions();await route()
   }catch(e){$('sync-note').textContent=e.message||'Échec.'
@@ -2140,7 +2278,6 @@ $('btn-sync').onclick=async()=>{
 
 $('btn-push').onclick=async()=>{
   const b=$('btn-push');b.disabled=true;b.textContent='…'
-  $('push-note').textContent=''
   try{
     const{data,error}=await sb.functions.invoke('push-workouts',{body:{days:14}})
     if(error)throw error
