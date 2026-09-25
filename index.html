@@ -145,6 +145,48 @@
   .jr .s{font-size:14px;font-weight:500;margin-top:1px}
   .jr .s em{font-style:normal;font-size:11px;color:var(--dim);font-weight:400}
   .jr .r{font-size:12px;color:var(--dim);margin-top:5px;line-height:1.45}
+  .grille{display:grid;grid-template-columns:34px 1fr 1fr 62px 32px;gap:6px;
+    align-items:center;margin-bottom:7px}
+  .grille .jl{font-family:"Barlow Condensed",sans-serif;font-size:14px;
+    font-weight:600;color:var(--acc);text-align:center;cursor:pointer}
+  .grille select,.grille input{padding:8px 6px;font-size:12.5px;border-radius:8px}
+  .grille .del{background:none;border:0;color:var(--faint);font-size:17px;padding:0}
+  .gtete{display:grid;grid-template-columns:34px 1fr 1fr 62px 32px;gap:6px;
+    font-size:9px;color:var(--faint);text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:6px;padding:0 2px}
+  .note{display:flex;align-items:center;gap:16px;padding:16px;
+    border-radius:var(--r);margin-top:12px}
+  .note.bon{background:var(--calm-soft)}
+  .note.moyen{background:var(--acc-soft)}
+  .note.faible{background:var(--alert-soft)}
+  .note .n{font-family:"Barlow Condensed",sans-serif;font-size:42px;
+    font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .note.bon .n{color:var(--calm)}
+  .note.moyen .n{color:var(--acc)}
+  .note.faible .n{color:var(--alert)}
+  .note .n em{display:block;font-size:11px;font-style:normal;font-weight:500;
+    font-family:Inter,sans-serif;opacity:.7;text-align:center}
+  .note .r{flex:1;font-size:14px;line-height:1.45;font-weight:500}
+  .corr{padding:14px 0}
+  .corr+.corr{border-top:1px solid var(--line)}
+  .corr .v{display:flex;align-items:center;gap:8px}
+  .corr .v i{width:18px;height:18px;border-radius:50%;flex:0 0 18px;
+    display:flex;align-items:center;justify-content:center;
+    font-style:normal;font-size:11px;color:#fff;font-weight:700}
+  .corr.juste .v i{background:var(--calm)}
+  .corr.a_revoir .v i{background:var(--acc)}
+  .corr.faux .v i{background:var(--alert)}
+  .corr .v b{font-family:"Barlow Condensed",sans-serif;font-size:15px;
+    letter-spacing:.04em;text-transform:uppercase}
+  .corr.juste .v b{color:var(--calm)}
+  .corr.a_revoir .v b{color:var(--acc)}
+  .corr.faux .v b{color:var(--alert)}
+  .corr .c{font-size:13.5px;margin-top:6px;font-weight:500}
+  .corr .e{font-size:13px;margin-top:5px;color:var(--dim);line-height:1.5}
+  .hist{padding:11px 0;display:flex;align-items:center;gap:12px}
+  .hist+.hist{border-top:1px solid var(--line)}
+  .hist .n{font-family:"Barlow Condensed",sans-serif;font-size:20px;
+    font-weight:700;flex:0 0 34px;text-align:center}
   .brief{padding:18px;border-radius:var(--r);margin-top:12px;
     background:var(--acc-soft);border-left:3px solid var(--acc)}
   .brief .q{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;
@@ -602,6 +644,28 @@
   </section>
 
   <section id="tab-methode" class="hide">
+    <div class="lbl">Mode devoirs <button id="btn-dev-new" class="sm">Composer</button></div>
+    <div class="panel">
+      <p class="hint" id="dev-intro">Compose ta propre semaine, le moteur la corrige
+        selon les principes. C'est en se trompant qu'on comprend pourquoi les règles
+        existent. Touche la lettre du jour pour la changer.</p>
+      <div id="dev-form" class="hide">
+        <div class="fld"><label for="dev-sem">Semaine du (lundi)</label>
+          <input id="dev-sem" type="date"></div>
+        <div class="gtete">
+          <span>Jour</span><span>Discipline</span><span>Filière</span>
+          <span>Min</span><span></span>
+        </div>
+        <div id="dev-lignes"></div>
+        <button id="dev-add" class="gh sm" style="width:100%;margin-top:8px">
+          + Ajouter une séance</button>
+        <button id="dev-go" style="width:100%;margin-top:12px">Corriger ma semaine</button>
+        <p id="dev-note" class="nt"></p>
+      </div>
+      <div id="dev-result"></div>
+      <div id="dev-hist"></div>
+    </div>
+
     <div class="lbl">Ma semaine expliquée</div>
     <div class="panel">
       <p class="nt" id="me-tete" style="margin:0 0 10px"></p>
@@ -767,8 +831,7 @@
     <details class="panel">
       <summary>Début de saison <span id="season-sum"></span></summary>
       <div class="inner">
-        <p class="hint">Les semaines avant cette date passent en <b>Transition</b>.
-          Les compteurs de progression repartent à zéro.</p>
+        <p class="hint">Les semaines avant cette date passent en <b>Transition</b>.</p>
         <div class="g2" style="align-items:end">
           <div class="fld" style="margin:0"><label for="season">Premier lundi</label>
             <input id="season" type="date"></div>
@@ -845,9 +908,7 @@
     <div class="panel">
       <div class="chat" id="chat"></div>
       <p class="none" id="chat-empty">Il voit ce que tu as réellement fait — allures,
-        fréquence cardiaque, structure des tours — pas seulement ce qui était prévu.
-        Il peut valider une séance, en ajouter une, alléger la semaine, évaluer ce
-        que tu lui proposes, enregistrer une douleur.</p>
+        fréquence cardiaque, structure des tours — pas seulement ce qui était prévu.</p>
       <div class="comp">
         <input id="chat-input" placeholder="Analyse ma séance de ce matin" autocomplete="off">
         <button id="btn-send" class="sm">Envoyer</button>
@@ -902,8 +963,10 @@ const MAT={home_trainer:'Home-trainer',capteur_puissance:'Capteur de puissance',
 const METRIC={ftp_watts:['FTP','W'],vma_kmh:['VMA','km/h'],weight_kg:['Poids','kg'],
   body_fat_pct:['Masse grasse','%'],threshold_pace_s_per_km:['Allure seuil','s/km'],
   css_s_per_100m:['Vitesse nat.','s/100m']}
+const DISC_DEV={course:'Course',velo:'Vélo',natation:'Natation',renfo:'Renfo'}
+const FIL_DEV={E:'Endurance',EM:'Seuil',EA:'VMA / PMA',F:'Force',V:'Technique'}
 const JOURS=['L','M','M','J','V','S','D']
-let mode='login',userId=null,weekOffset=0,glossCache=null
+let mode='login',userId=null,weekOffset=0,glossCache=null,devLignes=[]
 let selDispo=[1,2,3,4,5,6,7],selLongs=[6,7],fmOn=true,matObj={}
 
 const iso=d=>d.toISOString().slice(0,10)
@@ -1140,12 +1203,10 @@ async function openSheet(s){
           <div class="zf">${esc(iv.regularite??'')}${
             iv.derive?' · '+esc(iv.derive):''}</div></div>`
         for(const r of (iv.repetitions||[]).slice(0,14)){
-          head+=`<div class="stp">Bloc ${r.n} — ${Math.round(r.duree_s/60)} min ${
-            r.duree_s%60} s${
-            (fiable&&r.metres)?' · '+r.metres+' m':''}${
+          head+=`<div class="stp">Bloc ${r.n} — ${Math.floor(r.duree_s/60)} min ${
+            r.duree_s%60} s${(fiable&&r.metres)?' · '+r.metres+' m':''}${
             (fiable&&r.allure_min_km)?' · '+r.allure_min_km+'/km':''}${
             r.watts?' · '+r.watts+' W':''}${r.fc?' · '+r.fc+' bpm':''}</div>`}}
-      if(cd.charge_estimee)head+=`<p class="nt">Charge estimée depuis ta saisie.</p>`
       if(cd.note)head+=`<div class="kv"><div class="k">Ta note</div><div class="v">${esc(cd.note)}</div></div>`
       head+=`<div class="lbl">Analyse</div><div id="rev-box"></div>`
       if(manuel)head+=`<button id="s-undo" class="dg" style="width:100%;margin-top:14px">Annuler cette validation</button>`
@@ -1290,7 +1351,7 @@ function raceForm(r){
       const{error:e2}=await sb.rpc('build_plan',{p_user_id:userId});if(e2)throw e2
       closeSheet();await loadGoals();await loadToday()
       notify(coh?.verdict==='incompatible'
-        ?'Plan reconstruit — mais un enchaînement de courses est impossible, voir l\'onglet Saison.'
+        ?"Plan reconstruit — mais un enchaînement de courses est impossible, voir ci-dessous."
         :'Plan reconstruit selon ce format.', coh?.verdict==='incompatible'?'err':'ok')
     }catch(e){$('r-note').textContent=e.message;$('r-note').style.color='var(--alert)'
       $('r-save').disabled=false;$('r-save').textContent='Enregistrer et régénérer'}}
@@ -1407,7 +1468,7 @@ $('btn-dens').onclick=async()=>{
 
 $('btn-fnb').onclick=async()=>{
   const n=parseInt($('fnb').value,10)
-  if(!confirm('Changer la fréquence de musculation ? Le plan sera reconstruit.'))return
+  if(!confirm('Changer la fréquence de musculation ?'))return
   const b=$('btn-fnb');b.disabled=true;b.textContent='…'
   try{
     const{data,error}=await sb.rpc('set_force_frequence',{p_user_id:userId,p_nb:n})
@@ -1586,6 +1647,86 @@ $('btn-body').onclick=async()=>{
   }catch(e){$('body-note').textContent=e.message;$('body-note').style.color='var(--alert)'}
   finally{b.disabled=false;b.textContent='Enregistrer'}}
 
+function renderDevLignes(){
+  const box=$('dev-lignes');box.innerHTML=''
+  devLignes.forEach((l,i)=>{
+    const d=document.createElement('div');d.className='grille'
+    d.innerHTML=`<div class="jl" data-j="${i}">${JOURS[l.jour-1]}</div>
+      <select data-i="${i}" data-f="discipline">${
+        Object.entries(DISC_DEV).map(([k,v])=>
+          `<option value="${k}"${l.discipline===k?' selected':''}>${v}</option>`).join('')}</select>
+      <select data-i="${i}" data-f="filiere">${
+        Object.entries(FIL_DEV).map(([k,v])=>
+          `<option value="${k}"${l.filiere===k?' selected':''}>${v}</option>`).join('')}</select>
+      <input type="number" data-i="${i}" data-f="duree_min" min="15" max="400" value="${l.duree_min}">
+      <button class="del" data-del="${i}">×</button>`
+    box.appendChild(d)})
+  box.querySelectorAll('select,input').forEach(el=>{
+    el.onchange=e=>{const i=+e.target.dataset.i,f=e.target.dataset.f
+      devLignes[i][f]=f==='duree_min'?parseInt(e.target.value,10)||30:e.target.value}})
+  box.querySelectorAll('[data-j]').forEach(el=>{
+    el.onclick=e=>{const i=+e.target.dataset.j
+      devLignes[i].jour=devLignes[i].jour>=7?1:devLignes[i].jour+1
+      renderDevLignes()}})
+  box.querySelectorAll('[data-del]').forEach(b=>{
+    b.onclick=e=>{devLignes.splice(+e.target.dataset.del,1);renderDevLignes()}})}
+
+$('btn-dev-new').onclick=()=>{
+  $('dev-sem').value=iso(mondayOf(addDays(new Date(),7)))
+  devLignes=[{jour:2,discipline:'course',filiere:'E',duree_min:60}]
+  renderDevLignes();show($('dev-form'));$('dev-result').innerHTML=''
+  show($('dev-intro'),false)}
+
+$('dev-add').onclick=()=>{
+  const dernier=devLignes.length?devLignes[devLignes.length-1].jour:1
+  devLignes.push({jour:Math.min(dernier+1,7),discipline:'course',
+    filiere:'E',duree_min:60})
+  renderDevLignes()}
+
+$('dev-go').onclick=async()=>{
+  const sem=$('dev-sem').value
+  if(!sem||!devLignes.length){$('dev-note').textContent='Semaine et séances requises.'
+    $('dev-note').style.color='var(--alert)';return}
+  const b=$('dev-go');b.disabled=true;b.textContent='Correction…'
+  try{
+    const{data,error}=await sb.rpc('corriger_semaine',
+      {p_user_id:userId,p_semaine_du:sem,p_proposition:devLignes,p_enregistrer:true})
+    if(error)throw error
+    if(data?.erreur)throw new Error(data.erreur)
+    const n=data.note_sur_20
+    const cls=n>=16?'bon':n>=11?'moyen':'faible'
+    const V={juste:['✓','Juste'],a_revoir:['!','À revoir'],faux:['×','Faux']}
+    let h=`<div class="note ${cls}"><div class="n">${n}<em>sur 20</em></div>
+      <div class="r">${esc(data.resume)}</div></div>`
+    for(const c of (data.correction||[])){
+      const v=V[c.verdict]??['?','—']
+      h+=`<div class="corr ${c.verdict}">
+        <div class="v"><i>${v[0]}</i><b>${v[1]} — ${esc(c.regle)}</b></div>
+        <div class="c">${esc(c.constat)}</div>
+        <div class="e">${esc(c.commentaire)}</div></div>`}
+    h+=`<p class="warn">${esc(data.note_sur_la_notation)}</p>`
+    $('dev-result').innerHTML=h
+    $('dev-note').textContent=''
+    loadDevHist()
+  }catch(e){$('dev-note').textContent=e.message;$('dev-note').style.color='var(--alert)'}
+  finally{b.disabled=false;b.textContent='Corriger ma semaine'}}
+
+async function loadDevHist(){
+  const box=$('dev-hist');if(!box)return
+  const{data}=await sb.from('devoirs_semaine')
+    .select('semaine_du,note,cree_le').order('cree_le',{ascending:false}).limit(6)
+  if(!(data??[]).length){box.innerHTML='';return}
+  let h=`<div class="lbl" style="margin-top:18px">Tes copies</div>`
+  for(const d of data){
+    const c=d.note>=16?'var(--calm)':d.note>=11?'var(--acc)':'var(--alert)'
+    h+=`<div class="hist"><div class="n" style="color:${c}">${d.note}</div>
+      <div style="flex:1"><div style="font-size:13.5px">Semaine du ${
+        new Date(d.semaine_du).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</div>
+      <div style="font-size:11px;color:var(--faint)">corrigée le ${
+        new Date(d.cree_le).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</div>
+      </div></div>`}
+  box.innerHTML=h}
+
 async function loadMethode(){
   const bj=$('me-jours');bj.innerHTML='<p class="none">Chargement…</p>'
   try{
@@ -1652,7 +1793,8 @@ async function loadMethode(){
     const{data}=await sb.from('glossary').select('*').order('sort_order')
     glossCache=data??[]}
   $('gl-sum').textContent=(glossCache||[]).length+' termes'
-  renderGloss('')}
+  renderGloss('')
+  loadDevHist()}
 
 function renderGloss(q){
   const box=$('gloss');if(!box)return
@@ -2018,6 +2160,12 @@ async function loadCalendar(){
       if(meta.is_test_week){const s=document.createElement('span')
         s.className='chip';s.textContent='Semaine de test';c.appendChild(s)}
       card.appendChild(c)}
+    const next=races.find(r=>r.race_date>iso(wEnd))
+    if(next&&!courseSem.length){
+      const d=joursJusqua(next.race_date)-joursJusqua(iso(wEnd))
+      const t=document.createElement('div');t.className='prep'
+      t.innerHTML=`Prépare <b>${esc(next.name)}</b> — ${d} j après cette semaine`
+      card.appendChild(t)}
     const done=inWeek.filter(s=>s.status==='completed')
     const doneMin=done.reduce((t,s)=>t+(Number(s.completed_data?.duration_min)||0),0)
     const doneTss=done.reduce((t,s)=>t+(Number(s.completed_data?.training_load)||0),0)
@@ -2074,8 +2222,10 @@ async function loadGoals(){
       let h=`<div class="h">${esc(coh.resume)}</div>`
       for(const c of (coh.conflits||[])){
         h+=`<div class="sg"><b>${esc(c.premiere)} → ${esc(c.seconde)} · ${
-          c.ecart_jours} jours</b>${esc(c.lecture)}</div>`
-        for(const o of (c.options||[]))h+=`<div class="sg" style="border:0;padding-top:4px;margin-top:0;font-size:12px">• ${esc(o)}</div>`}
+          c.ecart_jours} jours pour ${c.recuperation_necessaire} nécessaires</b>${
+          esc(c.lecture)}</div>`
+        for(const o of (c.options||[]))
+          h+=`<div style="font-size:12px;color:var(--ink);padding:3px 0 0 12px">• ${esc(o)}</div>`}
       h+=`<div class="sg" style="font-size:11px;color:var(--dim)">${esc(coh.reserve)}</div>`
       cb.innerHTML=h;show(cb)
     }else show(cb,false)
@@ -2234,15 +2384,14 @@ async function loadHealth(){
     if(!m.error&&m.data){
       const md=m.data,c=md.competence_mentale,tBox=$('mental')
       $('mental-sum').textContent=c.theme||''
-      let h=`<div class="zone" style="margin-top:0"><div class="zk">${
-        esc(c.famille||'Mental')}</div>
-        <div class="zv" style="font-size:21px">${esc(c.theme)}</div>`
-      if(c.a_quoi_ca_sert)h+=`<div class="zf">${esc(c.a_quoi_ca_sert)}</div>`
-      h+=`</div><div class="kv" style="padding-top:0"><div class="k">L'exercice</div>
+      tBox.innerHTML=`<div class="zone" style="margin-top:0">
+        <div class="zk">${esc(c.famille||'Mental')}</div>
+        <div class="zv" style="font-size:21px">${esc(c.theme)}</div>
+        ${c.a_quoi_ca_sert?`<div class="zf">${esc(c.a_quoi_ca_sert)}</div>`:''}</div>
+        <div class="kv" style="padding-top:0"><div class="k">L'exercice</div>
         <div class="v">${esc(c.pratique)}</div></div>
         <div class="kv"><div class="k">Respiration</div>
         <div class="v">${esc(md.respiration.protocole)}</div></div>`
-      tBox.innerHTML=h
       $('fuel-warn').textContent=md.avertissement}
   }catch(e){}
 
